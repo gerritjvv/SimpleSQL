@@ -11,9 +11,11 @@ import org.simplesql.parser.SQLParser.statement_return;
 public class QueryParserApp {
 
 	public static void main(String[] args) throws RecognitionException {
+		String str = "SELECT a FROM tbl WHERE b=1 AND c=1*-(6+8) OR b=3";
+//		String str = "SELECT 'my', 12.2 FROM tbl";
 		SQLLexer lexer = new SQLLexer(
 				new ANTLRStringStream(
-						"SELECT f(a,c), f(b), 'B', 1, d*(2+f(1*(3+2))) FROM tbl WHERE a=1 and b=3 GROUP BY a+1,b ORDER BY a,c"));
+						str));
 		SQLParser parser = new SQLParser(new CommonTokenStream(lexer));
 		statement_return ret = parser.statement();
 		CommonTree tree = (CommonTree) ret.getTree();
@@ -37,6 +39,14 @@ public class QueryParserApp {
         for(Object ch : children){
                 CommonTree tree = (CommonTree)ch;
                 System.out.println(tab + ch);
+                if(ch.toString().equals("EXPRESSION")){
+//                	System.out.println("ChildCount: " + tree.getChildCount());
+//                	if(tree.getChildCount() == 0)
+//                	{
+//                		System.out.println("C");
+//                	}
+                	
+                }
                 if(tree.getChildCount() > 0){
                         printChildren(tab  + "\t",tree.getChildren());
                 }

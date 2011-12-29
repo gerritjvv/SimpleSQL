@@ -1,5 +1,7 @@
 package org.simplesql.data;
 
+import java.util.Arrays;
+
 /**
  * 
  * Contain the cells for each row entry. In case of an aggregate only one entry
@@ -20,12 +22,16 @@ public class DataEntry {
 
 	public void apply(Cell[] data) {
 		if (cells == null)
-			cells = data;
+			cells = CellsUtil.copyOf(data);
 
 		for (int i = 0; i < len; i++) {
 			functions[i].apply(cells, data);
 		}
 
+	}
+	
+	public int size(){
+		return (cells == null) ? 0 : cells.length;
 	}
 
 	public Cell[] getCells() {

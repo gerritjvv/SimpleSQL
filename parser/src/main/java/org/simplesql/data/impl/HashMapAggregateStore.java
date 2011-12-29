@@ -32,8 +32,14 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 	 * @param functions
 	 *            TransformFunction(s) that will be applied to each row put.
 	 */
-	public HashMapAggregateStore(TransformFunction[] functions) {
+	public HashMapAggregateStore(TransformFunction... functions) {
 		super();
+
+		// helps keep code clean from null pointers.
+		if (functions == null) {
+			functions = new TransformFunction[0];
+		}
+
 		this.functions = functions;
 	}
 
@@ -43,24 +49,26 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 	 */
 	@Override
 	public boolean put(String key, Cell[] cells) {
-		if (rowCount >= limit) {
-			return false;
-		}
-
-		rowCount++;
 
 		// here we should increment and add top to any values required
 
 		DataEntry entry = map.get(key);
 
 		if (entry == null) {
+			
+			if (rowCount++ >= limit) {
+				//check for limit on key
+				//this implementation expects that all keys are delivered in order.
+				return false;
+			}
+			
 			entry = new DataEntry(functions);
 			map.put(key, entry);
-		} else {
-			// each entry call to entry.apply will ensure that the transform
-			// functions are called.
-			entry.apply(cells);
-		}
+			
+		} 
+		
+		entry.apply(cells);
+		
 
 		return true;
 	}
@@ -92,13 +100,13 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 
 	@Override
 	public void write(DataSink sink) {
-		
+
 		Collection<DataEntry> values = map.values();
-		
-		for(DataEntry entry : values){
+
+		for (DataEntry entry : values) {
 			entry.write(sink);
 		}
-		
+
 	}
 
 }

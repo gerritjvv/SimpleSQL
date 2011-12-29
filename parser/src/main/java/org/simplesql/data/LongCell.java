@@ -64,4 +64,10 @@ public class LongCell implements Cell<Number> {
 		val += counter.getLongValue();
 	}
 
+	@Override
+	public Cell<Number> copy() {
+		return new LongCell(val);
+	}
+
+	
 }

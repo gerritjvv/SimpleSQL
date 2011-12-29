@@ -64,4 +64,9 @@ public class IntCell implements Cell<Number> {
 		val += counter.getIntValue();
 	}
 
+	@Override
+	public Cell<Number> copy() {
+		return new IntCell(val);
+	}
+
 }

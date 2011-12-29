@@ -9,6 +9,15 @@ public class StringCell implements Cell<String> {
 
 	String val;
 
+	public StringCell() {
+
+	}
+
+	public StringCell(String val) {
+		super();
+		this.val = val;
+	}
+
 	@Override
 	public void inc() {
 	}
@@ -53,6 +62,11 @@ public class StringCell implements Cell<String> {
 	@Override
 	public void inc(Counter counter) {
 		
+	}
+
+	@Override
+	public Cell<String> copy() {
+		return new StringCell(val);
 	}
 
 }

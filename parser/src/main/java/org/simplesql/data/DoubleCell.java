@@ -65,4 +65,9 @@ public class DoubleCell implements Cell<Number> {
 		val += counter.getDoubleValue();
 	}
 
+	@Override
+	public Cell<Number> copy() {
+		return new DoubleCell(val);
+	}
+
 }

@@ -13,6 +13,7 @@ import org.simplesql.data.TransformFunction;
 public class COUNT implements TransformFunction {
 
 	final int index;
+	boolean started = false;
 
 	public COUNT(int index) {
 		super();
@@ -22,9 +23,11 @@ public class COUNT implements TransformFunction {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void apply(Cell[] cells, Cell[] input) {
-
-		cells[index].inc();
-
+		if (!started) {
+			cells[index].setData(1);
+			started = true;
+		} else
+			cells[index].inc();
 	}
 
 }

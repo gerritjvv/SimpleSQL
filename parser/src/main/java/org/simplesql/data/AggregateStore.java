@@ -24,6 +24,7 @@ public interface AggregateStore<T> extends Iterable<DataEntry> {
 
 	Set<String> keys();
 
+	
 	void setLimit(int limit);
 
 	int getLimit();

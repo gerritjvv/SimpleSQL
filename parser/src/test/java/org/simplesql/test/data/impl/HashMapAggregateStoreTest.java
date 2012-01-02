@@ -26,6 +26,7 @@ import org.simplesql.funct.SUM;
  */
 public class HashMapAggregateStoreTest extends TestCase {
 
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void testAddToWithCountSumTransform() {
 		

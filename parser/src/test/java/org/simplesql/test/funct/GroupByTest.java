@@ -1,8 +1,6 @@
 package org.simplesql.test.funct;
 
 import java.util.Arrays;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import junit.framework.TestCase;
 
@@ -21,6 +19,7 @@ import org.simplesql.funct.SUM;
 public class GroupByTest extends TestCase{
 
 	
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void testGroupBy(){
 		

@@ -1,8 +1,5 @@
 package org.simplesql.data;
 
-import org.simplesql.funct.COUNT;
-import org.simplesql.funct.PassThroughTransform;
-import org.simplesql.funct.SUM;
 
 
 /**

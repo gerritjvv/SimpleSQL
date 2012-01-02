@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataEntry;
+import org.simplesql.data.DataEntryBuilder;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.TransformFunction;
 
@@ -26,6 +27,8 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 
 	int limit = Integer.MAX_VALUE;
 	int rowCount = 0;
+
+	DataEntryBuilder builder;
 
 	/**
 	 * 
@@ -55,20 +58,25 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 		DataEntry entry = map.get(key);
 
 		if (entry == null) {
-			
+
+			if (builder == null) {
+				builder = new DataEntryBuilder(cells, functions);
+			}
+
 			if (rowCount++ >= limit) {
-				//check for limit on key
-				//this implementation expects that all keys are delivered in order.
+				// check for limit on key
+				// this implementation expects that all keys are delivered in
+				// order.
 				return false;
 			}
-			
-			entry = new DataEntry(functions);
+
+			entry = builder.create();
+
 			map.put(key, entry);
-			
-		} 
-		
+
+		}
+
 		entry.apply(cells);
-		
 
 		return true;
 	}

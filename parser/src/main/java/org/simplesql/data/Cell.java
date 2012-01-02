@@ -6,6 +6,6 @@ public interface Cell<T> extends Counter {
 	
 	void setData(T dat);
 	
-	Cell<T> copy();
+	Cell<T> copy(boolean resetToDefaults);
 	
 }

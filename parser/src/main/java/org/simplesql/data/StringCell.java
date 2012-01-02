@@ -65,8 +65,12 @@ public class StringCell implements Cell<String> {
 	}
 
 	@Override
-	public Cell<String> copy() {
-		return new StringCell(val);
+	public Cell<String> copy(boolean resetToDefaults) {
+		return new StringCell((resetToDefaults)? "" : val);
 	}
 
+	public String toString(){
+		return val;
+	}
+	
 }

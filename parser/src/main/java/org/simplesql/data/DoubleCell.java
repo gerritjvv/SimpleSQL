@@ -66,8 +66,12 @@ public class DoubleCell implements Cell<Number> {
 	}
 
 	@Override
-	public Cell<Number> copy() {
-		return new DoubleCell(val);
+	public Cell<Number> copy(boolean resetToDefaults) {
+		return new DoubleCell((resetToDefaults)? 0.0D : val);
 	}
 
+	public String toString(){
+		return String.valueOf(val);
+	}
+	
 }

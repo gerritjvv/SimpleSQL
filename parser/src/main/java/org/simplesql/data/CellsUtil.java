@@ -9,13 +9,13 @@ public class CellsUtil {
 	 * @param cells
 	 * @return
 	 */
-	public static final Cell[] copyOf(Cell[] cells) {
+	public static final Cell[] copyOf(Cell[] cells, boolean resetToDefaults) {
 
 		int len = cells.length;
 		Cell[] ncells = new Cell[cells.length];
 
 		for (int i = 0; i < len; i++) {
-			ncells[i] = cells[i].copy();
+			ncells[i] = cells[i].copy(resetToDefaults);
 		}
 
 		return ncells;

@@ -13,21 +13,15 @@ import org.simplesql.data.TransformFunction;
 public class COUNT implements TransformFunction {
 
 	final int index;
-	boolean started = false;
 
 	public COUNT(int index) {
-		super();
 		this.index = index;
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void apply(Cell[] cells, Cell[] input) {
-		if (!started) {
-			cells[index].setData(1);
-			started = true;
-		} else
-			cells[index].inc();
+		cells[index].inc();
 	}
 
 }

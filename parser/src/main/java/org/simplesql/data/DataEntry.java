@@ -1,6 +1,9 @@
 package org.simplesql.data;
 
-import java.util.Arrays;
+import org.simplesql.funct.COUNT;
+import org.simplesql.funct.PassThroughTransform;
+import org.simplesql.funct.SUM;
+
 
 /**
  * 
@@ -11,23 +14,22 @@ import java.util.Arrays;
  */
 public class DataEntry {
 
-	Cell[] cells;
+	final Cell[] cells;
 	final TransformFunction[] functions;
 	final int len;
 
-	public DataEntry(TransformFunction[] functions) {
+	public DataEntry(Cell[] cells, TransformFunction[] functions) {
+		this.cells = cells;
 		this.functions = functions;
 		this.len = functions.length;
 	}
 
 	public void apply(Cell[] data) {
-		if (cells == null)
-			cells = CellsUtil.copyOf(data);
 
 		for (int i = 0; i < len; i++) {
 			functions[i].apply(cells, data);
 		}
-
+		
 	}
 	
 	public int size(){

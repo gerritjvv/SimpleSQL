@@ -65,9 +65,12 @@ public class LongCell implements Cell<Number> {
 	}
 
 	@Override
-	public Cell<Number> copy() {
-		return new LongCell(val);
+	public Cell<Number> copy(boolean resetToDefaults) {
+		return new LongCell((resetToDefaults)? 0L : val);
 	}
 
-	
+	public String toString() {
+		return String.valueOf(val);
+	}
+
 }

@@ -16,7 +16,7 @@ import org.simplesql.data.LongCell;
 import org.simplesql.data.StringCell;
 import org.simplesql.data.impl.HashMapAggregateStore;
 import org.simplesql.funct.COUNT;
-import org.simplesql.funct.NoOpTransform;
+import org.simplesql.funct.PassThroughTransform;
 import org.simplesql.funct.SUM;
 
 /**
@@ -28,6 +28,7 @@ public class HashMapAggregateStoreTest extends TestCase {
 
 	@Test
 	public void testAddToWithCountSumTransform() {
+		
 		/**
 		 * 
 		 * COUNT IntCell start=10 expect 10
@@ -37,7 +38,7 @@ public class HashMapAggregateStoreTest extends TestCase {
 		 * StringCell("Test");
 		 */
 		HashMapAggregateStore map = new HashMapAggregateStore(new COUNT(0),
-				new COUNT(1), new SUM(2));
+				new COUNT(1), new SUM(2), new PassThroughTransform(3));
 
 
 		int rows = 10;
@@ -59,9 +60,8 @@ public class HashMapAggregateStoreTest extends TestCase {
 			
 			assertEquals(10, cells[0].getIntValue());
 			assertEquals(10, cells[1].getLongValue());
-			assertEquals(2, (int)(cells[2].getDoubleValue() * 10));
+			assertEquals(0.2F, (float)cells[2].getDoubleValue());
 			assertEquals("Test", cells[3].getData());
-			System.out.println("Valid: " + key);
 		}
 
 	}

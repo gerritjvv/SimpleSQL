@@ -3,7 +3,7 @@ grammar SQL;
 options {
   language = Java;
   k = 2;
-  output = AST;
+  output=AST;
 }
 
 tokens {
@@ -37,9 +37,14 @@ tokens {
   
 }
 
+@members {
+  
+  public SELECT select;
+  
+}
 
 statement returns [SELECT ret = new SELECT()]
-           : SELECT (se1=expression {$ret.select($se1.expr);}) 
+           : SELECT (se1=expression { select = $ret;  $ret.select($se1.expr);}) 
                     (',' (se1=expression {$ret.select($se1.expr);}))* FROM IDENT {$ret.table($IDENT.text);} 
             (WHERE w1=logical {$ret.where($logical.ret);})*
             ('GROUP' 'BY' (gpe1=expression {$ret.groupBy($gpe1.expr);}) 
@@ -48,12 +53,12 @@ statement returns [SELECT ret = new SELECT()]
                      (',' (ope1=expression {$ret.orderBy($ope1.expr);}))*)*
             ('LIMIT' l=INTEGER {$ret.limit($l.text);})*
             ';'*
-            -> ^(SELECT $se1*) 
-               ^(WHERE $w1*)?
-               ^(GROUP $gpe1*)?
-               ^(ORDER $ope1*)?
-               ^(LIMIT $l)?;
-
+//            -> ^(SELECT $se1*) 
+//               ^(WHERE $w1*)?
+//               ^(GROUP $gpe1*)?
+//               ^(ORDER $ope1*)?
+//               ^(LIMIT $l)?;
+;
 
 //negation : (t1+='NOT' | t1+='!')* (v1=funct|v2=term) 
 //      -> ^(NEGATION_TOKEN $t1* $v1* $v2*);
@@ -62,7 +67,7 @@ unary returns [UNARY unary = new UNARY()]
       v1=funct {$unary.term($v1.f);}
       | v2=term {$unary.term($v2.term);}
       
-   -> ^(UNARY $v1* $v2*)
+//   -> ^(UNARY $v1* $v2*)
    ;
    
 mult returns [MULT ret = new MULT()]
@@ -72,14 +77,14 @@ mult returns [MULT ret = new MULT()]
     | t='mod' {$ret.mod();}) 
     u2=unary {$ret.unary($u2.unary);})*
     
-   -> ^(MULT_TOKEN $u1 ($t $u2)* )
+//   -> ^(MULT_TOKEN $u1 ($t $u2)* )
    ;
 
 expression returns [EXPRESSION expr = new EXPRESSION()]
    : em1=mult
    {$expr.mult($em1.ret);} ((t+='-' {$expr.minus();}| t+='+' {$expr.plus();}) em2=mult {$expr.mult($em2.ret);})* 
    
-   -> ^(EXPRESSION $em1 ($t $em2)* )
+//   -> ^(EXPRESSION $em1 ($t $em2)* )
    
    ;
    
@@ -87,18 +92,19 @@ relation returns [RELATION ret]
         : 
           e1=expression RELATION e2=expression 
           {$ret = new RELATION($e1.expr, $RELATION.text, $e2.expr);}
-      -> ^(RELATION_TOKEN RELATION $e1 $e2);
-      
+//      -> ^(RELATION_TOKEN RELATION $e1 $e2);
+  ;    
 logical returns [LOGICAL ret = new LOGICAL()]
         : r1=relation {$ret.relation($r1.ret);} 
           (lotoken=LOGICAL {$ret.logical($LOGICAL.text);}  r2=relation {$ret.relation($r2.ret);})*
-      -> ^(LOGICAL_TOKEN $r1 ($lotoken $r2)*);
-      
+//      -> ^(LOGICAL_TOKEN $r1 ($lotoken $r2)*);
+ ;     
       
 
 funct returns [FUNCTION f = new FUNCTION()] 
      : IDENT {$f.name($IDENT.text);}'(' fe1=expression {$f.expression($fe1.expr);} (',' fe2=expression {$f.expression($fe2.expr);})* ')'
-    -> ^(FUNC IDENT $fe1* $fe2*);
+//    -> ^(FUNC IDENT $fe1* $fe2*)
+;
 
   
 term returns [TERM term]: 
@@ -110,7 +116,6 @@ term returns [TERM term]:
       )
       | v=STRING_LITERAL -> ^(STRING $v) {$term = new STRING($v.text)};
 
-//ADDITION : ('+'|'-');
 
 RELATION : ('<' | '>' | '<=' | '>=' | '!=' | '=');
 LOGICAL : ('&&' | '||' | ('A'|'a')('N'|'n')('D'|'d')) | ('O'|'o')('R'|'r');

@@ -72,4 +72,42 @@ public class SELECT {
 		return orderBy;
 	}
 
+	public void visit(Visitor visitor) {
+		visitor.table(table);
+		visitor.limit(limit);
+
+		for (int i = 0; i < selects.size(); i++) {
+			visitor.select(i, selects.get(i));
+		}
+
+		for (int i = 0; i < groupBy.size(); i++) {
+			visitor.groupBy(i, groupBy.get(i));
+		}
+
+		for (int i = 0; i < orderBy.size(); i++) {
+			visitor.orderBy(i, orderBy.get(i));
+		}
+
+		for (int i = 0; i < where.size(); i++) {
+			visitor.where(i, where.get(i));
+		}
+
+	}
+
+	public static interface Visitor {
+
+		void table(String name);
+
+		void limit(int limit);
+
+		void select(int i, EXPRESSION expr);
+
+		void where(int i, LOGICAL logical);
+
+		void groupBy(int i, EXPRESSION expr);
+
+		void orderBy(int i, EXPRESSION expr);
+
+	}
+
 }

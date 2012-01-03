@@ -5,7 +5,7 @@ public class INTEGER extends NUMBER{
 	final int val;
 
 	public INTEGER(String val) {
-		super();
+		super(TYPE.INTEGER);
 		this.val = Integer.parseInt(val);
 	}
 

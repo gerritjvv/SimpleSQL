@@ -3,20 +3,79 @@ package org.simplesql.parser.tree;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.simplesql.data.Cell;
+
 public class EXPRESSION extends TERM {
 
-	List<Object> chidlren = new ArrayList<Object>();
+	enum OP {
+		PLUS("+"), MINUS("-");
+
+		final String val;
+
+		OP(String val) {
+			this.val = val;
+		}
+
+		public String toString() {
+			return val;
+		}
+
+		public static OP parse(String id) {
+			if (id.equals(PLUS.val))
+				return PLUS;
+			else
+				return MINUS;
+		}
+
+	}
+
+	List<Object> children = new ArrayList<Object>();
+
+	public EXPRESSION() {
+		super(TYPE.INTEGER);
+	}
 
 	public void plus() {
-		chidlren.add("+");
+		children.add(OP.PLUS);
 	}
 
 	public void minus() {
-		chidlren.add("-");
+		children.add(OP.MINUS);
 	}
 
 	public void mult(MULT mult) {
-		chidlren.add(mult);
+		// get the highest order type
+		type = mult.type.max(type);
+		children.add(mult);
 	}
 
+	/**
+	 * Gets the Cell class based on the type
+	 * 
+	 * @return
+	 */
+	public Class<? extends Cell> getCellType() {
+		return type.getCellType();
+	}
+
+	public void visit(Visitor visitor) {
+		for (Object obj : children) {
+			if (obj instanceof MULT)
+				visitor.mult((MULT) obj);
+			else if (obj.equals(OP.PLUS))
+				visitor.plus();
+			else
+				visitor.minus();
+		}
+	}
+
+	public static interface Visitor {
+
+		void plus();
+
+		void minus();
+
+		void mult(MULT mult);
+
+	}
 }

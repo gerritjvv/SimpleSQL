@@ -5,7 +5,7 @@ public class DOUBLE extends NUMBER {
 	final double val;
 
 	public DOUBLE(String val) {
-		super();
+		super(TYPE.DOUBLE);
 		this.val = Double.parseDouble(val);
 	}
 

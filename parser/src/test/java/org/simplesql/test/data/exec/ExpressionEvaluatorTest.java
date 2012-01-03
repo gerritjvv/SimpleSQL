@@ -15,6 +15,7 @@ public class ExpressionEvaluatorTest extends TestCase{
 	@Test
 	public void testExpression() throws CompileException, ParseException, ScanException, InvocationTargetException{
 		
+		
 		ExpressionEvaluator eval = new ExpressionEvaluator("a + new Integer(c)",
 				int.class,
 				new String[]{"a", "c"},

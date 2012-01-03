@@ -5,7 +5,7 @@ public class STRING extends TERM {
 	final String val;
 
 	public STRING(String val) {
-		super();
+		super(TYPE.STRING);
 		this.val = val;
 	}
 

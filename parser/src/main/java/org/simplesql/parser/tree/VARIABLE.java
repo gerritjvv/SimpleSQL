@@ -5,7 +5,7 @@ public class VARIABLE extends TERM{
 	final String name;
 
 	public VARIABLE(String name) {
-		super();
+		super(TYPE.UKNOWN);
 		this.name = name;
 	}
 

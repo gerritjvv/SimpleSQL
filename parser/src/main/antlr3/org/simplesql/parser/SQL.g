@@ -38,11 +38,15 @@ tokens {
 }
 
 
-statement : SELECT (se1+=expression) (',' (se1+=expression))* FROM IDENT 
-            (WHERE w1+=logical )*
-            ('GROUP' 'BY' (gpe1+=expression) (',' (gpe1+=expression))*)*
-            ('ORDER' 'BY' (ope1+=expression) (',' (ope1+=expression))*)*
-            ('LIMIT' l=INTEGER)*
+statement returns [SELECT ret = new SELECT()]
+           : SELECT (se1=expression {$ret.select($se1.expr);}) 
+                    (',' (se1=expression {$ret.select($se1.expr);}))* FROM IDENT {$ret.table($IDENT.text);} 
+            (WHERE w1=logical {$ret.where($logical.ret);})*
+            ('GROUP' 'BY' (gpe1=expression {$ret.groupBy($gpe1.expr);}) 
+                     (',' (gpe1=expression {$ret.groupBy($gpe1.expr);}))*)*
+            ('ORDER' 'BY' (ope1=expression {$ret.orderBy($ope1.expr);}) 
+                     (',' (ope1=expression {$ret.orderBy($ope1.expr);}))*)*
+            ('LIMIT' l=INTEGER {$ret.limit($l.text);})*
             ';'*
             -> ^(SELECT $se1*) 
                ^(WHERE $w1*)?
@@ -79,10 +83,15 @@ expression returns [EXPRESSION expr = new EXPRESSION()]
    
    ;
    
-relation : e1=expression RELATION e2=expression
+relation returns [RELATION ret] 
+        : 
+          e1=expression RELATION e2=expression 
+          {$ret = new RELATION($e1.expr, $RELATION.text, $e2.expr);}
       -> ^(RELATION_TOKEN RELATION $e1 $e2);
       
-logical : r1=relation (lotoken+=LOGICAL r2+=relation)*
+logical returns [LOGICAL ret = new LOGICAL()]
+        : r1=relation {$ret.relation($r1.ret);} 
+          (lotoken=LOGICAL {$ret.logical($LOGICAL.text);}  r2=relation {$ret.relation($r2.ret);})*
       -> ^(LOGICAL_TOKEN $r1 ($lotoken $r2)*);
       
       

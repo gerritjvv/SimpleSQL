@@ -15,11 +15,5 @@ public interface DataSource extends Iterable<Object[]> {
 	 */
 	long getEstimatedSize();
 
-	/**
-	 * For each record write to the dataSink, till the DataSink return false.
-	 * 
-	 * @param dataSink
-	 */
-	void each(DataSink dataSink);
 
 }

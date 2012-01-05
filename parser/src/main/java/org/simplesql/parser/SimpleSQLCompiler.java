@@ -1,6 +1,8 @@
 package org.simplesql.parser;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -12,7 +14,8 @@ import org.simplesql.data.Cell;
 import org.simplesql.data.Key;
 import org.simplesql.data.KeyParser;
 import org.simplesql.data.SimpleCellKey;
-import org.simplesql.data.StringCell;
+import org.simplesql.data.SimpleObjectKey;
+import org.simplesql.data.SimpleStringKey;
 import org.simplesql.parser.tree.SELECT;
 import org.simplesql.parser.tree.SELECTTreeAdaptor;
 import org.simplesql.parser.tree.TreeJavaConvert;
@@ -26,6 +29,13 @@ import org.simplesql.schema.TableDef;
  * 
  */
 public class SimpleSQLCompiler implements SQLCompiler {
+
+	final ExecutorService execService;
+
+	public SimpleSQLCompiler(ExecutorService execService) {
+		super();
+		this.execService = execService;
+	}
 
 	@Override
 	public SQLExecutor compile(TableDef tableDef, String sql) {
@@ -46,10 +56,21 @@ public class SimpleSQLCompiler implements SQLCompiler {
 							+ converter.getSelectExpressions() + "}",
 					Object[].class, columnNames, columnTypes);
 
-			KeyParser keyParser = (converter.getGroupByExpressions() == null) ? new NoKeyParser()
+			// Create key based on group by.
+			String groupByExpressions = converter.getGroupByExpressions();
+
+			KeyParser keyParser = (groupByExpressions == null || groupByExpressions
+					.trim().isEmpty()) ? new NoKeyParser()
 					: new SimpleKeyParser(converter, columnNames, columnTypes);
-			
-			return new SimpleSQLExecutor(tableDef, eval, keyParser);
+
+			String whereExpressions = converter.getWhereExpressions();
+
+			WhereFilter whereFilter = (whereExpressions == null || whereExpressions
+					.trim().isEmpty()) ? new AlwaysTrueWhereFilter()
+					: new SimpleWhereFilter(converter, columnNames, columnTypes);
+
+			return new SimpleSQLExecutor(execService, tableDef, eval,
+					keyParser, whereFilter);
 
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);
@@ -84,17 +105,63 @@ public class SimpleSQLCompiler implements SQLCompiler {
 	}
 
 	/**
-	 * Returns a single key with name equal '_';
+	 * Returns a new key for each call to makeKey;
 	 * 
 	 * 
 	 */
 	static public class NoKeyParser implements KeyParser {
 
-		static final Key key = new SimpleCellKey(new Cell[] { new StringCell("_") });
+		final AtomicInteger id = new AtomicInteger(0);
 
 		@Override
 		public Key makeKey(Object[] data) {
-			return key;
+			return new SimpleStringKey(String.valueOf(id.getAndIncrement()));
+		}
+
+	}
+
+	/**
+	 * 
+	 * Always return truer
+	 * 
+	 */
+	static public class AlwaysTrueWhereFilter implements WhereFilter {
+
+		@Override
+		public boolean include(Object[] data) {
+			return true;
+		}
+
+	}
+
+	/**
+	 * 
+	 * Implements a WhereFilter by evaluating the Where Expression using an
+	 * ExpressionEvaluator.
+	 * 
+	 */
+	static public class SimpleWhereFilter implements WhereFilter {
+
+		final ExpressionEvaluator evalBool;
+
+		public SimpleWhereFilter(TreeJavaConvert converter,
+				String[] columnNames, Class[] columnTypes)
+				throws CompileException, ParseException, ScanException {
+			
+			evalBool = new ExpressionEvaluator(converter.getWhereExpressions(),
+					Boolean.class, columnNames, columnTypes);
+
+		}
+
+		@Override
+		public boolean include(Object[] data) {
+			try {
+				return (Boolean) evalBool.evaluate(data);
+			} catch (InvocationTargetException e) {
+				RuntimeException exc = new RuntimeException(e.toString(), e);
+				exc.setStackTrace(e.getStackTrace());
+				throw exc;
+			}
 		}
 
 	}
@@ -112,9 +179,15 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		public SimpleKeyParser(TreeJavaConvert converter, String[] columnNames,
 				Class[] columnTypes) throws CompileException, ParseException,
 				ScanException {
+			
+			String str = "new "
+					+ SimpleCellKey.class.getName() + "( new "
+					+ Cell.class.getName() + "[]{"
+					+ converter.getGroupByExpressions() + "})";
+			
 			evalKeyCreator = new ExpressionEvaluator("new "
-					+ SimpleCellKey.class.getName() + "("
-					+ converter.getSelectExpressions() + ")", Object[].class,
+					+ SimpleObjectKey.class.getName() + "( new Object[]{"
+					+ converter.getGroupByExpressions() + "})", Key.class,
 					columnNames, columnTypes);
 
 		}

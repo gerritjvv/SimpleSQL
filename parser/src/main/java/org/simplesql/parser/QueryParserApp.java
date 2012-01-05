@@ -1,49 +1,82 @@
 package org.simplesql.parser;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.CommonTree;
-import org.codehaus.janino.ExpressionEvaluator;
+import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
-import org.simplesql.funct.GroupBy.KeyParser;
-import org.simplesql.parser.tree.SELECT;
-import org.simplesql.parser.tree.SELECTTreeAdaptor;
-import org.simplesql.parser.tree.TreeJavaConvert;
+import org.simplesql.data.DataSink;
+import org.simplesql.data.DataSource;
+import org.simplesql.data.IntCell;
+import org.simplesql.data.Key;
+import org.simplesql.data.StringCell;
+import org.simplesql.data.impl.HashMapAggregateStore;
+import org.simplesql.funct.PassThroughTransform;
+import org.simplesql.schema.SimpleColumnDef;
+import org.simplesql.schema.SimpleTableDef;
+import org.simplesql.schema.TableDef;
 
 public class QueryParserApp {
 
 	public static void main(String[] args) throws Throwable {
-		String str = "SELECT 1, a*0.5/2, \"STR\", SIZE(\"a\") FROM table WHERE a=2 AND b=3";
-		// String str = "SELECT 'my', 12.2 FROM tbl";
-		SQLLexer lexer = new SQLLexer(new ANTLRStringStream(str));
-		SQLParser parser = new SQLParser(new CommonTokenStream(lexer));
-		parser.setTreeAdaptor(new SELECTTreeAdaptor());
-
-		SELECT select = parser.statement().ret;
-
-		TreeJavaConvert converter = new TreeJavaConvert(select);
-
-		System.out.println(converter.getSelectExpressions());
-		System.out.println(converter.getGroupByExpressions());
-		System.out.println(converter.getOrderByExpressions());
-		System.out.println(converter.getWhereExpressions());
-
+		String str = "SELECT 1, b, a*0.5/2, \"STR\",c , SIZE(c) FROM table WHERE a>=1 AND b<5 GROUP BY a, b";
 		
-		ExpressionEvaluator eval = new ExpressionEvaluator("new org.simplesql.data.Cell[]{"
-				+ converter.getSelectExpressions() + "}", Object[].class,
-				new String[] { "a" }, new Class[] { int.class },
-				new Class[0], QueryParserApp.class.getClassLoader());
+		TableDef tableDef = new SimpleTableDef("mytbl", 
+				new SimpleColumnDef(Integer.class, "a", new IntCell()),
+				new SimpleColumnDef(Integer.class, "b", new IntCell()),
+				new SimpleColumnDef(String.class, "c", new StringCell()));
+
+		ExecutorService execService = Executors.newCachedThreadPool();
+		SQLCompiler compiler = new SimpleSQLCompiler(execService);
 		
-		String groupByExpressions = converter.getGroupByExpressions();
-		KeyParser keyParser;
+		SQLExecutor exec = compiler.compile(tableDef, str);
 		
-		if(groupByExpressions != null){
+		Object[][] data = new Object[][]{
 			
-		}
+				new Object[]{ 1, 2, "hi"},
+				new Object[]{ 1, 3, "hi there"},
+				new Object[]{ 1, 4, "hi there"}
+				
+		};
 		
+		AggregateStore store = new HashMapAggregateStore(new PassThroughTransform(0),
+				new PassThroughTransform(1), new PassThroughTransform(2),
+				new PassThroughTransform(3),
+				new PassThroughTransform(4),
+				new PassThroughTransform(5));
+		
+		final List<Object[]> dataList = Arrays.asList(data);
+		
+		
+		exec.pump(new DataSource() {
+			
+			@Override
+			public Iterator<Object[]> iterator() {
+					return dataList.iterator();
+			}
+			
+			@Override
+			public long getEstimatedSize() {
+				return dataList.size();
+			}
+			
+			
+		}, store, null);
+		
+		execService.shutdown();
+		
+		store.write(new DataSink() {
+			
+			@Override
+			public boolean fill(Key key, Cell<?>[] data) {
+				System.out.println(key.asString().hashCode() + " : " + Arrays.toString(data));
+				return true;
+			}
+		});
 		
 //		eval.setDefaultImports(new String[]{
 //			"org.simplesql.data",
@@ -55,9 +88,9 @@ public class QueryParserApp {
 //			"org.simplesql.data.DynamicCell"
 //		});
 		
-		Cell[] res = (Cell[]) eval.evaluate(new Object[] { new Integer(2) });
+//		Cell[] res = (Cell[]) eval.evaluate(new Object[] { new Integer(2) });
 
-		System.out.println(Arrays.toString(res));
+//		System.out.println(Arrays.toString(res));
 
 		//
 		//

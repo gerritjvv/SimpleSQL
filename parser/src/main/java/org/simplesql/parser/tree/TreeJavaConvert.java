@@ -143,7 +143,13 @@ public class TreeJavaConvert {
 
 			e1.visit(exprPrinter);
 
-			buff.append(")").append(op);
+			String opStr;
+			if (op.equals(RELATION.OP.EQ))
+				opStr = "==";
+			else
+				opStr = op.toString();
+
+			buff.append(")").append(opStr);
 			buff.append("(");
 
 			e2.visit(exprPrinter);

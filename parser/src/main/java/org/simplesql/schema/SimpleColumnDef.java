@@ -8,15 +8,15 @@ import org.simplesql.data.Cell;
  *
  * @param <T>
  */
-public class SimpleColumnDef<T> implements ColumnDef {
+public class SimpleColumnDef implements ColumnDef {
 
-	final Class<? extends T> javaType;
+	final Class<?> javaType;
 	final String name;
-	final Cell<? extends T> cell;
+	final Cell<?> cell;
 	final boolean isNumber;
 
-	public SimpleColumnDef(Class<? extends T> javaType, String name,
-			Cell<? extends T> cell) {
+	public SimpleColumnDef(Class<?> javaType, String name,
+			Cell<?> cell) {
 		super();
 		this.javaType = javaType;
 		this.name = name;
@@ -26,7 +26,7 @@ public class SimpleColumnDef<T> implements ColumnDef {
 
 	}
 
-	public Class<? extends T> getJavaType() {
+	public Class<?> getJavaType() {
 		return javaType;
 	}
 
@@ -34,7 +34,7 @@ public class SimpleColumnDef<T> implements ColumnDef {
 		return name;
 	}
 
-	public Cell<? extends T> getCell() {
+	public Cell<?> getCell() {
 		return cell;
 	}
 

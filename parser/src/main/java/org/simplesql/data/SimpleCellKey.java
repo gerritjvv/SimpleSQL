@@ -12,7 +12,7 @@ public class SimpleCellKey implements Key {
 	final String str;
 	final Cell[] cells;
 
-	public SimpleCellKey(Cell[] cells) {
+	public SimpleCellKey(Cell... cells) {
 		StringBuilder buff = new StringBuilder();
 		for (Cell cell : cells) {
 			buff.append(cell.getData().toString());

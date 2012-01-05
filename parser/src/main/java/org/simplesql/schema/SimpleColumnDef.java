@@ -8,7 +8,7 @@ import org.simplesql.data.Cell;
  *
  * @param <T>
  */
-public class SimpleColumnDef<T> implements ColumnDef<T> {
+public class SimpleColumnDef<T> implements ColumnDef {
 
 	final Class<? extends T> javaType;
 	final String name;

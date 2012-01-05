@@ -10,23 +10,23 @@ import java.util.Map;
  */
 public class SimpleTableDef implements TableDef {
 
-	final ColumnDef<?>[] columnDefs;
+	final ColumnDef[] columnDefs;
 	final String name;
-	final Map<String, ColumnDef<?>> columnMap = new HashMap<String, ColumnDef<?>>();
+	final Map<String, ColumnDef> columnMap = new HashMap<String, ColumnDef>();
 
-	public SimpleTableDef(String name, ColumnDef<?>... columnDefs) {
+	public SimpleTableDef(String name, ColumnDef... columnDefs) {
 		this.name = name;
 		this.columnDefs = columnDefs;
 
-		for (ColumnDef<?> def : columnDefs)
+		for (ColumnDef def : columnDefs)
 			columnMap.put(def.getName(), def);
 	}
 
-	public ColumnDef<?> getColumnDef(String name) {
+	public ColumnDef getColumnDef(String name) {
 		return columnMap.get(name);
 	}
 
-	public ColumnDef<?>[] getColumnDefs() {
+	public ColumnDef[] getColumnDefs() {
 		return columnDefs;
 	}
 

@@ -16,13 +16,13 @@ public interface AggregateStore<T> extends Iterable<DataEntry> {
 	 * @return boolean true if data was accepted, false if limit was reached
 	 *         etc.
 	 */
-	boolean put(String key, Cell[] cells);
+	boolean put(Key key, Cell[] cells);
 
-	DataEntry get(String key);
+	DataEntry get(Key key);
 
 	Iterator<DataEntry> iterator();
 
-	Set<String> keys();
+	Set<Key> keys();
 
 	
 	void setLimit(int limit);

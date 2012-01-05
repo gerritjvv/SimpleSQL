@@ -10,8 +10,8 @@ package org.simplesql.schema;
 public interface TableDef {
 
 	String getName();
-	ColumnDef<?>[] getColumnDefs();
-	ColumnDef<?> getColumnDef(String colName);
+	ColumnDef[] getColumnDefs();
+	ColumnDef getColumnDef(String colName);
 	int getColumnCount();
 	
 }

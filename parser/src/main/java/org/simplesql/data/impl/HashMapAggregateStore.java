@@ -12,6 +12,7 @@ import org.simplesql.data.DataEntry;
 import org.simplesql.data.DataEntryBuilder;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.TransformFunction;
+import org.simplesql.funct.GroupBy.Key;
 
 /**
  * 
@@ -21,7 +22,7 @@ import org.simplesql.data.TransformFunction;
  */
 public class HashMapAggregateStore<T> implements AggregateStore<T> {
 
-	final Map<String, DataEntry> map = new ConcurrentHashMap<String, DataEntry>();
+	final Map<Key, DataEntry> map = new ConcurrentHashMap<Key, DataEntry>();
 
 	final TransformFunction[] functions;
 
@@ -51,7 +52,7 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 	 * TranformFunction(s).
 	 */
 	@Override
-	public boolean put(String key, Cell[] cells) {
+	public boolean put(Key key, Cell[] cells) {
 
 		// here we should increment and add top to any values required
 
@@ -82,7 +83,7 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 	}
 
 	@Override
-	public DataEntry get(String key) {
+	public DataEntry get(Key key) {
 		return map.get(key);
 	}
 
@@ -92,7 +93,7 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 	}
 
 	@Override
-	public Set<String> keys() {
+	public Set<Key> keys() {
 		return map.keySet();
 	}
 

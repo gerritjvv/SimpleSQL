@@ -3,6 +3,7 @@ package org.simplesql.funct;
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
+import org.simplesql.data.Key;
 
 /**
  * 
@@ -19,35 +20,21 @@ import org.simplesql.data.DataSink;
  */
 public class GroupBy implements DataSink {
 
-	final KeyParser keyParser;
 	final AggregateStore store;
 
-	public GroupBy(KeyParser keyParser, AggregateStore store) {
+	public GroupBy(AggregateStore store) {
 		super();
-		this.keyParser = keyParser;
 		this.store = store;
 	}
 
-	public boolean fill(Cell[] cells) {
+	public boolean fill(Key key, Cell[] cells) {
 
-		return store.put(keyParser.makeKey(cells), cells);
+		return store.put(key, cells);
 
 	}
 
-	public void write(DataSink sink){
+	public void write(DataSink sink) {
 		store.write(sink);
-	}
-	
-	/**
-	 * 
-	 * Interface that create's keys from an input set
-	 * 
-	 * @param <T>
-	 */
-	public static interface KeyParser {
-
-		String makeKey(Cell[] cells);
-
 	}
 
 }

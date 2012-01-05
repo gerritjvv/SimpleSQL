@@ -7,11 +7,11 @@ import org.simplesql.data.Cell;
  * Defines a column interface and methods
  *
  */
-public interface ColumnDef<T> {
+public interface ColumnDef {
 
-	Class<? extends T> getJavaType();
+	Class<?> getJavaType();
 	
-	Cell<? extends T> getCell();
+	Cell<?> getCell();
 	
 	boolean isNumber();
 	

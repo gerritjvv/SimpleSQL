@@ -8,6 +8,7 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.codehaus.janino.ExpressionEvaluator;
 import org.simplesql.data.Cell;
+import org.simplesql.funct.GroupBy.KeyParser;
 import org.simplesql.parser.tree.SELECT;
 import org.simplesql.parser.tree.SELECTTreeAdaptor;
 import org.simplesql.parser.tree.TreeJavaConvert;
@@ -35,6 +36,15 @@ public class QueryParserApp {
 				+ converter.getSelectExpressions() + "}", Object[].class,
 				new String[] { "a" }, new Class[] { int.class },
 				new Class[0], QueryParserApp.class.getClassLoader());
+		
+		String groupByExpressions = converter.getGroupByExpressions();
+		KeyParser keyParser;
+		
+		if(groupByExpressions != null){
+			
+		}
+		
+		
 //		eval.setDefaultImports(new String[]{
 //			"org.simplesql.data",
 //			"org.simplesql.data.Cell",

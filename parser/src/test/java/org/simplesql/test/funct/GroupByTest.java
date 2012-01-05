@@ -9,6 +9,8 @@ import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.DoubleCell;
 import org.simplesql.data.IntCell;
+import org.simplesql.data.Key;
+import org.simplesql.data.SimpleCellKey;
 import org.simplesql.data.StringCell;
 import org.simplesql.data.impl.HashMapAggregateStore;
 import org.simplesql.funct.COUNT;
@@ -29,13 +31,7 @@ public class GroupByTest extends TestCase{
 				new COUNT(2),
 				new SUM(3));
 		
-		GroupBy groupBy = new GroupBy(new GroupBy.KeyParser() {
-			
-			@Override
-			public String makeKey(Cell[] cells) {
-				return new  StringBuilder().append(cells[0]).append(cells[1]).toString();
-			}
-		}, store);
+		GroupBy groupBy = new GroupBy(store);
 		
 		String[][] keys = new String[][]{ new String[]{"A", "1"}, new String[]{"B", "2"}, new String[]{"C", "3"} };
 		
@@ -46,7 +42,8 @@ public class GroupByTest extends TestCase{
 		for(String[] k : keys){
 			for(int i = 0; i < rows; i++){
 				long start = System.nanoTime();
-				groupBy.fill(getCells(k));
+				Cell[] cells = getCells(k);
+				groupBy.fill(new SimpleCellKey(cells), cells);
 				long end = System.nanoTime() - start;
 				max = Math.max(end, max);
 				min = Math.min(end, min);
@@ -57,9 +54,9 @@ public class GroupByTest extends TestCase{
 	   	groupBy.write(new DataSink() {
 			
 			@Override
-			public boolean fill(Cell[] data) {
+			public boolean fill(Key key, Cell[] data) {
 				
-				System.out.println(Arrays.toString(data));
+				System.out.println(key + " : " + Arrays.toString(data));
 				return true;
 			}
 		});

@@ -1,7 +1,7 @@
 package org.simplesql.data;
 
 
-public interface Key {
+public interface Key extends Comparable<Key>{
 
 	String asString();
 
@@ -9,6 +9,6 @@ public interface Key {
 
 	int hashCode();
 
-	boolean equals(Key key);
+	boolean equals(Object key);
 
 }

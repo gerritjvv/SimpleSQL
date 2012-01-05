@@ -14,8 +14,10 @@ public class DataEntry {
 	final Cell[] cells;
 	final TransformFunction[] functions;
 	final int len;
-
-	public DataEntry(Cell[] cells, TransformFunction[] functions) {
+	final Key key;
+	
+	public DataEntry(Key key, Cell[] cells, TransformFunction[] functions) {
+		this.key = key;
 		this.cells = cells;
 		this.functions = functions;
 		this.len = functions.length;
@@ -36,9 +38,12 @@ public class DataEntry {
 	public Cell[] getCells() {
 		return cells;
 	}
+	public Key getKey(){
+		return key;
+	}
 
 	public void write(DataSink sink) {
-		sink.fill(cells);
+		sink.fill(key, cells);
 	}
 
 }

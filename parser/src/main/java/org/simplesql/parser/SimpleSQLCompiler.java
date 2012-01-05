@@ -11,7 +11,7 @@ import org.codehaus.janino.Scanner.ScanException;
 import org.simplesql.data.Cell;
 import org.simplesql.data.Key;
 import org.simplesql.data.KeyParser;
-import org.simplesql.data.SimpleKey;
+import org.simplesql.data.SimpleCellKey;
 import org.simplesql.data.StringCell;
 import org.simplesql.parser.tree.SELECT;
 import org.simplesql.parser.tree.SELECTTreeAdaptor;
@@ -90,7 +90,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 	 */
 	static public class NoKeyParser implements KeyParser {
 
-		static final Key key = new SimpleKey(new Cell[] { new StringCell("_") });
+		static final Key key = new SimpleCellKey(new Cell[] { new StringCell("_") });
 
 		@Override
 		public Key makeKey(Object[] data) {
@@ -113,7 +113,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 				Class[] columnTypes) throws CompileException, ParseException,
 				ScanException {
 			evalKeyCreator = new ExpressionEvaluator("new "
-					+ SimpleKey.class.getName() + "("
+					+ SimpleCellKey.class.getName() + "("
 					+ converter.getSelectExpressions() + ")", Object[].class,
 					columnNames, columnTypes);
 

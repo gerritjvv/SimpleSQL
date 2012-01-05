@@ -11,8 +11,8 @@ import org.simplesql.data.Cell;
 import org.simplesql.data.DataEntry;
 import org.simplesql.data.DataEntryBuilder;
 import org.simplesql.data.DataSink;
+import org.simplesql.data.Key;
 import org.simplesql.data.TransformFunction;
-import org.simplesql.funct.GroupBy.Key;
 
 /**
  * 
@@ -71,7 +71,7 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 				return false;
 			}
 
-			entry = builder.create();
+			entry = builder.create(key);
 
 			map.put(key, entry);
 

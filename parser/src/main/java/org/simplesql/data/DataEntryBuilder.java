@@ -15,8 +15,8 @@ public class DataEntryBuilder {
 		this.functions = functions;
 	}
 
-	public DataEntry create() {
-		return new DataEntry(CellsUtil.copyOf(cells, true), functions);
+	public final DataEntry create(Key key) {
+		return new DataEntry(key, CellsUtil.copyOf(cells, true), functions);
 	}
 
 }

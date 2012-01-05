@@ -3,16 +3,16 @@ package org.simplesql.data;
 
 /**
  * 
- * Combines the Cell values into a single String. The single String is used
- * to calculate hashcode and equality.
+ * Combines the Cell values into a single String. The single String is used to
+ * calculate hashcode and equality.
  * 
  */
-public class SimpleKey implements Key, Comparable<SimpleKey>{
+public class SimpleCellKey implements Key {
 
 	final String str;
 	final Cell[] cells;
 
-	public SimpleKey(Cell[] cells) {
+	public SimpleCellKey(Cell[] cells) {
 		StringBuilder buff = new StringBuilder();
 		for (Cell cell : cells) {
 			buff.append(cell.getData().toString());
@@ -37,13 +37,17 @@ public class SimpleKey implements Key, Comparable<SimpleKey>{
 	}
 
 	@Override
-	public boolean equals(Key key) {
-		return str.equals(key.asString());
+	public boolean equals(Object key) {
+		return str.equals(((Key)key).asString());
 	}
 
 	@Override
-	public int compareTo(SimpleKey key) {
+	public int compareTo(Key key) {
 		return str.compareTo(key.asString());
+	}
+
+	public String toString() {
+		return "SimpleCellKey(" + str + ")";
 	}
 
 }

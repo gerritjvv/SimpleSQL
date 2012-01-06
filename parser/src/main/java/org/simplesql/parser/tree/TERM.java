@@ -15,16 +15,16 @@ public class TERM {
 				DynamicCell.class), AGGREGATE_TOP(6, DynamicCell.class), AGGREGATE_COUNT(
 				7, DynamicCell.class), AGGREGATE_SUM(8, DynamicCell.class);
 
-		int wieght;
+		int weight;
 		Class<? extends Cell> cellType;
 
 		TYPE(int w, Class<? extends Cell> cellType) {
-			this.wieght = w;
+			this.weight = w;
 			this.cellType = cellType;
 		}
 
 		public TYPE max(TYPE t) {
-			return (t.wieght > wieght) ? t : this;
+			return (t.weight > weight) ? t : this;
 		}
 
 		public Class<? extends Cell> getCellType() {

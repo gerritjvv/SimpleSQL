@@ -1,10 +1,6 @@
 package org.simplesql.parser.tree;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.simplesql.data.Cell;
-import org.simplesql.data.TransformFunction;
 import org.simplesql.funct.SQLFunctions;
 import org.simplesql.parser.tree.RELATION.OP;
 
@@ -255,18 +251,18 @@ public class TreeJavaConvert {
 
 		@Override
 		public void term(FUNCTION f) {
-			if(f.isAggregateFunction()){
+			if (f.isAggregateFunction()) {
 				for (EXPRESSION arg : f.getArgs()) {
 					arg.visit(exprVisitor);
 				}
-			}else{
+			} else {
 				buff.append(SQLFunctions.class.getName()).append(".");
 				buff.append(f.name).append("(");
-	
+
 				for (EXPRESSION arg : f.getArgs()) {
 					arg.visit(exprVisitor);
 				}
-	
+
 				buff.append(")");
 
 			}

@@ -12,7 +12,8 @@ public class TERM {
 	enum TYPE {
 		INTEGER(1, IntCell.class), LONG(2, LongCell.class), DOUBLE(3,
 				DoubleCell.class), STRING(4, StringCell.class), UKNOWN(5,
-				DynamicCell.class);
+				DynamicCell.class), AGGREGATE_TOP(6, DynamicCell.class), AGGREGATE_COUNT(
+				7, DynamicCell.class), AGGREGATE_SUM(8, DynamicCell.class);
 
 		int wieght;
 		Class<? extends Cell> cellType;

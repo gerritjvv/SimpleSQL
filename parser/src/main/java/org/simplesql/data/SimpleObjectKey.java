@@ -12,9 +12,6 @@ public class SimpleObjectKey implements Key {
 		}
 
 		str = buff.toString();
-
-		System.out.println("Create key: " + str);
-
 	}
 
 	@Override

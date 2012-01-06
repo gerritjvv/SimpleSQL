@@ -1,5 +1,6 @@
 package org.simplesql.parser;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,6 +12,7 @@ import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSource;
 import org.simplesql.data.KeyParser;
+import org.simplesql.data.TransformFunction;
 import org.simplesql.schema.TableDef;
 
 import com.lmax.disruptor.ClaimStrategy;
@@ -35,14 +37,23 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	final ExecutorService execService;
 	final WhereFilter whereFilter;
 	
-	public SimpleSQLExecutor(ExecutorService execService, TableDef tableDef, ExpressionEvaluator eval, KeyParser keyParser, WhereFilter whereFilter) {
+	final List<TransformFunction> transforms;
+	
+	public SimpleSQLExecutor(ExecutorService execService, TableDef tableDef, ExpressionEvaluator eval, KeyParser keyParser, WhereFilter whereFilter, List<TransformFunction> transforms) {
 		super();
 		this.execService = execService;
 		this.tableDef = tableDef;
 		this.eval = eval;
 		this.keyParser = keyParser;
 		this.whereFilter = whereFilter;
+		this.transforms = transforms;
 	}
+
+	
+	public List<TransformFunction> getTransforms() {
+		return transforms;
+	}
+
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override

@@ -70,7 +70,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 					: new SimpleWhereFilter(converter, columnNames, columnTypes);
 
 			return new SimpleSQLExecutor(execService, tableDef, eval,
-					keyParser, whereFilter);
+					keyParser, whereFilter, select.getTransforms());
 
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);
@@ -147,7 +147,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		public SimpleWhereFilter(TreeJavaConvert converter,
 				String[] columnNames, Class[] columnTypes)
 				throws CompileException, ParseException, ScanException {
-			
+
 			evalBool = new ExpressionEvaluator(converter.getWhereExpressions(),
 					Boolean.class, columnNames, columnTypes);
 
@@ -179,12 +179,11 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		public SimpleKeyParser(TreeJavaConvert converter, String[] columnNames,
 				Class[] columnTypes) throws CompileException, ParseException,
 				ScanException {
-			
-			String str = "new "
-					+ SimpleCellKey.class.getName() + "( new "
+
+			String str = "new " + SimpleCellKey.class.getName() + "( new "
 					+ Cell.class.getName() + "[]{"
 					+ converter.getGroupByExpressions() + "})";
-			
+
 			evalKeyCreator = new ExpressionEvaluator("new "
 					+ SimpleObjectKey.class.getName() + "( new Object[]{"
 					+ converter.getGroupByExpressions() + "})", Key.class,

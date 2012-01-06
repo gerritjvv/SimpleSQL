@@ -14,8 +14,8 @@ import org.simplesql.data.DataSource;
 import org.simplesql.data.IntCell;
 import org.simplesql.data.Key;
 import org.simplesql.data.StringCell;
+import org.simplesql.data.TransformFunction;
 import org.simplesql.data.impl.HashMapAggregateStore;
-import org.simplesql.funct.PassThroughTransform;
 import org.simplesql.schema.SimpleColumnDef;
 import org.simplesql.schema.SimpleTableDef;
 import org.simplesql.schema.TableDef;
@@ -23,7 +23,7 @@ import org.simplesql.schema.TableDef;
 public class QueryParserApp {
 
 	public static void main(String[] args) throws Throwable {
-		String str = "SELECT 1, b, a*0.5/2, \"STR\",c , SIZE(c) FROM table WHERE a>=1 AND b<5 GROUP BY a, b";
+		String str = "SELECT 1, b, a*0.5/2, \"STR\",c , COUNT(1) FROM table WHERE a>=1 AND b<5 GROUP BY a, b";
 		
 		TableDef tableDef = new SimpleTableDef("mytbl", 
 				new SimpleColumnDef(Integer.class, "a", new IntCell()),
@@ -39,15 +39,11 @@ public class QueryParserApp {
 			
 				new Object[]{ 1, 2, "hi"},
 				new Object[]{ 1, 3, "hi there"},
-				new Object[]{ 1, 4, "hi there"}
+				new Object[]{ 1, 3, "hi there"}
 				
 		};
 		
-		AggregateStore store = new HashMapAggregateStore(new PassThroughTransform(0),
-				new PassThroughTransform(1), new PassThroughTransform(2),
-				new PassThroughTransform(3),
-				new PassThroughTransform(4),
-				new PassThroughTransform(5));
+		AggregateStore store = new HashMapAggregateStore(exec.getTransforms().toArray(new TransformFunction[0]));
 		
 		final List<Object[]> dataList = Arrays.asList(data);
 		

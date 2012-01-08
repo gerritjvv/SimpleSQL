@@ -35,6 +35,12 @@
 
 		<!-- We need to have the ANTLR runtime jar when running and compiling. -->
 		<dependency>
+			<groupId>com.sleepycat</groupId>
+			<artifactId>je</artifactId>
+			<version>4.0.92</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr-runtime</artifactId>
 			<version>3.4</version>
@@ -43,7 +49,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>10.0.1</version>
+			<version>11.0</version>
 		</dependency>
 		<dependency>
 			<groupId>vanilla.java</groupId>

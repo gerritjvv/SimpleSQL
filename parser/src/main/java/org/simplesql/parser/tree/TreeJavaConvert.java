@@ -251,15 +251,21 @@ public class TreeJavaConvert {
 
 		@Override
 		public void term(FUNCTION f) {
-			buff.append(SQLFunctions.class.getName()).append(".");
-			buff.append(f.name).append("(");
+			if (f.isAggregateFunction()) {
+				for (EXPRESSION arg : f.getArgs()) {
+					arg.visit(exprVisitor);
+				}
+			} else {
+				buff.append(SQLFunctions.class.getName()).append(".");
+				buff.append(f.name).append("(");
 
-			for (EXPRESSION arg : f.getArgs()) {
-				arg.visit(exprVisitor);
+				for (EXPRESSION arg : f.getArgs()) {
+					arg.visit(exprVisitor);
+				}
+
+				buff.append(")");
+
 			}
-
-			buff.append(")");
-
 		}
 
 		@Override

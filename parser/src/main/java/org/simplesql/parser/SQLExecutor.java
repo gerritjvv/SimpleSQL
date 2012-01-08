@@ -1,8 +1,10 @@
 package org.simplesql.parser;
 
+import java.util.List;
+
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.DataSource;
-import org.simplesql.data.KeyParser;
+import org.simplesql.data.TransformFunction;
 
 public interface SQLExecutor {
 
@@ -22,6 +24,13 @@ public interface SQLExecutor {
 	@SuppressWarnings("rawtypes")
 	void pump(DataSource source, AggregateStore store, Progress progressListener);
 
+	
+	/**
+	 * 
+	 * @return List of transforms
+	 */
+	List<TransformFunction> getTransforms();
+	
 	/**
 	 * 
 	 * Each Progress update will be sent an object of this type. Contains the

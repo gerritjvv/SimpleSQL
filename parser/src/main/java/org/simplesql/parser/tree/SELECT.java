@@ -3,6 +3,11 @@ package org.simplesql.parser.tree;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.simplesql.data.TransformFunction;
+import org.simplesql.funct.COUNT;
+import org.simplesql.funct.PassThroughTransform;
+import org.simplesql.funct.SUM;
+
 public class SELECT {
 
 	/**
@@ -12,6 +17,11 @@ public class SELECT {
 	final List<LOGICAL> where = new ArrayList<LOGICAL>();
 	final List<EXPRESSION> groupBy = new ArrayList<EXPRESSION>();
 	final List<EXPRESSION> orderBy = new ArrayList<EXPRESSION>();
+
+	/**
+	 * Contain the identified transform functions for the select expressions.
+	 */
+	final List<TransformFunction> transforms = new ArrayList<TransformFunction>();
 
 	int limit = Integer.MAX_VALUE;
 	String table;
@@ -30,6 +40,20 @@ public class SELECT {
 
 	public void select(EXPRESSION expr) {
 		selects.add(expr);
+
+		final TERM.TYPE type = expr.getType();
+
+		// choose the correct Transform Function
+		if (type.equals(TERM.TYPE.AGGREGATE_COUNT)) {
+			transforms.add(new COUNT(selects.indexOf(expr)));
+		} else if (type.equals(TERM.TYPE.AGGREGATE_SUM)) {
+			transforms.add(new SUM(selects.indexOf(expr)));
+		} else if (type.equals(TERM.TYPE.AGGREGATE_TOP)) {
+			throw new RuntimeException("TOP is not yet supported");
+		} else {
+			transforms.add(new PassThroughTransform(selects.indexOf(expr)));
+		}
+
 	}
 
 	public void where(LOGICAL logical) {
@@ -58,6 +82,10 @@ public class SELECT {
 
 	public List<EXPRESSION> getSelects() {
 		return selects;
+	}
+
+	public List<TransformFunction> getTransforms() {
+		return transforms;
 	}
 
 	public List<LOGICAL> getWhere() {

@@ -25,9 +25,9 @@ public class FileCache {
 	
 	
 	/**
-	 * A record contains 4 bytes, start row, 4 bytes = length
+	 * A record contains 4 bytes, start row
 	 */
-	final int recordSize = 8;
+	final int recordSize = 4;
 
 	int maxPos;
 	
@@ -52,7 +52,7 @@ public class FileCache {
 	}
 	
 	
-	public void put(byte[] key, byte[] value) throws IOException{
+	public final void put(byte[] key, byte[] value) throws IOException{
 		int row = 1 - hashFunction.hashBytes(key).asInt() % size + recordSize;
 		if(row < 0){
 			row = row * -1;
@@ -65,13 +65,11 @@ public class FileCache {
 		
 		//add to store file.
 		int start = 100;
-		int len = 100;
+		//here start should point to the starting location
+		//of the storage bucket
 		
-		if(mbb.getInt(row) > 0){
-			System.out.println("!!! Duplicate");
-		}
+		
 		mbb.putInt(row, 100);
-		mbb.putInt(row+4, len);
 		
 	}
 	
@@ -79,7 +77,9 @@ public class FileCache {
 		int row = hashFunction.hashBytes(key).asInt() % size * recordSize;
 		
 		int start = mbb.getInt(row);
-		int len = mbb.getInt(row+2);
+
+		//here we should use start to retreive the value from the storage bucket located
+		//at position == start
 		
 		return new byte[]{(byte)start};
 	}

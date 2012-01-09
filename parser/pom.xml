@@ -45,11 +45,7 @@
 			<artifactId>guava</artifactId>
 			<version>11.0</version>
 		</dependency>
-		<dependency>
-			<groupId>vanilla.java</groupId>
-			<artifactId>collections</artifactId>
-			<version>0.1.6</version>
-		</dependency>
+	
 		<dependency>
 			<groupId>asm</groupId>
 			<artifactId>asm-all</artifactId>

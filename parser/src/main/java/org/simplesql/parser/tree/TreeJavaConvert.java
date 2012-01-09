@@ -1,5 +1,8 @@
 package org.simplesql.parser.tree;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.simplesql.data.Cell;
 import org.simplesql.funct.SQLFunctions;
 import org.simplesql.parser.tree.RELATION.OP;
@@ -15,6 +18,11 @@ public class TreeJavaConvert {
 	final String selectExpressions;
 	final String orderByExpressions;
 	final String groupByExpressions;
+	/**
+	 * Holds the variables used. In a select query the variables correspond to
+	 * the table columns.
+	 */
+	final Set<String> variables = new HashSet<String>();
 
 	/**
 	 * Visits the SELECT and all of its children.<br/>
@@ -26,14 +34,14 @@ public class TreeJavaConvert {
 	public TreeJavaConvert(SELECT select) {
 
 		final ExpressionPrinter selectExpressions = new ExpressionPrinter(
-				new StringBuilder());
+				new StringBuilder(), variables);
 		final ExpressionPrinter groupByExpressions = new ExpressionPrinter(
-				new StringBuilder());
+				new StringBuilder(), variables);
 		final ExpressionPrinter orderByExpressions = new ExpressionPrinter(
-				new StringBuilder());
+				new StringBuilder(), variables);
 
 		final LogicalPrinter logicalPrinter = new LogicalPrinter(
-				new StringBuilder());
+				new StringBuilder(), variables);
 
 		select.visit(new SELECT.Visitor() {
 
@@ -88,6 +96,10 @@ public class TreeJavaConvert {
 		this.orderByExpressions = orderByExpressions.toString();
 	}
 
+	public Set<String> getVariables() {
+		return variables;
+	}
+
 	public String getWhereExpressions() {
 		return whereExpressions;
 	}
@@ -113,9 +125,9 @@ public class TreeJavaConvert {
 		final StringBuilder buff;
 		final ExpressionPrinter exprPrinter;
 
-		public LogicalPrinter(StringBuilder buff) {
+		public LogicalPrinter(StringBuilder buff, Set<String> variables) {
 			this.buff = buff;
-			exprPrinter = new ExpressionPrinter(buff);
+			exprPrinter = new ExpressionPrinter(buff, variables);
 		}
 
 		public String toString() {
@@ -171,9 +183,9 @@ public class TreeJavaConvert {
 		final StringBuilder buff;
 		UnaryPrinter unaryPrinter;
 
-		public ExpressionPrinter(StringBuilder buff) {
+		public ExpressionPrinter(StringBuilder buff, Set<String> variables) {
 			this.buff = buff;
-			unaryPrinter = new UnaryPrinter(buff, this);
+			unaryPrinter = new UnaryPrinter(buff, this, variables);
 		}
 
 		public void addString(String str) {
@@ -235,9 +247,17 @@ public class TreeJavaConvert {
 		final StringBuilder buff;
 		final EXPRESSION.Visitor exprVisitor;
 
-		public UnaryPrinter(StringBuilder buff, EXPRESSION.Visitor exprVisitor) {
+		/**
+		 * Holds the variables used. In a select query the variables correspond
+		 * to the table columns.
+		 */
+		final Set<String> variables;
+
+		public UnaryPrinter(StringBuilder buff, EXPRESSION.Visitor exprVisitor,
+				Set<String> variables) {
 			this.buff = buff;
 			this.exprVisitor = exprVisitor;
+			this.variables = variables;
 		}
 
 		public String toString() {
@@ -286,6 +306,7 @@ public class TreeJavaConvert {
 		@Override
 		public void term(VARIABLE v) {
 			buff.append(v.getName());
+			variables.add(v.getName());
 		}
 
 	}

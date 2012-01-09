@@ -38,9 +38,11 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	final WhereFilter whereFilter;
 	
 	final List<TransformFunction> transforms;
+	final String[] columnsUsed;
 	
-	public SimpleSQLExecutor(ExecutorService execService, TableDef tableDef, ExpressionEvaluator eval, KeyParser keyParser, WhereFilter whereFilter, List<TransformFunction> transforms) {
+	public SimpleSQLExecutor(String[] columnsUsed, ExecutorService execService, TableDef tableDef, ExpressionEvaluator eval, KeyParser keyParser, WhereFilter whereFilter, List<TransformFunction> transforms) {
 		super();
+		this.columnsUsed = columnsUsed;
 		this.execService = execService;
 		this.tableDef = tableDef;
 		this.eval = eval;
@@ -50,10 +52,18 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	}
 
 	
+	public String[] getColumnsUsed(){
+		return columnsUsed;
+	}
+	
 	public List<TransformFunction> getTransforms() {
 		return transforms;
 	}
 
+	@Override
+	public WhereFilter getWhereFilter() {
+		return whereFilter;
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override

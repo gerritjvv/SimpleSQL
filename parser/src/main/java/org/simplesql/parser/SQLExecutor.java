@@ -24,6 +24,13 @@ public interface SQLExecutor {
 	@SuppressWarnings("rawtypes")
 	void pump(DataSource source, AggregateStore store, Progress progressListener);
 
+	/**
+	 * Returns all of the columns used from the table
+	 * @return String[]
+	 */
+	String[] getColumnsUsed();
+	
+	WhereFilter getWhereFilter();
 	
 	/**
 	 * 

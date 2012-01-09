@@ -37,21 +37,18 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		this.execService = execService;
 	}
 
-
 	@Override
 	public SQLExecutor compile(TableDefLoader loader, String sql) {
 		try {
-			
+
 			SQLLexer lexer = new SQLLexer(new ANTLRStringStream(sql));
 			SQLParser parser = new SQLParser(new CommonTokenStream(lexer));
 			parser.setTreeAdaptor(new SELECTTreeAdaptor());
 
 			SELECT select = parser.statement().ret;
-			
 
 			String tableName = select.getTable();
-			
-			
+
 			return compile(loader.load(tableName), select);
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);
@@ -64,13 +61,13 @@ public class SimpleSQLCompiler implements SQLCompiler {
 	@Override
 	public SQLExecutor compile(TableDef tableDef, String sql) {
 		try {
-			
+
 			SQLLexer lexer = new SQLLexer(new ANTLRStringStream(sql));
 			SQLParser parser = new SQLParser(new CommonTokenStream(lexer));
 			parser.setTreeAdaptor(new SELECTTreeAdaptor());
 
 			SELECT select = parser.statement().ret;
-			
+
 			return compile(tableDef, select);
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);
@@ -80,7 +77,6 @@ public class SimpleSQLCompiler implements SQLCompiler {
 
 	}
 
-	
 	private SQLExecutor compile(TableDef tableDef, SELECT select) {
 		try {
 			Object[][] nameTypes = columnNameTypes(tableDef);
@@ -107,8 +103,9 @@ public class SimpleSQLCompiler implements SQLCompiler {
 					.trim().isEmpty()) ? new AlwaysTrueWhereFilter()
 					: new SimpleWhereFilter(converter, columnNames, columnTypes);
 
-			return new SimpleSQLExecutor(execService, tableDef, eval,
-					keyParser, whereFilter, select.getTransforms());
+			return new SimpleSQLExecutor(converter.getVariables().toArray(
+					new String[0]), execService, tableDef, eval, keyParser,
+					whereFilter, select.getTransforms());
 
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);

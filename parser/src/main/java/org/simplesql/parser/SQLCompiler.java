@@ -12,4 +12,22 @@ public interface SQLCompiler {
 	 */
 	SQLExecutor compile(TableDef def, String sql);
 	
+	SQLExecutor compile(TableDefLoader loader, String sql);
+	
+	/**
+	 * 
+	 * Allows external processes to load the TableDef
+	 *
+	 */
+	static interface TableDefLoader{
+		
+		/**
+		 * 
+		 * @param tableName
+		 * @return TableDef
+		 */
+		TableDef load(String tableName);
+		
+	}
+	
 }

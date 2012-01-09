@@ -37,18 +37,56 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		this.execService = execService;
 	}
 
-	@Override
-	public SQLExecutor compile(TableDef tableDef, String sql) {
-		try {
-			Object[][] nameTypes = columnNameTypes(tableDef);
-			String[] columnNames = (String[]) nameTypes[0];
-			Class<?>[] columnTypes = (Class<?>[]) nameTypes[1];
 
+	@Override
+	public SQLExecutor compile(TableDefLoader loader, String sql) {
+		try {
+			
 			SQLLexer lexer = new SQLLexer(new ANTLRStringStream(sql));
 			SQLParser parser = new SQLParser(new CommonTokenStream(lexer));
 			parser.setTreeAdaptor(new SELECTTreeAdaptor());
 
 			SELECT select = parser.statement().ret;
+			
+
+			String tableName = select.getTable();
+			
+			
+			return compile(loader.load(tableName), select);
+		} catch (Throwable t) {
+			CompilerException excp = new CompilerException(t.toString(), t);
+			excp.setStackTrace(t.getStackTrace());
+			throw excp;
+		}
+
+	}
+
+	@Override
+	public SQLExecutor compile(TableDef tableDef, String sql) {
+		try {
+			
+			SQLLexer lexer = new SQLLexer(new ANTLRStringStream(sql));
+			SQLParser parser = new SQLParser(new CommonTokenStream(lexer));
+			parser.setTreeAdaptor(new SELECTTreeAdaptor());
+
+			SELECT select = parser.statement().ret;
+			
+			return compile(tableDef, select);
+		} catch (Throwable t) {
+			CompilerException excp = new CompilerException(t.toString(), t);
+			excp.setStackTrace(t.getStackTrace());
+			throw excp;
+		}
+
+	}
+
+	
+	private SQLExecutor compile(TableDef tableDef, SELECT select) {
+		try {
+			Object[][] nameTypes = columnNameTypes(tableDef);
+			String[] columnNames = (String[]) nameTypes[0];
+			Class<?>[] columnTypes = (Class<?>[]) nameTypes[1];
+
 			TreeJavaConvert converter = new TreeJavaConvert(select);
 
 			ExpressionEvaluator eval = new ExpressionEvaluator(

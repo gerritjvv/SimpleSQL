@@ -35,11 +35,22 @@
 
 		<!-- We need to have the ANTLR runtime jar when running and compiling. -->
 		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr-runtime</artifactId>
 			<version>3.4</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>11.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>asm</groupId>
 			<artifactId>asm-all</artifactId>
@@ -55,11 +66,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase</artifactId>
-			<version>0.90.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.axonframework.com.lmax</groupId>

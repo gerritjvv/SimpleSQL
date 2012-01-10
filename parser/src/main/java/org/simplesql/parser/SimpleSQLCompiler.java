@@ -103,7 +103,9 @@ public class SimpleSQLCompiler implements SQLCompiler {
 					.trim().isEmpty()) ? new AlwaysTrueWhereFilter()
 					: new SimpleWhereFilter(converter, columnNames, columnTypes);
 
-			return new SimpleSQLExecutor(converter.getVariables().toArray(
+			return new SimpleSQLExecutor(
+					converter.getRangeGroups(),
+					converter.getVariables().toArray(
 					new String[0]), execService, tableDef, eval, keyParser,
 					whereFilter, select.getTransforms());
 

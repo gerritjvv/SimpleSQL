@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.DataSource;
+import org.simplesql.data.RangeGroups;
 import org.simplesql.data.TransformFunction;
 
 public interface SQLExecutor {
@@ -31,6 +32,8 @@ public interface SQLExecutor {
 	String[] getColumnsUsed();
 	
 	WhereFilter getWhereFilter();
+	
+	RangeGroups getRangeGroups();
 	
 	/**
 	 * 

@@ -12,6 +12,7 @@ import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSource;
 import org.simplesql.data.KeyParser;
+import org.simplesql.data.RangeGroups;
 import org.simplesql.data.TransformFunction;
 import org.simplesql.schema.TableDef;
 
@@ -36,12 +37,17 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	final KeyParser keyParser;
 	final ExecutorService execService;
 	final WhereFilter whereFilter;
-	
+
 	final List<TransformFunction> transforms;
 	final String[] columnsUsed;
-	
-	public SimpleSQLExecutor(String[] columnsUsed, ExecutorService execService, TableDef tableDef, ExpressionEvaluator eval, KeyParser keyParser, WhereFilter whereFilter, List<TransformFunction> transforms) {
+	final RangeGroups rangeGroups;
+
+	public SimpleSQLExecutor(RangeGroups rangeGroups, String[] columnsUsed,
+			ExecutorService execService, TableDef tableDef,
+			ExpressionEvaluator eval, KeyParser keyParser,
+			WhereFilter whereFilter, List<TransformFunction> transforms) {
 		super();
+		this.rangeGroups = rangeGroups;
 		this.columnsUsed = columnsUsed;
 		this.execService = execService;
 		this.tableDef = tableDef;
@@ -51,11 +57,17 @@ public class SimpleSQLExecutor implements SQLExecutor {
 		this.transforms = transforms;
 	}
 
-	
-	public String[] getColumnsUsed(){
+	public RangeGroups getRangeGroups() {
+		return rangeGroups;
+	}
+
+	/**
+	 * Returns the columns that was used in the query
+	 */
+	public String[] getColumnsUsed() {
 		return columnsUsed;
 	}
-	
+
 	public List<TransformFunction> getTransforms() {
 		return transforms;
 	}
@@ -67,8 +79,8 @@ public class SimpleSQLExecutor implements SQLExecutor {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void pump(DataSource source,
-			final AggregateStore store, final Progress progressListener) {
+	public void pump(DataSource source, final AggregateStore store,
+			final Progress progressListener) {
 
 		int ringSize = 4096;
 
@@ -96,17 +108,16 @@ public class SimpleSQLExecutor implements SQLExecutor {
 			@Override
 			public void onEvent(DataEvent dat, long item, boolean batch)
 					throws Exception {
-				
-				
+
 				try {
-					//only process if the where filter evaluates to true
-					if(!whereFilter.include(dat.dat)){
+					// only process if the where filter evaluates to true
+					if (!whereFilter.include(dat.dat)) {
 						return;
 					}
-						
+
 					// evaluate data into cells
 					final Cell[] cells = (Cell[]) eval.evaluate(dat.dat);
-					
+
 					// put the cells into the store
 					if (!store.put(keyParser.makeKey(dat.dat), cells)) {
 
@@ -114,18 +125,17 @@ public class SimpleSQLExecutor implements SQLExecutor {
 
 					}
 
-
 				} catch (Throwable t) {
-					
+
 					shouldStop.set(true);
 					hasError.set(true);
 					errorReference.set(t);
-				}finally{
-					
+				} finally {
+
 					final int recordAt = count.incrementAndGet();
 					progressContext.recordsCompleted = recordAt;
-					
-					//update progress
+
+					// update progress
 					if (progressListener != null) {
 						try {
 							progressListener.update(progressContext);

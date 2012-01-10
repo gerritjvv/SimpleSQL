@@ -1,9 +1,14 @@
 package org.simplesql.parser.tree;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.simplesql.data.Cell;
+import org.simplesql.data.RangeGroups;
+import org.simplesql.data.VariableRange;
+import org.simplesql.data.VariableRanges;
 import org.simplesql.funct.SQLFunctions;
 import org.simplesql.parser.tree.RELATION.OP;
 
@@ -24,6 +29,8 @@ public class TreeJavaConvert {
 	 */
 	final Set<String> variables = new HashSet<String>();
 
+	final RangeGroups rangeGroups = new RangeGroups();
+
 	/**
 	 * Visits the SELECT and all of its children.<br/>
 	 * The strings for where, select, order and group will be created as valid
@@ -41,7 +48,7 @@ public class TreeJavaConvert {
 				new StringBuilder(), variables);
 
 		final LogicalPrinter logicalPrinter = new LogicalPrinter(
-				new StringBuilder(), variables);
+				new StringBuilder(), rangeGroups, variables);
 
 		select.visit(new SELECT.Visitor() {
 
@@ -96,6 +103,10 @@ public class TreeJavaConvert {
 		this.orderByExpressions = orderByExpressions.toString();
 	}
 
+	public RangeGroups getRangeGroups() {
+		return rangeGroups;
+	}
+
 	public Set<String> getVariables() {
 		return variables;
 	}
@@ -123,11 +134,16 @@ public class TreeJavaConvert {
 	 */
 	static class LogicalPrinter implements LOGICAL.Visitor, RELATION.Visitor {
 		final StringBuilder buff;
-		final ExpressionPrinter exprPrinter;
 
-		public LogicalPrinter(StringBuilder buff, Set<String> variables) {
+		final RangeGroups rangeGroups;
+
+		final Set<String> variables;
+
+		public LogicalPrinter(StringBuilder buff, RangeGroups rangeGroups,
+				Set<String> variables) {
+			this.rangeGroups = rangeGroups;
 			this.buff = buff;
-			exprPrinter = new ExpressionPrinter(buff, variables);
+			this.variables = variables;
 		}
 
 		public String toString() {
@@ -147,13 +163,21 @@ public class TreeJavaConvert {
 		@Override
 		public void or() {
 			buff.append(" || ");
+
+			rangeGroups.nextGroup();
+
 		}
 
 		@Override
 		public void relation(EXPRESSION e1, OP op, EXPRESSION e2) {
 			buff.append("(");
 
-			e1.visit(exprPrinter);
+			Set<String> leftVariables = new HashSet<String>();
+
+			ExpressionPrinter leftPrinter = new ExpressionPrinter(buff,
+					leftVariables);
+
+			e1.visit(leftPrinter);
 
 			String opStr;
 			if (op.equals(RELATION.OP.EQ))
@@ -164,9 +188,46 @@ public class TreeJavaConvert {
 			buff.append(")").append(opStr);
 			buff.append("(");
 
-			e2.visit(exprPrinter);
+			Set<String> rightVariables = new HashSet<String>();
+			ExpressionPrinter rightPrinter = new ExpressionPrinter(buff,
+					rightVariables);
+
+			e2.visit(rightPrinter);
 
 			buff.append(")");
+
+			variables.addAll(leftVariables);
+			variables.addAll(rightVariables);
+
+			System.out.println("LV.size: " + leftVariables.size() + ", " + leftPrinter.isComplex());
+			System.out.println("RV.size: " + rightVariables.size() + ", " + rightPrinter.isComplex() );
+			
+			// check for ranges
+			if (((leftVariables.size() + rightVariables.size()) == 1)
+					&& !(leftPrinter.isComplex() || rightPrinter.isComplex())) {
+				// here we can calculate a range
+				// we have either left or right with variable on one side and a
+				// value on the other.
+				// and some values that are none complex in terms of there are
+				// no functions and no multiplications
+
+				String varName;
+				VariableRange range;
+				Object upper, lower;
+				if (leftVariables.size() == 1) {
+					varName = leftVariables.iterator().next();
+					upper = leftPrinter.getMax();
+					lower = leftPrinter.getMin();
+				} else {
+					varName = rightVariables.iterator().next();
+					upper = leftPrinter.getMax();
+					lower = leftPrinter.getMin();
+				}
+
+				range = new VariableRange(upper instanceof Number, upper, lower);
+				rangeGroups.setVariable(varName, range);
+
+			}
 
 		}
 
@@ -183,9 +244,29 @@ public class TreeJavaConvert {
 		final StringBuilder buff;
 		UnaryPrinter unaryPrinter;
 
+		boolean complex = false;
+
 		public ExpressionPrinter(StringBuilder buff, Set<String> variables) {
 			this.buff = buff;
 			unaryPrinter = new UnaryPrinter(buff, this, variables);
+		}
+
+		public Object getMax() {
+			return unaryPrinter.getMax();
+		}
+
+		public Object getMin() {
+			return unaryPrinter.getMin();
+		}
+
+		/**
+		 * An expression is considered complex if it has anything other than a
+		 * variable or constant in it.
+		 * 
+		 * @return
+		 */
+		public boolean isComplex() {
+			return complex;
 		}
 
 		public void addString(String str) {
@@ -193,6 +274,7 @@ public class TreeJavaConvert {
 		}
 
 		public void addComma() {
+			complex = true;
 			buff.append(",");
 		}
 
@@ -202,11 +284,13 @@ public class TreeJavaConvert {
 
 		@Override
 		public void plus() {
+			complex = true;
 			buff.append(" + ");
 		}
 
 		@Override
 		public void minus() {
+			complex = true;
 			buff.append(" - ");
 		}
 
@@ -222,16 +306,19 @@ public class TreeJavaConvert {
 
 		@Override
 		public void mult() {
+			complex = true;
 			buff.append(" * ");
 		}
 
 		@Override
 		public void divide() {
+			complex = true;
 			buff.append(" / ");
 		}
 
 		@Override
 		public void mod() {
+			complex = true;
 			buff.append(" mod ");
 		}
 
@@ -247,6 +334,9 @@ public class TreeJavaConvert {
 		final StringBuilder buff;
 		final EXPRESSION.Visitor exprVisitor;
 
+		Object min = Integer.MAX_VALUE;
+		Object max = Integer.MIN_VALUE;
+
 		/**
 		 * Holds the variables used. In a select query the variables correspond
 		 * to the table columns.
@@ -260,17 +350,31 @@ public class TreeJavaConvert {
 			this.variables = variables;
 		}
 
+		public Object getMax() {
+			return max;
+		}
+
+		public Object getMin() {
+			return min;
+		}
+
 		public String toString() {
 			return buff.toString();
 		}
 
 		@Override
 		public void term(EXPRESSION expression) {
+			// range calculations are no supported for complex expressions
+			max = Integer.MAX_VALUE;
+			min = Integer.MIN_VALUE;
+
 			expression.visit(exprVisitor);
 		}
 
 		@Override
 		public void term(FUNCTION f) {
+			// range calculations are no supported for complex expressions
+
 			if (f.isAggregateFunction()) {
 				for (EXPRESSION arg : f.getArgs()) {
 					arg.visit(exprVisitor);
@@ -290,23 +394,49 @@ public class TreeJavaConvert {
 
 		@Override
 		public void term(DOUBLE d) {
-			buff.append(d.getVal());
+
+			double val = d.getVal();
+
+			if (max instanceof Number) {
+				max = Math.max(((Number) max).doubleValue(), val);
+			}
+
+			if (min instanceof Number) {
+				min = Math.min(((Number) min).doubleValue(), val);
+			}
+
+			buff.append(val);
 		}
 
 		@Override
 		public void term(INTEGER i) {
-			buff.append(i.getVal());
+			int val = i.getVal();
+
+			if (max instanceof Number) {
+				max = Math.max(((Number) max).intValue(), val);
+			}
+
+			if (min instanceof Number) {
+				min = Math.min(((Number) min).intValue(), val);
+			}
+
+			buff.append(val);
 		}
 
 		@Override
 		public void term(STRING s) {
+			String val = s.getVal();
+			max = val;
+			min = val;
 			buff.append(s.getVal());
 		}
 
 		@Override
 		public void term(VARIABLE v) {
-			buff.append(v.getName());
-			variables.add(v.getName());
+			String name = v.getName();
+
+			buff.append(name);
+			variables.add(name);
 		}
 
 	}

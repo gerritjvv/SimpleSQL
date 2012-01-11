@@ -250,4 +250,87 @@ public class TestRangeGroups extends TestCase{
 		
 	}
 	
+	
+	/**
+	 * Test variables with equal only
+	 */
+	@Test
+	public void testRange6(){
+		
+	String str = "SELECT 1, b, a*0.5/2, \"STR\",c , COUNT(1) FROM table WHERE a=1 GROUP BY a, b";
+		
+		TableDef tableDef = new SimpleTableDef("mytbl", 
+				new SimpleColumnDef(Integer.class, "a", new IntCell()),
+				new SimpleColumnDef(Integer.class, "b", new IntCell()),
+				new SimpleColumnDef(String.class, "c", new StringCell()));
+
+		ExecutorService execService = Executors.newCachedThreadPool();
+		SQLCompiler compiler = new SimpleSQLCompiler(execService);
+		
+		SQLExecutor exec = compiler.compile(tableDef, str);
+		
+		RangeGroups groups = exec.getRangeGroups();
+		System.out.println("Groups: " + groups.getRanges().size());
+		
+		List<VariableRanges> rangesList = groups.getRanges();
+		assertNotNull(rangesList);
+		assertEquals(1, rangesList.size());
+		
+		for(VariableRanges ranges : rangesList){
+			
+			System.out.println("A: " + ranges.getRange("a").getLower() + ", " + ranges.getRange("a").getUpper());
+			
+				Set<String> vars = ranges.getVariables();
+				assertNotNull(vars);
+				assertTrue(vars.contains("a"));
+				assertEquals(1, ((Integer)ranges.getRange("a").getLower()).intValue());
+				assertEquals(1, ((Integer)ranges.getRange("a").getUpper()).intValue());
+				
+				
+		}
+		
+	}
+	
+
+	/**
+	 * Test variables with equal and range basically this type of parameters does not make sense 
+	 * so the ranges will be non deterministic.
+	 */
+	@Test
+	public void testRange7(){
+		
+	String str = "SELECT 1, b, a*0.5/2, \"STR\",c , COUNT(1) FROM table WHERE  a > 0 AND a=1 AND a <=10 GROUP BY a, b";
+		
+		TableDef tableDef = new SimpleTableDef("mytbl", 
+				new SimpleColumnDef(Integer.class, "a", new IntCell()),
+				new SimpleColumnDef(Integer.class, "b", new IntCell()),
+				new SimpleColumnDef(String.class, "c", new StringCell()));
+
+		ExecutorService execService = Executors.newCachedThreadPool();
+		SQLCompiler compiler = new SimpleSQLCompiler(execService);
+		
+		SQLExecutor exec = compiler.compile(tableDef, str);
+		
+		RangeGroups groups = exec.getRangeGroups();
+		System.out.println("Groups: " + groups.getRanges().size());
+		
+		List<VariableRanges> rangesList = groups.getRanges();
+		assertNotNull(rangesList);
+		assertEquals(1, rangesList.size());
+		
+		for(VariableRanges ranges : rangesList){
+			
+			System.out.println("A: " + ranges.getRange("a").getLower() + ", " + ranges.getRange("a").getUpper());
+			
+				Set<String> vars = ranges.getVariables();
+				assertNotNull(vars);
+				assertTrue(vars.contains("a"));
+				assertEquals(1, ((Integer)ranges.getRange("a").getLower()).intValue());
+				assertEquals(1, ((Integer)ranges.getRange("a").getUpper()).intValue());
+				
+				
+		}
+		
+	}
+	
 }

@@ -7,6 +7,7 @@ public class INTEGER extends NUMBER{
 	public INTEGER(String val) {
 		super(TYPE.INTEGER);
 		this.val = Integer.parseInt(val);
+		setValue(this.val);
 	}
 
 	public int getVal() {

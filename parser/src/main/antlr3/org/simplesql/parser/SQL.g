@@ -43,7 +43,7 @@ tokens {
   
 }
 
-statement returns [SELECT ret = new SELECT()]
+statement returns [SELECT ret = new SELECT();]
            : SELECT (se1=expression { select = $ret;  $ret.select($se1.expr);}) 
                     (',' (se1=expression {$ret.select($se1.expr);}))* FROM IDENT {$ret.table($IDENT.text);} 
             (WHERE w1=logical {$ret.where($logical.ret);})*
@@ -95,8 +95,15 @@ relation returns [RELATION ret]
 //      -> ^(RELATION_TOKEN RELATION $e1 $e2);
   ;    
 logical returns [LOGICAL ret = new LOGICAL()]
-        : r1=relation {$ret.relation($r1.ret);} 
-          (lotoken=LOGICAL {$ret.logical($LOGICAL.text);}  r2=relation {$ret.relation($r2.ret);})*
+        : r1=relation {$ret.relation($r1.ret); select.rangeGroups.addRange($r1.ret.getRange());} 
+          (lotoken=LOGICAL {
+              $ret.logical($LOGICAL.text);
+              org.simplesql.parser.tree.LOGICAL.OP lop = org.simplesql.parser.tree.LOGICAL.OP.parse($LOGICAL.text);
+              if(lop == org.simplesql.parser.tree.LOGICAL.OP.JAVA_OR || lop == org.simplesql.parser.tree.LOGICAL.OP.OR)
+                 select.rangeGroups.nextGroup();
+              
+            }  
+           r2=relation {$ret.relation($r2.ret); select.rangeGroups.addRange($r2.ret.getRange());})*
 //      -> ^(LOGICAL_TOKEN $r1 ($lotoken $r2)*);
  ;     
       
@@ -108,7 +115,8 @@ funct returns [FUNCTION f = new FUNCTION()]
 
   
 term returns [TERM term]: 
-      ( v=IDENT   -> ^(VARIABLE $v) {$term = new VARIABLE($v.text)}  
+      ( v=IDENT  {select.variables.add($v.text.trim());}   
+          -> ^(VARIABLE $v) {$term = new VARIABLE($v.text)}  
       | v=INTEGER -> ^(NUMBER $v) { $term = new INTEGER($v.text)}
       | v=DOUBLE -> ^(REAL_NUMBER $v) {$term = new DOUBLE($v.text)} 
       | '(' r=expression ')' -> ^(EXPRESSION $r)

@@ -7,6 +7,7 @@ public class STRING extends TERM {
 	public STRING(String val) {
 		super(TYPE.STRING);
 		this.val = val;
+		setValue(val);
 	}
 
 	public String getVal() {

@@ -26,12 +26,34 @@ public class MULT {
 
 	List<Object> children = new ArrayList<Object>();
 
+	
+	/**
+	 * An expression is considered complex if it contains anything other than a simple constant or variable.
+	 */
+	boolean complex = false;
+	
+	/**
+	 * Only used if complex == false.
+	 * This means that only one UNARY exist.
+	 */
+	UNARY.TYPE unaryType = UNARY.TYPE.MIXED;
+	Object unaryValue;
+	
 	public void unary(UNARY unary) {
 
 		// get the highest order type
 		type = unary.term.type.max(type);
-
+		
 		children.add(unary);
+		
+		//set to complex if the unary is a functions, expression or other than a CONSTANT or Variable.
+		unaryType = unary.getType();
+		unaryValue = unary.term.getValue();
+		
+		complex = unaryType == UNARY.TYPE.MIXED;
+		//or if the children size > 1
+		complex = children.size() > 1;
+		
 	}
 
 	public TYPE getType() {
@@ -54,6 +76,10 @@ public class MULT {
 		children.add(OP.MOD);
 	}
 
+	public boolean isComplex(){
+		return complex;
+	}
+	
 	public void visit(Visitor visitor) {
 
 		for (Object child : children) {

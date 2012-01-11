@@ -31,22 +31,45 @@ public class EXPRESSION extends TERM {
 
 	List<Object> children = new ArrayList<Object>();
 
+	/**
+	 * An expression is considered complex if it contains anything other than a
+	 * simple constant or variable.
+	 */
+	boolean complex = false;
+	/**
+	 * Only used if complex == false. This means that only one UNARY exist.
+	 */
+	UNARY.TYPE unaryType = UNARY.TYPE.MIXED;
+
 	public EXPRESSION() {
 		super(TYPE.INTEGER);
 	}
 
 	public void plus() {
 		children.add(OP.PLUS);
+		complex = true;
 	}
 
 	public void minus() {
 		children.add(OP.MINUS);
+		complex = true;
 	}
 
 	public void mult(MULT mult) {
 		// get the highest order type
 		type = mult.type.max(type);
 		children.add(mult);
+
+		// if the expressions is only madeup of a
+		// single constant or variable we propogate the
+		// value and type upwards from the MULT and UNARY.
+		complex = mult.isComplex();
+		unaryType = mult.unaryType;
+		setValue(mult.unaryValue);
+	}
+
+	public boolean isComplex() {
+		return complex;
 	}
 
 	/**

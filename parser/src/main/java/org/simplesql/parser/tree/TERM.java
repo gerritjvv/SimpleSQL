@@ -34,12 +34,19 @@ public class TERM {
 	}
 
 	TYPE type;
-
+	Object value;
+	
 	public TERM(TYPE type) {
 		super();
 		this.type = type;
 	}
 
+	public TERM(TYPE type, Object value) {
+		super();
+		this.type = type;
+		this.value = value;
+	}
+	
 	public void setType(TYPE type) {
 		this.type = type;
 	}
@@ -48,4 +55,13 @@ public class TERM {
 		return type;
 	}
 
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
+	
 }

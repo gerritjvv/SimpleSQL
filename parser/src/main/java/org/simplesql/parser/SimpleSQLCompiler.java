@@ -104,9 +104,8 @@ public class SimpleSQLCompiler implements SQLCompiler {
 					: new SimpleWhereFilter(converter, columnNames, columnTypes);
 
 			return new SimpleSQLExecutor(
-					converter.getRangeGroups(),
-					converter.getVariables().toArray(
-					new String[0]), execService, tableDef, eval, keyParser,
+					select.getRangeGroups(),
+					select.getVariables().toArray(new String[0]), execService, tableDef, eval, keyParser,
 					whereFilter, select.getTransforms());
 
 		} catch (Throwable t) {

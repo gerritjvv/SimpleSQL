@@ -5,7 +5,7 @@ import java.util.List;
 
 public class LOGICAL {
 
-	enum OP {
+	public enum OP {
 		AND("AND"), OR("OR"), JAVA_AND("&&"), JAVA_OR("||");
 
 		final String val;

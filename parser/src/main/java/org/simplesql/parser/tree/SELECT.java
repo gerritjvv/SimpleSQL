@@ -1,8 +1,11 @@
 package org.simplesql.parser.tree;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.simplesql.data.RangeGroups;
 import org.simplesql.data.TransformFunction;
 import org.simplesql.funct.COUNT;
 import org.simplesql.funct.PassThroughTransform;
@@ -18,6 +21,10 @@ public class SELECT {
 	final List<EXPRESSION> groupBy = new ArrayList<EXPRESSION>();
 	final List<EXPRESSION> orderBy = new ArrayList<EXPRESSION>();
 
+	public final Set<String> variables = new HashSet<String>();
+	public final RangeGroups rangeGroups = new RangeGroups();
+	
+	
 	/**
 	 * Contain the identified transform functions for the select expressions.
 	 */
@@ -78,6 +85,15 @@ public class SELECT {
 
 	public void setLimit(int limit) {
 		this.limit = limit;
+	}
+
+	
+	public Set<String> getVariables() {
+		return variables;
+	}
+
+	public RangeGroups getRangeGroups() {
+		return rangeGroups;
 	}
 
 	public List<EXPRESSION> getSelects() {

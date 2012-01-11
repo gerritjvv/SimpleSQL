@@ -8,10 +8,27 @@ package org.simplesql.parser.tree;
 public class UNARY {
 
 	
+	enum TYPE{
+		VARIABLE, CONSTANT, MIXED;
+	}
+	
 	TERM term;
-
+	TYPE type;
+	
+	
 	public void term(TERM term) {
 		this.term = term;
+		if(term instanceof VARIABLE){
+			type = TYPE.VARIABLE;
+		}else if(term instanceof NUMBER || term instanceof STRING){
+			type = TYPE.CONSTANT;
+		}else{
+			type = TYPE.MIXED;
+		}
+	}
+	
+	public TYPE getType(){
+		return type;
 	}
 
 	

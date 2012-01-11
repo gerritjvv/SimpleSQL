@@ -7,6 +7,7 @@ public class DOUBLE extends NUMBER {
 	public DOUBLE(String val) {
 		super(TYPE.DOUBLE);
 		this.val = Double.parseDouble(val);
+		setValue(this.val);
 	}
 
 	public double getVal() {

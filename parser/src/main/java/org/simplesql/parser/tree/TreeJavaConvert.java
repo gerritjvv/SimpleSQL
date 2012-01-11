@@ -290,7 +290,6 @@ public class TreeJavaConvert {
 
 		@Override
 		public void term(STRING s) {
-			String val = s.getVal();
 			buff.append(s.getVal());
 		}
 

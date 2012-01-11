@@ -50,9 +50,10 @@ public class MULT {
 		unaryType = unary.getType();
 		unaryValue = unary.term.getValue();
 		
-		complex = unaryType == UNARY.TYPE.MIXED;
-		//or if the children size > 1
-		complex = children.size() > 1;
+		if(!complex){
+			complex = unaryType == UNARY.TYPE.MIXED || children.size() > 1;
+
+		}
 		
 	}
 

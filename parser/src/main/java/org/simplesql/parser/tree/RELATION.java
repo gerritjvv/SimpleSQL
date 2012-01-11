@@ -74,7 +74,7 @@ public class RELATION {
 	}
 
 	private static final VariableRange createRange(String string, OP op, Object val) {
-		System.out.println("Creating range with value: " + val);
+
 		VariableRange range = new VariableRange(string, val instanceof Number);
 		
 		if(op == OP.BIGGER_EQ_THAN || op == OP.BIGGER_THAN){

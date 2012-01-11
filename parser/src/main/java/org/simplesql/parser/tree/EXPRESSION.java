@@ -63,9 +63,11 @@ public class EXPRESSION extends TERM {
 		// if the expressions is only madeup of a
 		// single constant or variable we propogate the
 		// value and type upwards from the MULT and UNARY.
-		complex = mult.isComplex();
-		unaryType = mult.unaryType;
-		setValue(mult.unaryValue);
+		if(!complex){
+			complex = mult.isComplex();
+			unaryType = mult.unaryType;
+			setValue(mult.unaryValue);
+		}
 	}
 
 	public boolean isComplex() {

@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-01-24 09:35:40
+// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-01-24 09:37:25
 
   package org.simplesql.parser;
   
@@ -1421,7 +1421,7 @@ public TreeAdaptor getTreeAdaptor() {
                             stream_IDENT.add(v);
 
 
-                            select.variables.add((v!=null?v.getText():null).trim());
+                            variables.add((v!=null?v.getText():null).trim());
 
                             // AST REWRITE
                             // elements: v

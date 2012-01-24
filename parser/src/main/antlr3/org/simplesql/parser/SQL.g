@@ -115,7 +115,7 @@ funct returns [FUNCTION f = new FUNCTION()]
 
   
 term returns [TERM term]: 
-      ( v=IDENT  {select.variables.add($v.text.trim());}   
+      ( v=IDENT  {variables.add($v.text.trim());}   
           -> ^(VARIABLE $v) {$term = new VARIABLE($v.text)}  
       | v=INTEGER -> ^(NUMBER $v) { $term = new INTEGER($v.text)}
       | v=DOUBLE -> ^(REAL_NUMBER $v) {$term = new DOUBLE($v.text)} 

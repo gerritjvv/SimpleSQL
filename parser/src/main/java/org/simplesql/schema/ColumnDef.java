@@ -17,4 +17,7 @@ public interface ColumnDef {
 	
 	String getName();
 		
+	Object getMax();
+	Object getMin();
+	
 }

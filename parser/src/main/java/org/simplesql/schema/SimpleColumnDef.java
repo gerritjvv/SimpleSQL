@@ -42,4 +42,14 @@ public class SimpleColumnDef implements ColumnDef {
 		return isNumber;
 	}
 
+	@Override
+	public Object getMax() {
+		return cell.getMax();
+	}
+
+	@Override
+	public Object getMin() {
+		return cell.getMin();
+	}
+
 }

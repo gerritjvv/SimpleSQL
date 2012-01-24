@@ -125,4 +125,37 @@ public class DynamicCell implements Cell<String> {
 		return val.toString();
 	}
 
+	@Override
+	public Object getMax() {
+
+		Object max = null;
+		if (Double.class.isAssignableFrom(this.val.getClass()))
+			max = Double.MAX_VALUE;
+		else if (Long.class.isAssignableFrom(this.val.getClass()))
+			max = Long.MAX_VALUE;
+		else if (Integer.class.isAssignableFrom(this.val.getClass()))
+			max = Integer.MAX_VALUE;
+		else{
+			max = (char)128;
+		}
+			
+		return max;
+	}
+
+	@Override
+	public Object getMin() {
+		Object min = null;
+		if (Double.class.isAssignableFrom(this.val.getClass()))
+			min = Double.MIN_VALUE;
+		else if (Long.class.isAssignableFrom(this.val.getClass()))
+			min = Long.MIN_VALUE;
+		else if (Integer.class.isAssignableFrom(this.val.getClass()))
+			min = Integer.MIN_VALUE;
+		else{
+			min = (char)0;
+		}
+			
+		return min;
+	}
+
 }

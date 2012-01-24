@@ -21,10 +21,9 @@ public class SELECT {
 	final List<EXPRESSION> groupBy = new ArrayList<EXPRESSION>();
 	final List<EXPRESSION> orderBy = new ArrayList<EXPRESSION>();
 
-	public final Set<String> variables = new HashSet<String>();
+	public Set<String> variables = new HashSet<String>();
 	public final RangeGroups rangeGroups = new RangeGroups();
-	
-	
+
 	/**
 	 * Contain the identified transform functions for the select expressions.
 	 */
@@ -32,6 +31,14 @@ public class SELECT {
 
 	int limit = Integer.MAX_VALUE;
 	String table;
+
+	public SELECT() {
+
+	}
+
+	public SELECT(Set<String> variables) {
+		this.variables = variables;
+	}
 
 	public String getTable() {
 		return table;
@@ -87,7 +94,6 @@ public class SELECT {
 		this.limit = limit;
 	}
 
-	
 	public Set<String> getVariables() {
 		return variables;
 	}

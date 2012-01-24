@@ -73,5 +73,15 @@ public class DoubleCell implements Cell<Number> {
 	public String toString(){
 		return String.valueOf(val);
 	}
+
+	@Override
+	public Object getMax() {
+		return Double.MAX_VALUE;
+	}
+
+	@Override
+	public Object getMin() {
+		return Double.MIN_VALUE;
+	}
 	
 }

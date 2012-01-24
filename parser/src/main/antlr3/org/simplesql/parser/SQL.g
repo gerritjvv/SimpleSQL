@@ -40,10 +40,10 @@ tokens {
 @members {
   
   public SELECT select;
-  
+  public static final java.util.Set<String> variables = new java.util.HashSet<String>();
 }
 
-statement returns [SELECT ret = new SELECT();]
+statement returns [SELECT ret = new SELECT(variables);]
            : SELECT (se1=expression { select = $ret;  $ret.select($se1.expr);}) 
                     (',' (se1=expression {$ret.select($se1.expr);}))* FROM IDENT {$ret.table($IDENT.text);} 
             (WHERE w1=logical {$ret.where($logical.ret);})*

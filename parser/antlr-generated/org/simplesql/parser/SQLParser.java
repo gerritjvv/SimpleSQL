@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-01-11 10:24:36
+// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-01-24 09:35:40
 
   package org.simplesql.parser;
   
@@ -87,18 +87,18 @@ public TreeAdaptor getTreeAdaptor() {
 
       
       public SELECT select;
-      
+      public static final java.util.Set<String> variables = new java.util.HashSet<String>();
 
 
     public static class statement_return extends ParserRuleReturnScope {
-        public SELECT ret = new SELECT();;
+        public SELECT ret = new SELECT(variables);;
         Object tree;
         public Object getTree() { return tree; }
     };
 
 
     // $ANTLR start "statement"
-    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:46:1: statement returns [SELECT ret = new SELECT();] : SELECT (se1= expression ) ( ',' (se1= expression ) )* FROM IDENT ( WHERE w1= logical )* ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* )* ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* )* ( 'LIMIT' l= INTEGER )* ( ';' )* ;
+    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:46:1: statement returns [SELECT ret = new SELECT(variables);] : SELECT (se1= expression ) ( ',' (se1= expression ) )* FROM IDENT ( WHERE w1= logical )* ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* )* ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* )* ( 'LIMIT' l= INTEGER )* ( ';' )* ;
     public final SQLParser.statement_return statement() throws RecognitionException {
         SQLParser.statement_return retval = new SQLParser.statement_return();
         retval.start = input.LT(1);

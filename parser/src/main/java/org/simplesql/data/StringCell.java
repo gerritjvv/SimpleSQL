@@ -61,16 +61,26 @@ public class StringCell implements Cell<String> {
 
 	@Override
 	public void inc(Counter counter) {
-		
+
 	}
 
 	@Override
 	public Cell<String> copy(boolean resetToDefaults) {
-		return new StringCell((resetToDefaults)? "" : val);
+		return new StringCell((resetToDefaults) ? "" : val);
 	}
 
-	public String toString(){
+	public String toString() {
 		return val;
 	}
-	
+
+	@Override
+	public Object getMax() {
+		return (char) Integer.MAX_VALUE;
+	}
+
+	@Override
+	public Object getMin() {
+		return (char) 0;
+	}
+
 }

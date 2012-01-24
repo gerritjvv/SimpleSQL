@@ -66,11 +66,21 @@ public class IntCell implements Cell<Number> {
 
 	@Override
 	public Cell<Number> copy(boolean resetToDefaults) {
-		return new IntCell((resetToDefaults)? 0 : val);
+		return new IntCell((resetToDefaults) ? 0 : val);
 	}
 
 	public String toString() {
 		return String.valueOf(val);
+	}
+
+	@Override
+	public Object getMax() {
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public Object getMin() {
+		return Integer.MIN_VALUE;
 	}
 
 }

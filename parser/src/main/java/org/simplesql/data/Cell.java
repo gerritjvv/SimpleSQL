@@ -7,5 +7,9 @@ public interface Cell<T> extends Counter {
 	void setData(T dat);
 	
 	Cell<T> copy(boolean resetToDefaults);
+
+	Object getMax();
+
+	Object getMin();
 	
 }

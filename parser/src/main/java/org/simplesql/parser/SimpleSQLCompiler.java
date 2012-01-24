@@ -1,8 +1,13 @@
 package org.simplesql.parser;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -103,10 +108,10 @@ public class SimpleSQLCompiler implements SQLCompiler {
 					.trim().isEmpty()) ? new AlwaysTrueWhereFilter()
 					: new SimpleWhereFilter(converter, columnNames, columnTypes);
 
-			return new SimpleSQLExecutor(
-					select.getRangeGroups(),
-					select.getVariables().toArray(new String[0]), execService, tableDef, eval, keyParser,
-					whereFilter, select.getTransforms());
+			return new SimpleSQLExecutor(select.getRangeGroups(), select
+					.getVariables().toArray(new String[0]), execService,
+					tableDef, eval, keyParser, whereFilter,
+					select.getTransforms());
 
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);
@@ -168,6 +173,16 @@ public class SimpleSQLCompiler implements SQLCompiler {
 			return true;
 		}
 
+		@Override
+		public void write(DataOutput dataOut) throws IOException {
+
+		}
+
+		@Override
+		public void read(DataInput dataIn) throws IOException {
+
+		}
+
 	}
 
 	/**
@@ -178,15 +193,35 @@ public class SimpleSQLCompiler implements SQLCompiler {
 	 */
 	static public class SimpleWhereFilter implements WhereFilter {
 
-		final ExpressionEvaluator evalBool;
+		private static final Pattern SPLIT_COMMA = Pattern.compile(",");
 
+		ExpressionEvaluator evalBool;
+
+		String[] columnNames;
+		Class[] columnTypes;
+		String whereExpressions;
+
+		/**
+		 * Should only be used with reflection and in conjunction with the read
+		 * and write methods.
+		 */
+		public SimpleWhereFilter() {
+
+		}
+
+		@SuppressWarnings("rawtypes")
 		public SimpleWhereFilter(TreeJavaConvert converter,
 				String[] columnNames, Class[] columnTypes)
 				throws CompileException, ParseException, ScanException {
 
-			evalBool = new ExpressionEvaluator(converter.getWhereExpressions(),
-					Boolean.class, columnNames, columnTypes);
+			String whereExpressions = converter.getWhereExpressions();
 
+			evalBool = new ExpressionEvaluator(whereExpressions, Boolean.class,
+					columnNames, columnTypes);
+
+			this.columnNames = columnNames;
+			this.columnTypes = columnTypes;
+			this.whereExpressions = whereExpressions;
 		}
 
 		@Override
@@ -198,6 +233,71 @@ public class SimpleSQLCompiler implements SQLCompiler {
 				exc.setStackTrace(e.getStackTrace());
 				throw exc;
 			}
+		}
+
+		@Override
+		public void write(DataOutput dataOut) throws IOException {
+
+			final byte[] columns = Arrays.toString(columnNames).getBytes(
+					"UTF-8");
+			final byte[] types = Arrays.toString(columnTypes).getBytes("UTF-8");
+			final byte[] whereBytes = whereExpressions.getBytes("UTF-8");
+
+			dataOut.write(columns.length);
+			dataOut.write(columns);
+			dataOut.write(types.length);
+			dataOut.write(types);
+			dataOut.write(whereBytes.length);
+			dataOut.write(whereBytes);
+
+		}
+
+		@Override
+		public void read(DataInput dataIn) throws IOException {
+
+			String columnStr = readString(dataIn);
+			String typesStr = readString(dataIn);
+			String whereStr = readString(dataIn);
+
+			// deserialize columns
+			this.columnNames = SPLIT_COMMA.split(columnStr);
+
+			// deserialize types
+			String[] typesArr = SPLIT_COMMA.split(typesStr);
+			ClassLoader cls = Thread.currentThread().getContextClassLoader();
+
+			columnTypes = new Class[typesArr.length];
+			for (int i = 0; i < typesArr.length; i++) {
+				try {
+					columnTypes[i] = cls.loadClass(typesArr[i]);
+				} catch (ClassNotFoundException e) {
+					rethrow(e);
+				}
+			}
+
+			// save where str and compile expression
+			whereExpressions = whereStr;
+			try {
+				evalBool = new ExpressionEvaluator(whereExpressions,
+						Boolean.class, columnNames, columnTypes);
+			} catch (Throwable t) {
+				rethrow(t);
+			}
+		}
+
+		private static final void rethrow(Throwable t) {
+			RuntimeException rte = new RuntimeException(t.toString(), t);
+			rte.setStackTrace(t.getStackTrace());
+			throw rte;
+		}
+
+		private static final String readString(DataInput dataIn)
+				throws IOException {
+			int len = dataIn.readInt();
+			byte[] bytes = new byte[len];
+			dataIn.readFully(bytes, 0, len);
+
+			return new String(bytes, "UTF8");
 		}
 
 	}

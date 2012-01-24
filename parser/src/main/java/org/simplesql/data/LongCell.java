@@ -66,11 +66,21 @@ public class LongCell implements Cell<Number> {
 
 	@Override
 	public Cell<Number> copy(boolean resetToDefaults) {
-		return new LongCell((resetToDefaults)? 0L : val);
+		return new LongCell((resetToDefaults) ? 0L : val);
 	}
 
 	public String toString() {
 		return String.valueOf(val);
+	}
+
+	@Override
+	public Object getMax() {
+		return Long.MAX_VALUE;
+	}
+
+	@Override
+	public Object getMin() {
+		return Long.MIN_VALUE;
 	}
 
 }

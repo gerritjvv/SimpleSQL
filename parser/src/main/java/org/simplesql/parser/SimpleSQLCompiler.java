@@ -183,6 +183,11 @@ public class SimpleSQLCompiler implements SQLCompiler {
 
 		}
 
+		@Override
+		public String[] getColumnNames() {
+			return null;
+		}
+
 	}
 
 	/**
@@ -224,6 +229,11 @@ public class SimpleSQLCompiler implements SQLCompiler {
 			this.whereExpressions = whereExpressions;
 		}
 
+		@Override
+		public String[] getColumnNames(){
+			return columnNames;
+		}
+		
 		@Override
 		public boolean include(Object[] data) {
 			try {

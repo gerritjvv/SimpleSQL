@@ -1,6 +1,7 @@
 package org.simplesql.parser;
 
 import java.util.List;
+import java.util.Set;
 
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.DataSource;
@@ -27,9 +28,9 @@ public interface SQLExecutor {
 
 	/**
 	 * Returns all of the columns used from the table
-	 * @return String[]
+	 * @return Set of String
 	 */
-	String[] getColumnsUsed();
+	Set<String> getColumnsUsed();
 	
 	WhereFilter getWhereFilter();
 	

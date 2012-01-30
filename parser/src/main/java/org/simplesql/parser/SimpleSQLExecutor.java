@@ -1,6 +1,7 @@
 package org.simplesql.parser;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,10 +40,10 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	final WhereFilter whereFilter;
 
 	final List<TransformFunction> transforms;
-	final String[] columnsUsed;
+	final Set<String> columnsUsed;
 	final RangeGroups rangeGroups;
 
-	public SimpleSQLExecutor(RangeGroups rangeGroups, String[] columnsUsed,
+	public SimpleSQLExecutor(RangeGroups rangeGroups, Set<String> columnsUsed,
 			ExecutorService execService, TableDef tableDef,
 			ExpressionEvaluator eval, KeyParser keyParser,
 			WhereFilter whereFilter, List<TransformFunction> transforms) {
@@ -64,7 +65,7 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	/**
 	 * Returns the columns that was used in the query
 	 */
-	public String[] getColumnsUsed() {
+	public Set<String> getColumnsUsed() {
 		return columnsUsed;
 	}
 

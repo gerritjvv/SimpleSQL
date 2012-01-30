@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
@@ -84,7 +84,10 @@ public class SimpleSQLCompiler implements SQLCompiler {
 
 	private SQLExecutor compile(TableDef tableDef, SELECT select) {
 		try {
-			Object[][] nameTypes = columnNameTypes(tableDef);
+
+			Set<String> variablesUsed = select.getVariables();
+
+			Object[][] nameTypes = columnNameTypes(variablesUsed, tableDef);
 			String[] columnNames = (String[]) nameTypes[0];
 			Class<?>[] columnTypes = (Class<?>[]) nameTypes[1];
 
@@ -108,10 +111,9 @@ public class SimpleSQLCompiler implements SQLCompiler {
 					.trim().isEmpty()) ? new AlwaysTrueWhereFilter()
 					: new SimpleWhereFilter(converter, columnNames, columnTypes);
 
-			return new SimpleSQLExecutor(select.getRangeGroups(), select
-					.getVariables().toArray(new String[0]), execService,
-					tableDef, eval, keyParser, whereFilter,
-					select.getTransforms());
+			return new SimpleSQLExecutor(select.getRangeGroups(),
+					variablesUsed, execService, tableDef, eval, keyParser,
+					whereFilter, select.getTransforms());
 
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);
@@ -126,20 +128,35 @@ public class SimpleSQLCompiler implements SQLCompiler {
 	 * index[0] = String[] == names<br/>
 	 * index[1] = Class[] == types<br/>
 	 * 
+	 * @param variablesUsed
+	 * 
 	 * @param tableDef
 	 * @return
 	 */
-	private static final Object[][] columnNameTypes(TableDef tableDef) {
+	private static final Object[][] columnNameTypes(Set<String> variablesUsed,
+			TableDef tableDef) {
 
-		ColumnDef[] defs = tableDef.getColumnDefs();
-		int len = defs.length;
-		String[] names = new String[len];
-		Class<?>[] types = new Class<?>[len];
+		final ColumnDef[] defs = tableDef.getColumnDefs();
+
+		final int len = defs.length;
+		final int usedLen = variablesUsed.size();
+
+		final String[] names = new String[usedLen];
+		final Class<?>[] types = new Class<?>[usedLen];
+		int usedI = 0;
 
 		for (int i = 0; i < len; i++) {
 			ColumnDef def = defs[i];
-			names[i] = def.getName();
-			types[i] = def.getJavaType();
+
+			final String name = def.getName();
+			if (variablesUsed.contains(name)) {
+				names[usedI] = def.getName();
+				types[usedI] = def.getJavaType();
+				usedI++;
+				if (usedI >= usedLen)
+					break;
+			}
+
 		}
 
 		return new Object[][] { names, types };
@@ -230,10 +247,10 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		}
 
 		@Override
-		public String[] getColumnNames(){
+		public String[] getColumnNames() {
 			return columnNames;
 		}
-		
+
 		@Override
 		public boolean include(Object[] data) {
 			try {

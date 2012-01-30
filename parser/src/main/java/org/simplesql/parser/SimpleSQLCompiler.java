@@ -238,17 +238,31 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		@Override
 		public void write(DataOutput dataOut) throws IOException {
 
-			final byte[] columns = Arrays.toString(columnNames).getBytes(
-					"UTF-8");
-			final byte[] types = Arrays.toString(columnTypes).getBytes("UTF-8");
-			final byte[] whereBytes = whereExpressions.getBytes("UTF-8");
+			if (whereExpressions != null) {
+				final byte[] columns = arrayToString(columnNames).getBytes(
+						"UTF-8");
 
-			dataOut.write(columns.length);
-			dataOut.write(columns);
-			dataOut.write(types.length);
-			dataOut.write(types);
-			dataOut.write(whereBytes.length);
-			dataOut.write(whereBytes);
+				StringBuilder columnTypesBuff = new StringBuilder();
+				for (int i = 0; i < columnTypes.length; i++) {
+					if (i != 0)
+						columnTypesBuff.append(',');
+
+					columnTypesBuff.append(columnTypes[i].getName());
+				}
+
+				final byte[] types = columnTypesBuff.toString().getBytes(
+						"UTF-8");
+				final byte[] whereBytes = whereExpressions.getBytes("UTF-8");
+
+				dataOut.writeInt(columns.length);
+				dataOut.write(columns);
+				dataOut.writeInt(types.length);
+				dataOut.write(types);
+				dataOut.writeInt(whereBytes.length);
+				dataOut.write(whereBytes);
+			} else {
+				dataOut.writeInt(0);
+			}
 
 		}
 
@@ -256,6 +270,9 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		public void read(DataInput dataIn) throws IOException {
 
 			String columnStr = readString(dataIn);
+			if (columnStr == null)
+				return;
+
 			String typesStr = readString(dataIn);
 			String whereStr = readString(dataIn);
 
@@ -269,7 +286,22 @@ public class SimpleSQLCompiler implements SQLCompiler {
 			columnTypes = new Class[typesArr.length];
 			for (int i = 0; i < typesArr.length; i++) {
 				try {
-					columnTypes[i] = cls.loadClass(typesArr[i]);
+					String clsType = typesArr[i];
+					if (clsType.startsWith("int")) {
+						columnTypes[i] = int.class;
+					} else if (clsType.startsWith("long")) {
+						columnTypes[i] = long.class;
+					} else if (clsType.startsWith("double")) {
+						columnTypes[i] = double.class;
+					} else if (clsType.startsWith("float")) {
+						columnTypes[i] = float.class;
+					} else if (clsType.startsWith("short")) {
+						columnTypes[i] = short.class;
+					} else if (clsType.startsWith("boolean")) {
+						columnTypes[i] = boolean.class;
+					} else {
+						columnTypes[i] = cls.loadClass(clsType);
+					}
 				} catch (ClassNotFoundException e) {
 					rethrow(e);
 				}
@@ -285,6 +317,20 @@ public class SimpleSQLCompiler implements SQLCompiler {
 			}
 		}
 
+		private static final <T> String arrayToString(T[] t) {
+			StringBuilder buff = new StringBuilder();
+			int len = t.length;
+
+			for (int i = 0; i < len; i++) {
+				if (i != 0)
+					buff.append(',');
+
+				buff.append(t[i].toString());
+			}
+
+			return buff.toString();
+		}
+
 		private static final void rethrow(Throwable t) {
 			RuntimeException rte = new RuntimeException(t.toString(), t);
 			rte.setStackTrace(t.getStackTrace());
@@ -294,6 +340,10 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		private static final String readString(DataInput dataIn)
 				throws IOException {
 			int len = dataIn.readInt();
+
+			if (len == 0)
+				return null;
+
 			byte[] bytes = new byte[len];
 			dataIn.readFully(bytes, 0, len);
 

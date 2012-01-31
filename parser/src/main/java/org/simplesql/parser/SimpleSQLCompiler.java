@@ -4,6 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -158,7 +159,12 @@ public class SimpleSQLCompiler implements SQLCompiler {
 			}
 
 		}
-
+		if (usedI != usedLen) {
+			throw new RuntimeException(
+					"Some of the columns do not exist in table definition : found only "
+							+ Arrays.toString(names));
+		}
+		
 		return new Object[][] { names, types };
 	}
 

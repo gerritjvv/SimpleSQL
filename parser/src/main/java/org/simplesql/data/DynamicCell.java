@@ -109,10 +109,10 @@ public class DynamicCell implements Cell<String> {
 			Object copy = ((Double) val).doubleValue();
 			return new DynamicCell((resetToDefaults) ? 0D : copy);
 		} else if (Long.class.isAssignableFrom(val.getClass())) {
-			Object copy = ((Double) val).doubleValue();
+			Object copy = ((Long) val).longValue();
 			return new DynamicCell((resetToDefaults) ? 0L : copy);
 		} else if (Integer.class.isAssignableFrom(val.getClass())) {
-			Object copy = ((Integer) val).doubleValue();
+			Object copy = ((Integer) val).intValue();
 			return new DynamicCell((resetToDefaults) ? 0 : copy);
 		} else {
 			Object copy = val;
@@ -135,10 +135,10 @@ public class DynamicCell implements Cell<String> {
 			max = Long.MAX_VALUE;
 		else if (Integer.class.isAssignableFrom(this.val.getClass()))
 			max = Integer.MAX_VALUE;
-		else{
-			max = (char)128;
+		else {
+			max = (char) 128;
 		}
-			
+
 		return max;
 	}
 
@@ -151,10 +151,10 @@ public class DynamicCell implements Cell<String> {
 			min = Long.MIN_VALUE;
 		else if (Integer.class.isAssignableFrom(this.val.getClass()))
 			min = Integer.MIN_VALUE;
-		else{
-			min = (char)0;
+		else {
+			min = (char) 0;
 		}
-			
+
 		return min;
 	}
 

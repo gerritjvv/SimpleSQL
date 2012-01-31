@@ -113,7 +113,7 @@ public class TreeJavaConvert {
 		final StringBuilder buff;
 
 		ExpressionPrinter expressionPrinter;
-		
+
 		public LogicalPrinter(StringBuilder buff) {
 			this.buff = buff;
 			this.expressionPrinter = new ExpressionPrinter(buff);
@@ -142,7 +142,6 @@ public class TreeJavaConvert {
 		public void relation(EXPRESSION e1, OP op, EXPRESSION e2) {
 			buff.append("(");
 
-
 			e1.visit(expressionPrinter);
 
 			String opStr;
@@ -157,7 +156,6 @@ public class TreeJavaConvert {
 			e2.visit(expressionPrinter);
 
 			buff.append(")");
-
 
 		}
 
@@ -264,7 +262,11 @@ public class TreeJavaConvert {
 				buff.append(SQLFunctions.class.getName()).append(".");
 				buff.append(f.name).append("(");
 
+				int i = 0;
 				for (EXPRESSION arg : f.getArgs()) {
+					if(i++ != 0)
+						buff.append(',');
+						
 					arg.visit(exprVisitor);
 				}
 

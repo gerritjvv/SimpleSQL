@@ -142,6 +142,6 @@ INTEGER : '0'..'9'+;
 STRING_LITERAL :
   '"' (~('"'|'\n'|'\r'))* '"' | '\'' (~('\''|'\n'|'\r'))* '\'';
   
-IDENT : ('a'..'z' | 'A'..'Z')('a'..'z' | 'A'..'Z' | INTEGER)*;
+IDENT : ('a'..'z' | 'A'..'Z')('a'..'z' | 'A'..'Z' | '_' | '-' | '$' | INTEGER)*;
 
 WS : (' ' | '\t' | '\n' | '\r' | '\f')+ {$channel = HIDDEN;};

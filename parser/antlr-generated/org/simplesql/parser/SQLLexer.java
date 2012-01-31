@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-01-31 12:58:48
+// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-01-31 13:19:16
 
   package org.simplesql.parser;
   
@@ -894,8 +894,8 @@ public class SQLLexer extends Lexer {
         try {
             int _type = IDENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:7: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | INTEGER )* )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:9: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | INTEGER )*
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:7: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '$' | INTEGER )* )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:9: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '$' | INTEGER )*
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
@@ -907,10 +907,10 @@ public class SQLLexer extends Lexer {
             }
 
 
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:30: ( 'a' .. 'z' | 'A' .. 'Z' | INTEGER )*
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '$' | INTEGER )*
             loop8:
             do {
-                int alt8=4;
+                int alt8=7;
                 switch ( input.LA(1) ) {
                 case 'a':
                 case 'b':
@@ -972,6 +972,21 @@ public class SQLLexer extends Lexer {
                     alt8=2;
                     }
                     break;
+                case '_':
+                    {
+                    alt8=3;
+                    }
+                    break;
+                case '-':
+                    {
+                    alt8=4;
+                    }
+                    break;
+                case '$':
+                    {
+                    alt8=5;
+                    }
+                    break;
                 case '0':
                 case '1':
                 case '2':
@@ -983,7 +998,7 @@ public class SQLLexer extends Lexer {
                 case '8':
                 case '9':
                     {
-                    alt8=3;
+                    alt8=6;
                     }
                     break;
 
@@ -1005,7 +1020,28 @@ public class SQLLexer extends Lexer {
             	    }
             	    break;
             	case 3 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:53: INTEGER
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:53: '_'
+            	    {
+            	    match('_'); 
+
+            	    }
+            	    break;
+            	case 4 :
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:59: '-'
+            	    {
+            	    match('-'); 
+
+            	    }
+            	    break;
+            	case 5 :
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:65: '$'
+            	    {
+            	    match('$'); 
+
+            	    }
+            	    break;
+            	case 6 :
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:71: INTEGER
             	    {
             	    mINTEGER(); 
 
@@ -1294,10 +1330,10 @@ public class SQLLexer extends Lexer {
         "\104\uffff";
     static final String DFA10_minS =
         "\1\11\10\uffff\1\157\2\uffff\1\116\1\122\1\105\1\110\3\122\1\131"+
-        "\1\111\1\56\3\uffff\1\144\2\104\2\60\1\114\1\105\1\60\2\117\1\60"+
-        "\1\115\2\uffff\3\60\2\105\1\122\1\115\1\125\1\uffff\1\111\1\uffff"+
-        "\1\122\1\103\1\105\1\60\1\120\1\124\1\60\1\124\1\60\1\uffff\2\60"+
-        "\1\uffff\1\60\4\uffff";
+        "\1\111\1\56\3\uffff\1\144\2\104\2\44\1\114\1\105\1\44\2\117\1\44"+
+        "\1\115\2\uffff\3\44\2\105\1\122\1\115\1\125\1\uffff\1\111\1\uffff"+
+        "\1\122\1\103\1\105\1\44\1\120\1\124\1\44\1\124\1\44\1\uffff\2\44"+
+        "\1\uffff\1\44\4\uffff";
     static final String DFA10_maxS =
         "\1\174\10\uffff\1\157\2\uffff\1\156\1\162\1\105\1\110\1\162\2\122"+
         "\1\131\1\111\1\71\3\uffff\3\144\2\172\1\114\1\105\1\172\2\117\1"+
@@ -1343,20 +1379,27 @@ public class SQLLexer extends Lexer {
             "\1\47",
             "\1\51\37\uffff\1\50",
             "\1\51\37\uffff\1\50",
-            "\12\27\7\uffff\3\27\1\52\26\27\6\uffff\32\27",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\3\27\1\52\26\27\4"+
+            "\uffff\1\27\1\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
             "\1\53",
             "\1\54",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
             "\1\55",
             "\1\56",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
             "\1\60",
             "",
             "",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
             "\1\62",
             "\1\63",
             "\1\64",
@@ -1368,17 +1411,23 @@ public class SQLLexer extends Lexer {
             "\1\70",
             "\1\71",
             "\1\72",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
             "\1\74",
             "\1\75",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
             "\1\77",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
             "",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
             "",
-            "\12\27\7\uffff\32\27\6\uffff\32\27",
+            "\1\27\10\uffff\1\27\2\uffff\12\27\7\uffff\32\27\4\uffff\1\27"+
+            "\1\uffff\32\27",
             "",
             "",
             "",

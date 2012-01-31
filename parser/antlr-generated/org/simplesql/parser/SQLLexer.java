@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-01-31 13:19:16
+// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-02-01 01:21:42
 
   package org.simplesql.parser;
   
@@ -262,10 +262,10 @@ public class SQLLexer extends Lexer {
         try {
             int _type = RELATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:128:10: ( ( '<' | '>' | '<=' | '>=' | '!=' | '=' ) )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:128:12: ( '<' | '>' | '<=' | '>=' | '!=' | '=' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:10: ( ( '<' | '>' | '<=' | '>=' | '!=' | '=' ) )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:12: ( '<' | '>' | '<=' | '>=' | '!=' | '=' )
             {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:128:12: ( '<' | '>' | '<=' | '>=' | '!=' | '=' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:12: ( '<' | '>' | '<=' | '>=' | '!=' | '=' )
             int alt1=6;
             switch ( input.LA(1) ) {
             case '<':
@@ -312,21 +312,21 @@ public class SQLLexer extends Lexer {
 
             switch (alt1) {
                 case 1 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:128:13: '<'
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:13: '<'
                     {
                     match('<'); 
 
                     }
                     break;
                 case 2 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:128:19: '>'
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:19: '>'
                     {
                     match('>'); 
 
                     }
                     break;
                 case 3 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:128:25: '<='
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:25: '<='
                     {
                     match("<="); 
 
@@ -335,7 +335,7 @@ public class SQLLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:128:32: '>='
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:32: '>='
                     {
                     match(">="); 
 
@@ -344,7 +344,7 @@ public class SQLLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:128:39: '!='
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:39: '!='
                     {
                     match("!="); 
 
@@ -353,7 +353,7 @@ public class SQLLexer extends Lexer {
                     }
                     break;
                 case 6 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:128:46: '='
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:46: '='
                     {
                     match('='); 
 
@@ -379,7 +379,7 @@ public class SQLLexer extends Lexer {
         try {
             int _type = LOGICAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:129:9: ( ( '&&' | '||' | ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ) | ( 'O' | 'o' ) ( 'R' | 'r' ) )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:134:9: ( ( '&&' | '||' | ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ) | ( 'O' | 'o' ) ( 'R' | 'r' ) )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -398,9 +398,9 @@ public class SQLLexer extends Lexer {
             }
             switch (alt3) {
                 case 1 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:129:11: ( '&&' | '||' | ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' ) )
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:134:11: ( '&&' | '||' | ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' ) )
                     {
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:129:11: ( '&&' | '||' | ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' ) )
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:134:11: ( '&&' | '||' | ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' ) )
                     int alt2=3;
                     switch ( input.LA(1) ) {
                     case '&':
@@ -429,7 +429,7 @@ public class SQLLexer extends Lexer {
 
                     switch (alt2) {
                         case 1 :
-                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:129:12: '&&'
+                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:134:12: '&&'
                             {
                             match("&&"); 
 
@@ -438,7 +438,7 @@ public class SQLLexer extends Lexer {
                             }
                             break;
                         case 2 :
-                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:129:19: '||'
+                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:134:19: '||'
                             {
                             match("||"); 
 
@@ -447,7 +447,7 @@ public class SQLLexer extends Lexer {
                             }
                             break;
                         case 3 :
-                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:129:26: ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' )
+                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:134:26: ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' )
                             {
                             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                                 input.consume();
@@ -488,7 +488,7 @@ public class SQLLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:129:57: ( 'O' | 'o' ) ( 'R' | 'r' )
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:134:57: ( 'O' | 'o' ) ( 'R' | 'r' )
                     {
                     if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
                         input.consume();
@@ -528,8 +528,8 @@ public class SQLLexer extends Lexer {
         try {
             int _type = SELECT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:131:8: ( 'SELECT' )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:131:10: 'SELECT'
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:136:8: ( 'SELECT' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:136:10: 'SELECT'
             {
             match("SELECT"); 
 
@@ -551,8 +551,8 @@ public class SQLLexer extends Lexer {
         try {
             int _type = WHERE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:132:7: ( 'WHERE' )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:132:9: 'WHERE'
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:137:7: ( 'WHERE' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:137:9: 'WHERE'
             {
             match("WHERE"); 
 
@@ -574,8 +574,8 @@ public class SQLLexer extends Lexer {
         try {
             int _type = ORDER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:6: ( 'ORDER' )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:133:8: 'ORDER'
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:138:6: ( 'ORDER' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:138:8: 'ORDER'
             {
             match("ORDER"); 
 
@@ -597,8 +597,8 @@ public class SQLLexer extends Lexer {
         try {
             int _type = FROM;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:134:6: ( 'FROM' )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:134:8: 'FROM'
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:139:6: ( 'FROM' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:139:8: 'FROM'
             {
             match("FROM"); 
 
@@ -620,8 +620,8 @@ public class SQLLexer extends Lexer {
         try {
             int _type = GROUP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:135:7: ( 'GROUP' )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:135:9: 'GROUP'
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:140:7: ( 'GROUP' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:140:9: 'GROUP'
             {
             match("GROUP"); 
 
@@ -643,8 +643,8 @@ public class SQLLexer extends Lexer {
         try {
             int _type = BY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:136:4: ( 'BY' )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:136:6: 'BY'
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:141:4: ( 'BY' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:141:6: 'BY'
             {
             match("BY"); 
 
@@ -666,8 +666,8 @@ public class SQLLexer extends Lexer {
         try {
             int _type = LIMIT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:137:7: ( 'LIMIT' )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:137:9: 'LIMIT'
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:142:7: ( 'LIMIT' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:142:9: 'LIMIT'
             {
             match("LIMIT"); 
 
@@ -689,8 +689,8 @@ public class SQLLexer extends Lexer {
         try {
             int _type = DOUBLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:139:8: ( INTEGER '.' INTEGER )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:139:10: INTEGER '.' INTEGER
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:144:8: ( INTEGER '.' INTEGER )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:144:10: INTEGER '.' INTEGER
             {
             mINTEGER(); 
 
@@ -716,10 +716,10 @@ public class SQLLexer extends Lexer {
         try {
             int _type = INTEGER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:140:9: ( ( '0' .. '9' )+ )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:140:11: ( '0' .. '9' )+
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:9: ( ( '0' .. '9' )+ )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:11: ( '0' .. '9' )+
             {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:140:11: ( '0' .. '9' )+
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:11: ( '0' .. '9' )+
             int cnt4=0;
             loop4:
             do {
@@ -774,7 +774,7 @@ public class SQLLexer extends Lexer {
         try {
             int _type = STRING_LITERAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:142:16: ( '\"' (~ ( '\"' | '\\n' | '\\r' ) )* '\"' | '\\'' (~ ( '\\'' | '\\n' | '\\r' ) )* '\\'' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:147:16: ( '\"' (~ ( '\"' | '\\n' | '\\r' ) )* '\"' | '\\'' (~ ( '\\'' | '\\n' | '\\r' ) )* '\\'' )
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -793,11 +793,11 @@ public class SQLLexer extends Lexer {
             }
             switch (alt7) {
                 case 1 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:143:3: '\"' (~ ( '\"' | '\\n' | '\\r' ) )* '\"'
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:148:3: '\"' (~ ( '\"' | '\\n' | '\\r' ) )* '\"'
                     {
                     match('\"'); 
 
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:143:7: (~ ( '\"' | '\\n' | '\\r' ) )*
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:148:7: (~ ( '\"' | '\\n' | '\\r' ) )*
                     loop5:
                     do {
                         int alt5=2;
@@ -836,11 +836,11 @@ public class SQLLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:143:33: '\\'' (~ ( '\\'' | '\\n' | '\\r' ) )* '\\''
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:148:33: '\\'' (~ ( '\\'' | '\\n' | '\\r' ) )* '\\''
                     {
                     match('\''); 
 
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:143:38: (~ ( '\\'' | '\\n' | '\\r' ) )*
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:148:38: (~ ( '\\'' | '\\n' | '\\r' ) )*
                     loop6:
                     do {
                         int alt6=2;
@@ -894,8 +894,8 @@ public class SQLLexer extends Lexer {
         try {
             int _type = IDENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:7: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '$' | INTEGER )* )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:9: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '$' | INTEGER )*
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:150:7: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '$' | INTEGER )* )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:150:9: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '$' | INTEGER )*
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
@@ -907,7 +907,7 @@ public class SQLLexer extends Lexer {
             }
 
 
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '$' | INTEGER )*
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:150:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '$' | INTEGER )*
             loop8:
             do {
                 int alt8=7;
@@ -1006,42 +1006,42 @@ public class SQLLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:31: 'a' .. 'z'
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:150:31: 'a' .. 'z'
             	    {
             	    matchRange('a','z'); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:42: 'A' .. 'Z'
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:150:42: 'A' .. 'Z'
             	    {
             	    matchRange('A','Z'); 
 
             	    }
             	    break;
             	case 3 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:53: '_'
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:150:53: '_'
             	    {
             	    match('_'); 
 
             	    }
             	    break;
             	case 4 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:59: '-'
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:150:59: '-'
             	    {
             	    match('-'); 
 
             	    }
             	    break;
             	case 5 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:65: '$'
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:150:65: '$'
             	    {
             	    match('$'); 
 
             	    }
             	    break;
             	case 6 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:145:71: INTEGER
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:150:71: INTEGER
             	    {
             	    mINTEGER(); 
 
@@ -1071,10 +1071,10 @@ public class SQLLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:147:4: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+ )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:147:6: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:152:4: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+ )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:152:6: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
             {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:147:6: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:152:6: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
             int cnt9=0;
             loop9:
             do {

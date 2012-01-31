@@ -46,12 +46,17 @@ tokens {
 statement returns [SELECT ret = new SELECT(variables);]
            : SELECT (se1=expression { select = $ret;  $ret.select($se1.expr);}) 
                     (',' (se1=expression {$ret.select($se1.expr);}))* FROM IDENT {$ret.table($IDENT.text);} 
-            (WHERE w1=logical {$ret.where($logical.ret);})*
+            (
+            (WHERE w1=logical {$ret.where($logical.ret);})
+                      |
             ('GROUP' 'BY' (gpe1=expression {$ret.groupBy($gpe1.expr);}) 
-                     (',' (gpe1=expression {$ret.groupBy($gpe1.expr);}))*)*
+                     (',' (gpe1=expression {$ret.groupBy($gpe1.expr);}))*)
+                     |
             ('ORDER' 'BY' (ope1=expression {$ret.orderBy($ope1.expr);}) 
-                     (',' (ope1=expression {$ret.orderBy($ope1.expr);}))*)*
-            ('LIMIT' l=INTEGER {$ret.limit($l.text);})*
+                     (',' (ope1=expression {$ret.orderBy($ope1.expr);}))*)
+                     |
+            ('LIMIT' l=INTEGER {$ret.limit($l.text);})
+            )*
             ';'*
 //            -> ^(SELECT $se1*) 
 //               ^(WHERE $w1*)?

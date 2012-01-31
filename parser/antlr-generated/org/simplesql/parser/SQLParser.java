@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-01-31 13:19:15
+// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-02-01 01:21:42
 
   package org.simplesql.parser;
   
@@ -98,7 +98,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "statement"
-    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:46:1: statement returns [SELECT ret = new SELECT(variables);] : SELECT (se1= expression ) ( ',' (se1= expression ) )* FROM IDENT ( WHERE w1= logical )* ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* )* ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* )* ( 'LIMIT' l= INTEGER )* ( ';' )* ;
+    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:46:1: statement returns [SELECT ret = new SELECT(variables);] : SELECT (se1= expression ) ( ',' (se1= expression ) )* FROM IDENT ( ( WHERE w1= logical ) | ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* ) | ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* ) | ( 'LIMIT' l= INTEGER ) )* ( ';' )* ;
     public final SQLParser.statement_return statement() throws RecognitionException {
         SQLParser.statement_return retval = new SQLParser.statement_return();
         retval.start = input.LT(1);
@@ -145,8 +145,8 @@ public TreeAdaptor getTreeAdaptor() {
         Object char_literal13_tree=null;
 
         try {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:47:12: ( SELECT (se1= expression ) ( ',' (se1= expression ) )* FROM IDENT ( WHERE w1= logical )* ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* )* ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* )* ( 'LIMIT' l= INTEGER )* ( ';' )* )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:47:14: SELECT (se1= expression ) ( ',' (se1= expression ) )* FROM IDENT ( WHERE w1= logical )* ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* )* ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* )* ( 'LIMIT' l= INTEGER )* ( ';' )*
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:47:12: ( SELECT (se1= expression ) ( ',' (se1= expression ) )* FROM IDENT ( ( WHERE w1= logical ) | ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* ) | ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* ) | ( 'LIMIT' l= INTEGER ) )* ( ';' )* )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:47:14: SELECT (se1= expression ) ( ',' (se1= expression ) )* FROM IDENT ( ( WHERE w1= logical ) | ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* ) | ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* ) | ( 'LIMIT' l= INTEGER ) )* ( ';' )*
             {
             root_0 = (Object)adaptor.nil();
 
@@ -235,29 +235,49 @@ public TreeAdaptor getTreeAdaptor() {
 
             retval.ret.table((IDENT4!=null?IDENT4.getText():null));
 
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:49:13: ( WHERE w1= logical )*
-            loop2:
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:49:13: ( ( WHERE w1= logical ) | ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* ) | ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* ) | ( 'LIMIT' l= INTEGER ) )*
+            loop4:
             do {
-                int alt2=2;
-                int LA2_0 = input.LA(1);
+                int alt4=5;
+                switch ( input.LA(1) ) {
+                case WHERE:
+                    {
+                    alt4=1;
+                    }
+                    break;
+                case GROUP:
+                    {
+                    alt4=2;
+                    }
+                    break;
+                case ORDER:
+                    {
+                    alt4=3;
+                    }
+                    break;
+                case LIMIT:
+                    {
+                    alt4=4;
+                    }
+                    break;
 
-                if ( (LA2_0==WHERE) ) {
-                    alt2=1;
                 }
 
-
-                switch (alt2) {
+                switch (alt4) {
             	case 1 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:49:14: WHERE w1= logical
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:50:13: ( WHERE w1= logical )
             	    {
-            	    WHERE5=(Token)match(input,WHERE,FOLLOW_WHERE_in_statement215); 
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:50:13: ( WHERE w1= logical )
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:50:14: WHERE w1= logical
+            	    {
+            	    WHERE5=(Token)match(input,WHERE,FOLLOW_WHERE_in_statement229); 
             	    WHERE5_tree = 
             	    (Object)adaptor.create(WHERE5)
             	    ;
             	    adaptor.addChild(root_0, WHERE5_tree);
 
 
-            	    pushFollow(FOLLOW_logical_in_statement219);
+            	    pushFollow(FOLLOW_logical_in_statement233);
             	    w1=logical();
 
             	    state._fsp--;
@@ -267,47 +287,34 @@ public TreeAdaptor getTreeAdaptor() {
             	    retval.ret.where((w1!=null?w1.ret:null));
 
             	    }
+
+
+            	    }
             	    break;
-
-            	default :
-            	    break loop2;
-                }
-            } while (true);
-
-
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:50:13: ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* )*
-            loop4:
-            do {
-                int alt4=2;
-                int LA4_0 = input.LA(1);
-
-                if ( (LA4_0==GROUP) ) {
-                    alt4=1;
-                }
-
-
-                switch (alt4) {
-            	case 1 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:50:14: 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )*
+            	case 2 :
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:52:13: ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* )
             	    {
-            	    string_literal6=(Token)match(input,GROUP,FOLLOW_GROUP_in_statement238); 
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:52:13: ( 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )* )
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:52:14: 'GROUP' 'BY' (gpe1= expression ) ( ',' (gpe1= expression ) )*
+            	    {
+            	    string_literal6=(Token)match(input,GROUP,FOLLOW_GROUP_in_statement275); 
             	    string_literal6_tree = 
             	    (Object)adaptor.create(string_literal6)
             	    ;
             	    adaptor.addChild(root_0, string_literal6_tree);
 
 
-            	    string_literal7=(Token)match(input,BY,FOLLOW_BY_in_statement240); 
+            	    string_literal7=(Token)match(input,BY,FOLLOW_BY_in_statement277); 
             	    string_literal7_tree = 
             	    (Object)adaptor.create(string_literal7)
             	    ;
             	    adaptor.addChild(root_0, string_literal7_tree);
 
 
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:50:27: (gpe1= expression )
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:50:28: gpe1= expression
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:52:27: (gpe1= expression )
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:52:28: gpe1= expression
             	    {
-            	    pushFollow(FOLLOW_expression_in_statement245);
+            	    pushFollow(FOLLOW_expression_in_statement282);
             	    gpe1=expression();
 
             	    state._fsp--;
@@ -319,32 +326,32 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
 
 
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:51:22: ( ',' (gpe1= expression ) )*
-            	    loop3:
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:53:22: ( ',' (gpe1= expression ) )*
+            	    loop2:
             	    do {
-            	        int alt3=2;
-            	        int LA3_0 = input.LA(1);
+            	        int alt2=2;
+            	        int LA2_0 = input.LA(1);
 
-            	        if ( (LA3_0==35) ) {
-            	            alt3=1;
+            	        if ( (LA2_0==35) ) {
+            	            alt2=1;
             	        }
 
 
-            	        switch (alt3) {
+            	        switch (alt2) {
             	    	case 1 :
-            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:51:23: ',' (gpe1= expression )
+            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:53:23: ',' (gpe1= expression )
             	    	    {
-            	    	    char_literal8=(Token)match(input,35,FOLLOW_35_in_statement273); 
+            	    	    char_literal8=(Token)match(input,35,FOLLOW_35_in_statement310); 
             	    	    char_literal8_tree = 
             	    	    (Object)adaptor.create(char_literal8)
             	    	    ;
             	    	    adaptor.addChild(root_0, char_literal8_tree);
 
 
-            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:51:27: (gpe1= expression )
-            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:51:28: gpe1= expression
+            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:53:27: (gpe1= expression )
+            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:53:28: gpe1= expression
             	    	    {
-            	    	    pushFollow(FOLLOW_expression_in_statement278);
+            	    	    pushFollow(FOLLOW_expression_in_statement315);
             	    	    gpe1=expression();
 
             	    	    state._fsp--;
@@ -360,53 +367,40 @@ public TreeAdaptor getTreeAdaptor() {
             	    	    break;
 
             	    	default :
-            	    	    break loop3;
+            	    	    break loop2;
             	        }
             	    } while (true);
 
 
             	    }
+
+
+            	    }
             	    break;
-
-            	default :
-            	    break loop4;
-                }
-            } while (true);
-
-
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:52:13: ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* )*
-            loop6:
-            do {
-                int alt6=2;
-                int LA6_0 = input.LA(1);
-
-                if ( (LA6_0==ORDER) ) {
-                    alt6=1;
-                }
-
-
-                switch (alt6) {
-            	case 1 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:52:14: 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )*
+            	case 3 :
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:55:13: ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* )
             	    {
-            	    string_literal9=(Token)match(input,ORDER,FOLLOW_ORDER_in_statement300); 
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:55:13: ( 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )* )
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:55:14: 'ORDER' 'BY' (ope1= expression ) ( ',' (ope1= expression ) )*
+            	    {
+            	    string_literal9=(Token)match(input,ORDER,FOLLOW_ORDER_in_statement359); 
             	    string_literal9_tree = 
             	    (Object)adaptor.create(string_literal9)
             	    ;
             	    adaptor.addChild(root_0, string_literal9_tree);
 
 
-            	    string_literal10=(Token)match(input,BY,FOLLOW_BY_in_statement302); 
+            	    string_literal10=(Token)match(input,BY,FOLLOW_BY_in_statement361); 
             	    string_literal10_tree = 
             	    (Object)adaptor.create(string_literal10)
             	    ;
             	    adaptor.addChild(root_0, string_literal10_tree);
 
 
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:52:27: (ope1= expression )
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:52:28: ope1= expression
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:55:27: (ope1= expression )
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:55:28: ope1= expression
             	    {
-            	    pushFollow(FOLLOW_expression_in_statement307);
+            	    pushFollow(FOLLOW_expression_in_statement366);
             	    ope1=expression();
 
             	    state._fsp--;
@@ -418,32 +412,32 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
 
 
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:53:22: ( ',' (ope1= expression ) )*
-            	    loop5:
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:56:22: ( ',' (ope1= expression ) )*
+            	    loop3:
             	    do {
-            	        int alt5=2;
-            	        int LA5_0 = input.LA(1);
+            	        int alt3=2;
+            	        int LA3_0 = input.LA(1);
 
-            	        if ( (LA5_0==35) ) {
-            	            alt5=1;
+            	        if ( (LA3_0==35) ) {
+            	            alt3=1;
             	        }
 
 
-            	        switch (alt5) {
+            	        switch (alt3) {
             	    	case 1 :
-            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:53:23: ',' (ope1= expression )
+            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:56:23: ',' (ope1= expression )
             	    	    {
-            	    	    char_literal11=(Token)match(input,35,FOLLOW_35_in_statement335); 
+            	    	    char_literal11=(Token)match(input,35,FOLLOW_35_in_statement394); 
             	    	    char_literal11_tree = 
             	    	    (Object)adaptor.create(char_literal11)
             	    	    ;
             	    	    adaptor.addChild(root_0, char_literal11_tree);
 
 
-            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:53:27: (ope1= expression )
-            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:53:28: ope1= expression
+            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:56:27: (ope1= expression )
+            	    	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:56:28: ope1= expression
             	    	    {
-            	    	    pushFollow(FOLLOW_expression_in_statement340);
+            	    	    pushFollow(FOLLOW_expression_in_statement399);
             	    	    ope1=expression();
 
             	    	    state._fsp--;
@@ -459,43 +453,30 @@ public TreeAdaptor getTreeAdaptor() {
             	    	    break;
 
             	    	default :
-            	    	    break loop5;
+            	    	    break loop3;
             	        }
             	    } while (true);
 
 
             	    }
+
+
+            	    }
             	    break;
-
-            	default :
-            	    break loop6;
-                }
-            } while (true);
-
-
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:54:13: ( 'LIMIT' l= INTEGER )*
-            loop7:
-            do {
-                int alt7=2;
-                int LA7_0 = input.LA(1);
-
-                if ( (LA7_0==LIMIT) ) {
-                    alt7=1;
-                }
-
-
-                switch (alt7) {
-            	case 1 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:54:14: 'LIMIT' l= INTEGER
+            	case 4 :
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:58:13: ( 'LIMIT' l= INTEGER )
             	    {
-            	    string_literal12=(Token)match(input,LIMIT,FOLLOW_LIMIT_in_statement362); 
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:58:13: ( 'LIMIT' l= INTEGER )
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:58:14: 'LIMIT' l= INTEGER
+            	    {
+            	    string_literal12=(Token)match(input,LIMIT,FOLLOW_LIMIT_in_statement443); 
             	    string_literal12_tree = 
             	    (Object)adaptor.create(string_literal12)
             	    ;
             	    adaptor.addChild(root_0, string_literal12_tree);
 
 
-            	    l=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_statement366); 
+            	    l=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_statement447); 
             	    l_tree = 
             	    (Object)adaptor.create(l)
             	    ;
@@ -505,30 +486,33 @@ public TreeAdaptor getTreeAdaptor() {
             	    retval.ret.limit((l!=null?l.getText():null));
 
             	    }
+
+
+            	    }
             	    break;
 
             	default :
-            	    break loop7;
+            	    break loop4;
                 }
             } while (true);
 
 
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:55:13: ( ';' )*
-            loop8:
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:60:13: ( ';' )*
+            loop5:
             do {
-                int alt8=2;
-                int LA8_0 = input.LA(1);
+                int alt5=2;
+                int LA5_0 = input.LA(1);
 
-                if ( (LA8_0==38) ) {
-                    alt8=1;
+                if ( (LA5_0==38) ) {
+                    alt5=1;
                 }
 
 
-                switch (alt8) {
+                switch (alt5) {
             	case 1 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:55:13: ';'
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:60:13: ';'
             	    {
-            	    char_literal13=(Token)match(input,38,FOLLOW_38_in_statement384); 
+            	    char_literal13=(Token)match(input,38,FOLLOW_38_in_statement479); 
             	    char_literal13_tree = 
             	    (Object)adaptor.create(char_literal13)
             	    ;
@@ -539,7 +523,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    break;
 
             	default :
-            	    break loop8;
+            	    break loop5;
                 }
             } while (true);
 
@@ -576,7 +560,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "unary"
-    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:65:1: unary returns [UNARY unary = new UNARY()] : (v1= funct |v2= term );
+    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:70:1: unary returns [UNARY unary = new UNARY()] : (v1= funct |v2= term );
     public final SQLParser.unary_return unary() throws RecognitionException {
         SQLParser.unary_return retval = new SQLParser.unary_return();
         retval.start = input.LT(1);
@@ -591,45 +575,45 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:66:2: (v1= funct |v2= term )
-            int alt9=2;
-            int LA9_0 = input.LA(1);
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:71:2: (v1= funct |v2= term )
+            int alt6=2;
+            int LA6_0 = input.LA(1);
 
-            if ( (LA9_0==IDENT) ) {
-                int LA9_1 = input.LA(2);
+            if ( (LA6_0==IDENT) ) {
+                int LA6_1 = input.LA(2);
 
-                if ( (LA9_1==31) ) {
-                    alt9=1;
+                if ( (LA6_1==31) ) {
+                    alt6=1;
                 }
-                else if ( (LA9_1==EOF||LA9_1==FROM||LA9_1==GROUP||(LA9_1 >= LIMIT && LA9_1 <= LOGICAL)||LA9_1==ORDER||LA9_1==RELATION||LA9_1==WHERE||(LA9_1 >= 32 && LA9_1 <= 39)) ) {
-                    alt9=2;
+                else if ( (LA6_1==EOF||LA6_1==FROM||LA6_1==GROUP||(LA6_1 >= LIMIT && LA6_1 <= LOGICAL)||LA6_1==ORDER||LA6_1==RELATION||LA6_1==WHERE||(LA6_1 >= 32 && LA6_1 <= 39)) ) {
+                    alt6=2;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 9, 1, input);
+                        new NoViableAltException("", 6, 1, input);
 
                     throw nvae;
 
                 }
             }
-            else if ( (LA9_0==DOUBLE||LA9_0==INTEGER||LA9_0==STRING_LITERAL||LA9_0==31) ) {
-                alt9=2;
+            else if ( (LA6_0==DOUBLE||LA6_0==INTEGER||LA6_0==STRING_LITERAL||LA6_0==31) ) {
+                alt6=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 9, 0, input);
+                    new NoViableAltException("", 6, 0, input);
 
                 throw nvae;
 
             }
-            switch (alt9) {
+            switch (alt6) {
                 case 1 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:67:7: v1= funct
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:72:7: v1= funct
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_funct_in_unary415);
+                    pushFollow(FOLLOW_funct_in_unary510);
                     v1=funct();
 
                     state._fsp--;
@@ -641,12 +625,12 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:68:9: v2= term
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:73:9: v2= term
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_term_in_unary429);
+                    pushFollow(FOLLOW_term_in_unary524);
                     v2=term();
 
                     state._fsp--;
@@ -689,7 +673,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "mult"
-    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:73:1: mult returns [MULT ret = new MULT()] : u1= unary ( (t= '*' |t= '/' |t= 'mod' ) u2= unary )* ;
+    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:78:1: mult returns [MULT ret = new MULT()] : u1= unary ( (t= '*' |t= '/' |t= 'mod' ) u2= unary )* ;
     public final SQLParser.mult_return mult() throws RecognitionException {
         SQLParser.mult_return retval = new SQLParser.mult_return();
         retval.start = input.LT(1);
@@ -706,13 +690,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object t_tree=null;
 
         try {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:74:4: (u1= unary ( (t= '*' |t= '/' |t= 'mod' ) u2= unary )* )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:75:5: u1= unary ( (t= '*' |t= '/' |t= 'mod' ) u2= unary )*
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:79:4: (u1= unary ( (t= '*' |t= '/' |t= 'mod' ) u2= unary )* )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:80:5: u1= unary ( (t= '*' |t= '/' |t= 'mod' ) u2= unary )*
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_unary_in_mult467);
+            pushFollow(FOLLOW_unary_in_mult562);
             u1=unary();
 
             state._fsp--;
@@ -721,52 +705,52 @@ public TreeAdaptor getTreeAdaptor() {
 
             retval.ret.unary((u1!=null?u1.unary:null));
 
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:76:5: ( (t= '*' |t= '/' |t= 'mod' ) u2= unary )*
-            loop11:
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:81:5: ( (t= '*' |t= '/' |t= 'mod' ) u2= unary )*
+            loop8:
             do {
-                int alt11=2;
-                int LA11_0 = input.LA(1);
+                int alt8=2;
+                int LA8_0 = input.LA(1);
 
-                if ( (LA11_0==33||LA11_0==37||LA11_0==39) ) {
-                    alt11=1;
+                if ( (LA8_0==33||LA8_0==37||LA8_0==39) ) {
+                    alt8=1;
                 }
 
 
-                switch (alt11) {
+                switch (alt8) {
             	case 1 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:76:6: (t= '*' |t= '/' |t= 'mod' ) u2= unary
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:81:6: (t= '*' |t= '/' |t= 'mod' ) u2= unary
             	    {
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:76:6: (t= '*' |t= '/' |t= 'mod' )
-            	    int alt10=3;
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:81:6: (t= '*' |t= '/' |t= 'mod' )
+            	    int alt7=3;
             	    switch ( input.LA(1) ) {
             	    case 33:
             	        {
-            	        alt10=1;
+            	        alt7=1;
             	        }
             	        break;
             	    case 37:
             	        {
-            	        alt10=2;
+            	        alt7=2;
             	        }
             	        break;
             	    case 39:
             	        {
-            	        alt10=3;
+            	        alt7=3;
             	        }
             	        break;
             	    default:
             	        NoViableAltException nvae =
-            	            new NoViableAltException("", 10, 0, input);
+            	            new NoViableAltException("", 7, 0, input);
 
             	        throw nvae;
 
             	    }
 
-            	    switch (alt10) {
+            	    switch (alt7) {
             	        case 1 :
-            	            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:76:7: t= '*'
+            	            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:81:7: t= '*'
             	            {
-            	            t=(Token)match(input,33,FOLLOW_33_in_mult479); 
+            	            t=(Token)match(input,33,FOLLOW_33_in_mult574); 
             	            t_tree = 
             	            (Object)adaptor.create(t)
             	            ;
@@ -778,9 +762,9 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 2 :
-            	            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:76:30: t= '/'
+            	            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:81:30: t= '/'
             	            {
-            	            t=(Token)match(input,37,FOLLOW_37_in_mult487); 
+            	            t=(Token)match(input,37,FOLLOW_37_in_mult582); 
             	            t_tree = 
             	            (Object)adaptor.create(t)
             	            ;
@@ -792,9 +776,9 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 3 :
-            	            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:77:7: t= 'mod'
+            	            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:82:7: t= 'mod'
             	            {
-            	            t=(Token)match(input,39,FOLLOW_39_in_mult499); 
+            	            t=(Token)match(input,39,FOLLOW_39_in_mult594); 
             	            t_tree = 
             	            (Object)adaptor.create(t)
             	            ;
@@ -809,7 +793,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
 
 
-            	    pushFollow(FOLLOW_unary_in_mult511);
+            	    pushFollow(FOLLOW_unary_in_mult606);
             	    u2=unary();
 
             	    state._fsp--;
@@ -822,7 +806,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    break;
 
             	default :
-            	    break loop11;
+            	    break loop8;
                 }
             } while (true);
 
@@ -859,7 +843,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "expression"
-    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:83:1: expression returns [EXPRESSION expr = new EXPRESSION()] : em1= mult ( (t+= '-' |t+= '+' ) em2= mult )* ;
+    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:88:1: expression returns [EXPRESSION expr = new EXPRESSION()] : em1= mult ( (t+= '-' |t+= '+' ) em2= mult )* ;
     public final SQLParser.expression_return expression() throws RecognitionException {
         SQLParser.expression_return retval = new SQLParser.expression_return();
         retval.start = input.LT(1);
@@ -877,13 +861,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object t_tree=null;
 
         try {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:84:4: (em1= mult ( (t+= '-' |t+= '+' ) em2= mult )* )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:84:6: em1= mult ( (t+= '-' |t+= '+' ) em2= mult )*
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:89:4: (em1= mult ( (t+= '-' |t+= '+' ) em2= mult )* )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:89:6: em1= mult ( (t+= '-' |t+= '+' ) em2= mult )*
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_mult_in_expression542);
+            pushFollow(FOLLOW_mult_in_expression637);
             em1=mult();
 
             state._fsp--;
@@ -892,43 +876,43 @@ public TreeAdaptor getTreeAdaptor() {
 
             retval.expr.mult((em1!=null?em1.ret:null));
 
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:85:28: ( (t+= '-' |t+= '+' ) em2= mult )*
-            loop13:
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:90:28: ( (t+= '-' |t+= '+' ) em2= mult )*
+            loop10:
             do {
-                int alt13=2;
-                int LA13_0 = input.LA(1);
+                int alt10=2;
+                int LA10_0 = input.LA(1);
 
-                if ( (LA13_0==34||LA13_0==36) ) {
-                    alt13=1;
+                if ( (LA10_0==34||LA10_0==36) ) {
+                    alt10=1;
                 }
 
 
-                switch (alt13) {
+                switch (alt10) {
             	case 1 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:85:29: (t+= '-' |t+= '+' ) em2= mult
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:90:29: (t+= '-' |t+= '+' ) em2= mult
             	    {
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:85:29: (t+= '-' |t+= '+' )
-            	    int alt12=2;
-            	    int LA12_0 = input.LA(1);
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:90:29: (t+= '-' |t+= '+' )
+            	    int alt9=2;
+            	    int LA9_0 = input.LA(1);
 
-            	    if ( (LA12_0==36) ) {
-            	        alt12=1;
+            	    if ( (LA9_0==36) ) {
+            	        alt9=1;
             	    }
-            	    else if ( (LA12_0==34) ) {
-            	        alt12=2;
+            	    else if ( (LA9_0==34) ) {
+            	        alt9=2;
             	    }
             	    else {
             	        NoViableAltException nvae =
-            	            new NoViableAltException("", 12, 0, input);
+            	            new NoViableAltException("", 9, 0, input);
 
             	        throw nvae;
 
             	    }
-            	    switch (alt12) {
+            	    switch (alt9) {
             	        case 1 :
-            	            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:85:30: t+= '-'
+            	            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:90:30: t+= '-'
             	            {
-            	            t=(Token)match(input,36,FOLLOW_36_in_expression553); 
+            	            t=(Token)match(input,36,FOLLOW_36_in_expression648); 
             	            t_tree = 
             	            (Object)adaptor.create(t)
             	            ;
@@ -943,9 +927,9 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 2 :
-            	            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:85:55: t+= '+'
+            	            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:90:55: t+= '+'
             	            {
-            	            t=(Token)match(input,34,FOLLOW_34_in_expression560); 
+            	            t=(Token)match(input,34,FOLLOW_34_in_expression655); 
             	            t_tree = 
             	            (Object)adaptor.create(t)
             	            ;
@@ -963,7 +947,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
 
 
-            	    pushFollow(FOLLOW_mult_in_expression567);
+            	    pushFollow(FOLLOW_mult_in_expression662);
             	    em2=mult();
 
             	    state._fsp--;
@@ -976,7 +960,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    break;
 
             	default :
-            	    break loop13;
+            	    break loop10;
                 }
             } while (true);
 
@@ -1013,7 +997,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "relation"
-    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:91:1: relation returns [RELATION ret] : e1= expression RELATION e2= expression ;
+    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:96:1: relation returns [RELATION ret] : e1= expression RELATION e2= expression ;
     public final SQLParser.relation_return relation() throws RecognitionException {
         SQLParser.relation_return retval = new SQLParser.relation_return();
         retval.start = input.LT(1);
@@ -1030,27 +1014,27 @@ public TreeAdaptor getTreeAdaptor() {
         Object RELATION14_tree=null;
 
         try {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:92:9: (e1= expression RELATION e2= expression )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:93:11: e1= expression RELATION e2= expression
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:97:9: (e1= expression RELATION e2= expression )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:98:11: e1= expression RELATION e2= expression
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_expression_in_relation622);
+            pushFollow(FOLLOW_expression_in_relation717);
             e1=expression();
 
             state._fsp--;
 
             adaptor.addChild(root_0, e1.getTree());
 
-            RELATION14=(Token)match(input,RELATION,FOLLOW_RELATION_in_relation624); 
+            RELATION14=(Token)match(input,RELATION,FOLLOW_RELATION_in_relation719); 
             RELATION14_tree = 
             (Object)adaptor.create(RELATION14)
             ;
             adaptor.addChild(root_0, RELATION14_tree);
 
 
-            pushFollow(FOLLOW_expression_in_relation628);
+            pushFollow(FOLLOW_expression_in_relation723);
             e2=expression();
 
             state._fsp--;
@@ -1091,7 +1075,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "logical"
-    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:97:1: logical returns [LOGICAL ret = new LOGICAL()] : r1= relation (lotoken= LOGICAL r2= relation )* ;
+    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:102:1: logical returns [LOGICAL ret = new LOGICAL()] : r1= relation (lotoken= LOGICAL r2= relation )* ;
     public final SQLParser.logical_return logical() throws RecognitionException {
         SQLParser.logical_return retval = new SQLParser.logical_return();
         retval.start = input.LT(1);
@@ -1108,13 +1092,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object lotoken_tree=null;
 
         try {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:98:9: (r1= relation (lotoken= LOGICAL r2= relation )* )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:98:11: r1= relation (lotoken= LOGICAL r2= relation )*
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:103:9: (r1= relation (lotoken= LOGICAL r2= relation )* )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:103:11: r1= relation (lotoken= LOGICAL r2= relation )*
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_relation_in_logical670);
+            pushFollow(FOLLOW_relation_in_logical765);
             r1=relation();
 
             state._fsp--;
@@ -1123,22 +1107,22 @@ public TreeAdaptor getTreeAdaptor() {
 
             retval.ret.relation((r1!=null?r1.ret:null)); select.rangeGroups.addRange((r1!=null?r1.ret:null).getRange());
 
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:99:11: (lotoken= LOGICAL r2= relation )*
-            loop14:
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:104:11: (lotoken= LOGICAL r2= relation )*
+            loop11:
             do {
-                int alt14=2;
-                int LA14_0 = input.LA(1);
+                int alt11=2;
+                int LA11_0 = input.LA(1);
 
-                if ( (LA14_0==LOGICAL) ) {
-                    alt14=1;
+                if ( (LA11_0==LOGICAL) ) {
+                    alt11=1;
                 }
 
 
-                switch (alt14) {
+                switch (alt11) {
             	case 1 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:99:12: lotoken= LOGICAL r2= relation
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:104:12: lotoken= LOGICAL r2= relation
             	    {
-            	    lotoken=(Token)match(input,LOGICAL,FOLLOW_LOGICAL_in_logical688); 
+            	    lotoken=(Token)match(input,LOGICAL,FOLLOW_LOGICAL_in_logical783); 
             	    lotoken_tree = 
             	    (Object)adaptor.create(lotoken)
             	    ;
@@ -1153,7 +1137,7 @@ public TreeAdaptor getTreeAdaptor() {
             	                  
             	                
 
-            	    pushFollow(FOLLOW_relation_in_logical707);
+            	    pushFollow(FOLLOW_relation_in_logical802);
             	    r2=relation();
 
             	    state._fsp--;
@@ -1166,7 +1150,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    break;
 
             	default :
-            	    break loop14;
+            	    break loop11;
                 }
             } while (true);
 
@@ -1203,7 +1187,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "funct"
-    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:111:1: funct returns [FUNCTION f = new FUNCTION()] : IDENT '(' fe1= expression ( ',' fe2= expression )* ')' ;
+    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:116:1: funct returns [FUNCTION f = new FUNCTION()] : IDENT '(' fe1= expression ( ',' fe2= expression )* ')' ;
     public final SQLParser.funct_return funct() throws RecognitionException {
         SQLParser.funct_return retval = new SQLParser.funct_return();
         retval.start = input.LT(1);
@@ -1226,13 +1210,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object char_literal18_tree=null;
 
         try {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:112:6: ( IDENT '(' fe1= expression ( ',' fe2= expression )* ')' )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:112:8: IDENT '(' fe1= expression ( ',' fe2= expression )* ')'
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:117:6: ( IDENT '(' fe1= expression ( ',' fe2= expression )* ')' )
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:117:8: IDENT '(' fe1= expression ( ',' fe2= expression )* ')'
             {
             root_0 = (Object)adaptor.nil();
 
 
-            IDENT15=(Token)match(input,IDENT,FOLLOW_IDENT_in_funct744); 
+            IDENT15=(Token)match(input,IDENT,FOLLOW_IDENT_in_funct839); 
             IDENT15_tree = 
             (Object)adaptor.create(IDENT15)
             ;
@@ -1241,14 +1225,14 @@ public TreeAdaptor getTreeAdaptor() {
 
             retval.f.name((IDENT15!=null?IDENT15.getText():null));
 
-            char_literal16=(Token)match(input,31,FOLLOW_31_in_funct747); 
+            char_literal16=(Token)match(input,31,FOLLOW_31_in_funct842); 
             char_literal16_tree = 
             (Object)adaptor.create(char_literal16)
             ;
             adaptor.addChild(root_0, char_literal16_tree);
 
 
-            pushFollow(FOLLOW_expression_in_funct751);
+            pushFollow(FOLLOW_expression_in_funct846);
             fe1=expression();
 
             state._fsp--;
@@ -1257,29 +1241,29 @@ public TreeAdaptor getTreeAdaptor() {
 
             retval.f.expression((fe1!=null?fe1.expr:null));
 
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:112:84: ( ',' fe2= expression )*
-            loop15:
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:117:84: ( ',' fe2= expression )*
+            loop12:
             do {
-                int alt15=2;
-                int LA15_0 = input.LA(1);
+                int alt12=2;
+                int LA12_0 = input.LA(1);
 
-                if ( (LA15_0==35) ) {
-                    alt15=1;
+                if ( (LA12_0==35) ) {
+                    alt12=1;
                 }
 
 
-                switch (alt15) {
+                switch (alt12) {
             	case 1 :
-            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:112:85: ',' fe2= expression
+            	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:117:85: ',' fe2= expression
             	    {
-            	    char_literal17=(Token)match(input,35,FOLLOW_35_in_funct756); 
+            	    char_literal17=(Token)match(input,35,FOLLOW_35_in_funct851); 
             	    char_literal17_tree = 
             	    (Object)adaptor.create(char_literal17)
             	    ;
             	    adaptor.addChild(root_0, char_literal17_tree);
 
 
-            	    pushFollow(FOLLOW_expression_in_funct760);
+            	    pushFollow(FOLLOW_expression_in_funct855);
             	    fe2=expression();
 
             	    state._fsp--;
@@ -1292,12 +1276,12 @@ public TreeAdaptor getTreeAdaptor() {
             	    break;
 
             	default :
-            	    break loop15;
+            	    break loop12;
                 }
             } while (true);
 
 
-            char_literal18=(Token)match(input,32,FOLLOW_32_in_funct766); 
+            char_literal18=(Token)match(input,32,FOLLOW_32_in_funct861); 
             char_literal18_tree = 
             (Object)adaptor.create(char_literal18)
             ;
@@ -1336,7 +1320,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "term"
-    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:117:1: term returns [TERM term] : ( (v= IDENT -> ^( VARIABLE $v) |v= INTEGER -> ^( NUMBER $v) |v= DOUBLE -> ^( REAL_NUMBER $v) | '(' r= expression ')' -> ^( EXPRESSION $r) ) |v= STRING_LITERAL -> ^( STRING $v) );
+    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:122:1: term returns [TERM term] : ( (v= IDENT -> ^( VARIABLE $v) |v= INTEGER -> ^( NUMBER $v) |v= DOUBLE -> ^( REAL_NUMBER $v) | '(' r= expression ')' -> ^( EXPRESSION $r) ) |v= STRING_LITERAL -> ^( STRING $v) );
     public final SQLParser.term_return term() throws RecognitionException {
         SQLParser.term_return retval = new SQLParser.term_return();
         retval.start = input.LT(1);
@@ -1361,63 +1345,63 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_31=new RewriteRuleTokenStream(adaptor,"token 31");
         RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:117:25: ( (v= IDENT -> ^( VARIABLE $v) |v= INTEGER -> ^( NUMBER $v) |v= DOUBLE -> ^( REAL_NUMBER $v) | '(' r= expression ')' -> ^( EXPRESSION $r) ) |v= STRING_LITERAL -> ^( STRING $v) )
-            int alt17=2;
-            int LA17_0 = input.LA(1);
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:122:25: ( (v= IDENT -> ^( VARIABLE $v) |v= INTEGER -> ^( NUMBER $v) |v= DOUBLE -> ^( REAL_NUMBER $v) | '(' r= expression ')' -> ^( EXPRESSION $r) ) |v= STRING_LITERAL -> ^( STRING $v) )
+            int alt14=2;
+            int LA14_0 = input.LA(1);
 
-            if ( (LA17_0==DOUBLE||(LA17_0 >= IDENT && LA17_0 <= INTEGER)||LA17_0==31) ) {
-                alt17=1;
+            if ( (LA14_0==DOUBLE||(LA14_0 >= IDENT && LA14_0 <= INTEGER)||LA14_0==31) ) {
+                alt14=1;
             }
-            else if ( (LA17_0==STRING_LITERAL) ) {
-                alt17=2;
+            else if ( (LA14_0==STRING_LITERAL) ) {
+                alt14=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 17, 0, input);
+                    new NoViableAltException("", 14, 0, input);
 
                 throw nvae;
 
             }
-            switch (alt17) {
+            switch (alt14) {
                 case 1 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:118:7: (v= IDENT -> ^( VARIABLE $v) |v= INTEGER -> ^( NUMBER $v) |v= DOUBLE -> ^( REAL_NUMBER $v) | '(' r= expression ')' -> ^( EXPRESSION $r) )
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:123:7: (v= IDENT -> ^( VARIABLE $v) |v= INTEGER -> ^( NUMBER $v) |v= DOUBLE -> ^( REAL_NUMBER $v) | '(' r= expression ')' -> ^( EXPRESSION $r) )
                     {
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:118:7: (v= IDENT -> ^( VARIABLE $v) |v= INTEGER -> ^( NUMBER $v) |v= DOUBLE -> ^( REAL_NUMBER $v) | '(' r= expression ')' -> ^( EXPRESSION $r) )
-                    int alt16=4;
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:123:7: (v= IDENT -> ^( VARIABLE $v) |v= INTEGER -> ^( NUMBER $v) |v= DOUBLE -> ^( REAL_NUMBER $v) | '(' r= expression ')' -> ^( EXPRESSION $r) )
+                    int alt13=4;
                     switch ( input.LA(1) ) {
                     case IDENT:
                         {
-                        alt16=1;
+                        alt13=1;
                         }
                         break;
                     case INTEGER:
                         {
-                        alt16=2;
+                        alt13=2;
                         }
                         break;
                     case DOUBLE:
                         {
-                        alt16=3;
+                        alt13=3;
                         }
                         break;
                     case 31:
                         {
-                        alt16=4;
+                        alt13=4;
                         }
                         break;
                     default:
                         NoViableAltException nvae =
-                            new NoViableAltException("", 16, 0, input);
+                            new NoViableAltException("", 13, 0, input);
 
                         throw nvae;
 
                     }
 
-                    switch (alt16) {
+                    switch (alt13) {
                         case 1 :
-                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:118:9: v= IDENT
+                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:123:9: v= IDENT
                             {
-                            v=(Token)match(input,IDENT,FOLLOW_IDENT_in_term793);  
+                            v=(Token)match(input,IDENT,FOLLOW_IDENT_in_term888);  
                             stream_IDENT.add(v);
 
 
@@ -1435,9 +1419,9 @@ public TreeAdaptor getTreeAdaptor() {
                             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                             root_0 = (Object)adaptor.nil();
-                            // 119:11: -> ^( VARIABLE $v)
+                            // 124:11: -> ^( VARIABLE $v)
                             {
-                                // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:119:14: ^( VARIABLE $v)
+                                // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:124:14: ^( VARIABLE $v)
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot(
@@ -1459,9 +1443,9 @@ public TreeAdaptor getTreeAdaptor() {
                             }
                             break;
                         case 2 :
-                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:120:9: v= INTEGER
+                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:125:9: v= INTEGER
                             {
-                            v=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_term834);  
+                            v=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_term929);  
                             stream_INTEGER.add(v);
 
 
@@ -1477,9 +1461,9 @@ public TreeAdaptor getTreeAdaptor() {
                             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                             root_0 = (Object)adaptor.nil();
-                            // 120:19: -> ^( NUMBER $v)
+                            // 125:19: -> ^( NUMBER $v)
                             {
-                                // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:120:22: ^( NUMBER $v)
+                                // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:125:22: ^( NUMBER $v)
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot(
@@ -1501,9 +1485,9 @@ public TreeAdaptor getTreeAdaptor() {
                             }
                             break;
                         case 3 :
-                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:121:9: v= DOUBLE
+                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:126:9: v= DOUBLE
                             {
-                            v=(Token)match(input,DOUBLE,FOLLOW_DOUBLE_in_term857);  
+                            v=(Token)match(input,DOUBLE,FOLLOW_DOUBLE_in_term952);  
                             stream_DOUBLE.add(v);
 
 
@@ -1519,9 +1503,9 @@ public TreeAdaptor getTreeAdaptor() {
                             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                             root_0 = (Object)adaptor.nil();
-                            // 121:18: -> ^( REAL_NUMBER $v)
+                            // 126:18: -> ^( REAL_NUMBER $v)
                             {
-                                // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:121:21: ^( REAL_NUMBER $v)
+                                // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:126:21: ^( REAL_NUMBER $v)
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot(
@@ -1543,20 +1527,20 @@ public TreeAdaptor getTreeAdaptor() {
                             }
                             break;
                         case 4 :
-                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:122:9: '(' r= expression ')'
+                            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:127:9: '(' r= expression ')'
                             {
-                            char_literal19=(Token)match(input,31,FOLLOW_31_in_term879);  
+                            char_literal19=(Token)match(input,31,FOLLOW_31_in_term974);  
                             stream_31.add(char_literal19);
 
 
-                            pushFollow(FOLLOW_expression_in_term883);
+                            pushFollow(FOLLOW_expression_in_term978);
                             r=expression();
 
                             state._fsp--;
 
                             stream_expression.add(r.getTree());
 
-                            char_literal20=(Token)match(input,32,FOLLOW_32_in_term885);  
+                            char_literal20=(Token)match(input,32,FOLLOW_32_in_term980);  
                             stream_32.add(char_literal20);
 
 
@@ -1572,9 +1556,9 @@ public TreeAdaptor getTreeAdaptor() {
                             RewriteRuleSubtreeStream stream_r=new RewriteRuleSubtreeStream(adaptor,"rule r",r!=null?r.tree:null);
 
                             root_0 = (Object)adaptor.nil();
-                            // 122:30: -> ^( EXPRESSION $r)
+                            // 127:30: -> ^( EXPRESSION $r)
                             {
-                                // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:122:33: ^( EXPRESSION $r)
+                                // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:127:33: ^( EXPRESSION $r)
                                 {
                                 Object root_1 = (Object)adaptor.nil();
                                 root_1 = (Object)adaptor.becomeRoot(
@@ -1600,9 +1584,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:125:9: v= STRING_LITERAL
+                    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:130:9: v= STRING_LITERAL
                     {
-                    v=(Token)match(input,STRING_LITERAL,FOLLOW_STRING_LITERAL_in_term925);  
+                    v=(Token)match(input,STRING_LITERAL,FOLLOW_STRING_LITERAL_in_term1020);  
                     stream_STRING_LITERAL.add(v);
 
 
@@ -1618,9 +1602,9 @@ public TreeAdaptor getTreeAdaptor() {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 125:26: -> ^( STRING $v)
+                    // 130:26: -> ^( STRING $v)
                     {
-                        // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:125:29: ^( STRING $v)
+                        // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:130:29: ^( STRING $v)
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot(
@@ -1675,50 +1659,50 @@ public TreeAdaptor getTreeAdaptor() {
     public static final BitSet FOLLOW_expression_in_statement188 = new BitSet(new long[]{0x0000000800000080L});
     public static final BitSet FOLLOW_FROM_in_statement195 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_statement197 = new BitSet(new long[]{0x0000004020081202L});
-    public static final BitSet FOLLOW_WHERE_in_statement215 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_logical_in_statement219 = new BitSet(new long[]{0x0000004020081202L});
-    public static final BitSet FOLLOW_GROUP_in_statement238 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_BY_in_statement240 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_expression_in_statement245 = new BitSet(new long[]{0x0000004800081202L});
-    public static final BitSet FOLLOW_35_in_statement273 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_expression_in_statement278 = new BitSet(new long[]{0x0000004800081202L});
-    public static final BitSet FOLLOW_ORDER_in_statement300 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_BY_in_statement302 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_expression_in_statement307 = new BitSet(new long[]{0x0000004800081002L});
-    public static final BitSet FOLLOW_35_in_statement335 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_expression_in_statement340 = new BitSet(new long[]{0x0000004800081002L});
-    public static final BitSet FOLLOW_LIMIT_in_statement362 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_INTEGER_in_statement366 = new BitSet(new long[]{0x0000004000001002L});
-    public static final BitSet FOLLOW_38_in_statement384 = new BitSet(new long[]{0x0000004000000002L});
-    public static final BitSet FOLLOW_funct_in_unary415 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_term_in_unary429 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_unary_in_mult467 = new BitSet(new long[]{0x000000A200000002L});
-    public static final BitSet FOLLOW_33_in_mult479 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_37_in_mult487 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_39_in_mult499 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_unary_in_mult511 = new BitSet(new long[]{0x000000A200000002L});
-    public static final BitSet FOLLOW_mult_in_expression542 = new BitSet(new long[]{0x0000001400000002L});
-    public static final BitSet FOLLOW_36_in_expression553 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_34_in_expression560 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_mult_in_expression567 = new BitSet(new long[]{0x0000001400000002L});
-    public static final BitSet FOLLOW_expression_in_relation622 = new BitSet(new long[]{0x0000000000400000L});
-    public static final BitSet FOLLOW_RELATION_in_relation624 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_expression_in_relation628 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_relation_in_logical670 = new BitSet(new long[]{0x0000000000002002L});
-    public static final BitSet FOLLOW_LOGICAL_in_logical688 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_relation_in_logical707 = new BitSet(new long[]{0x0000000000002002L});
-    public static final BitSet FOLLOW_IDENT_in_funct744 = new BitSet(new long[]{0x0000000080000000L});
-    public static final BitSet FOLLOW_31_in_funct747 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_expression_in_funct751 = new BitSet(new long[]{0x0000000900000000L});
-    public static final BitSet FOLLOW_35_in_funct756 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_expression_in_funct760 = new BitSet(new long[]{0x0000000900000000L});
-    public static final BitSet FOLLOW_32_in_funct766 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_term793 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INTEGER_in_term834 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_DOUBLE_in_term857 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_31_in_term879 = new BitSet(new long[]{0x0000000084000C20L});
-    public static final BitSet FOLLOW_expression_in_term883 = new BitSet(new long[]{0x0000000100000000L});
-    public static final BitSet FOLLOW_32_in_term885 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STRING_LITERAL_in_term925 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_WHERE_in_statement229 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_logical_in_statement233 = new BitSet(new long[]{0x0000004020081202L});
+    public static final BitSet FOLLOW_GROUP_in_statement275 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_BY_in_statement277 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_expression_in_statement282 = new BitSet(new long[]{0x0000004820081202L});
+    public static final BitSet FOLLOW_35_in_statement310 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_expression_in_statement315 = new BitSet(new long[]{0x0000004820081202L});
+    public static final BitSet FOLLOW_ORDER_in_statement359 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_BY_in_statement361 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_expression_in_statement366 = new BitSet(new long[]{0x0000004820081202L});
+    public static final BitSet FOLLOW_35_in_statement394 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_expression_in_statement399 = new BitSet(new long[]{0x0000004820081202L});
+    public static final BitSet FOLLOW_LIMIT_in_statement443 = new BitSet(new long[]{0x0000000000000800L});
+    public static final BitSet FOLLOW_INTEGER_in_statement447 = new BitSet(new long[]{0x0000004020081202L});
+    public static final BitSet FOLLOW_38_in_statement479 = new BitSet(new long[]{0x0000004000000002L});
+    public static final BitSet FOLLOW_funct_in_unary510 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_term_in_unary524 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_unary_in_mult562 = new BitSet(new long[]{0x000000A200000002L});
+    public static final BitSet FOLLOW_33_in_mult574 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_37_in_mult582 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_39_in_mult594 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_unary_in_mult606 = new BitSet(new long[]{0x000000A200000002L});
+    public static final BitSet FOLLOW_mult_in_expression637 = new BitSet(new long[]{0x0000001400000002L});
+    public static final BitSet FOLLOW_36_in_expression648 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_34_in_expression655 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_mult_in_expression662 = new BitSet(new long[]{0x0000001400000002L});
+    public static final BitSet FOLLOW_expression_in_relation717 = new BitSet(new long[]{0x0000000000400000L});
+    public static final BitSet FOLLOW_RELATION_in_relation719 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_expression_in_relation723 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_relation_in_logical765 = new BitSet(new long[]{0x0000000000002002L});
+    public static final BitSet FOLLOW_LOGICAL_in_logical783 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_relation_in_logical802 = new BitSet(new long[]{0x0000000000002002L});
+    public static final BitSet FOLLOW_IDENT_in_funct839 = new BitSet(new long[]{0x0000000080000000L});
+    public static final BitSet FOLLOW_31_in_funct842 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_expression_in_funct846 = new BitSet(new long[]{0x0000000900000000L});
+    public static final BitSet FOLLOW_35_in_funct851 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_expression_in_funct855 = new BitSet(new long[]{0x0000000900000000L});
+    public static final BitSet FOLLOW_32_in_funct861 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_term888 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INTEGER_in_term929 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_DOUBLE_in_term952 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_31_in_term974 = new BitSet(new long[]{0x0000000084000C20L});
+    public static final BitSet FOLLOW_expression_in_term978 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_32_in_term980 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STRING_LITERAL_in_term1020 = new BitSet(new long[]{0x0000000000000002L});
 
 }

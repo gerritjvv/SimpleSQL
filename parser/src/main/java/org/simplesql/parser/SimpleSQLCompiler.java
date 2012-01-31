@@ -94,9 +94,6 @@ public class SimpleSQLCompiler implements SQLCompiler {
 
 			TreeJavaConvert converter = new TreeJavaConvert(select);
 
-			System.out.println("SimpleSQLCompiler:SELECT: " + "new org.simplesql.data.Cell[]{"
-							+ converter.getSelectExpressions() + "}");
-			
 			ExpressionEvaluator eval = new ExpressionEvaluator(
 					"new org.simplesql.data.Cell[]{"
 							+ converter.getSelectExpressions() + "}",
@@ -167,7 +164,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 					"Some of the columns do not exist in table definition : found only "
 							+ Arrays.toString(names));
 		}
-		
+
 		return new Object[][] { names, types };
 	}
 
@@ -402,11 +399,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 				Class[] columnTypes) throws CompileException, ParseException,
 				ScanException {
 
-			String str = "new " + SimpleCellKey.class.getName() + "( new "
-					+ Cell.class.getName() + "[]{"
-					+ converter.getGroupByExpressions() + "})";
-
-			evalKeyCreator = new ExpressionEvaluator("new "
+				evalKeyCreator = new ExpressionEvaluator("new "
 					+ SimpleObjectKey.class.getName() + "( new Object[]{"
 					+ converter.getGroupByExpressions() + "})", Key.class,
 					columnNames, columnTypes);

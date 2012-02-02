@@ -399,7 +399,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 				Class[] columnTypes) throws CompileException, ParseException,
 				ScanException {
 
-				evalKeyCreator = new ExpressionEvaluator("new "
+			evalKeyCreator = new ExpressionEvaluator("new "
 					+ SimpleObjectKey.class.getName() + "( new Object[]{"
 					+ converter.getGroupByExpressions() + "})", Key.class,
 					columnNames, columnTypes);

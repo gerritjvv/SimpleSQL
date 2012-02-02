@@ -264,9 +264,9 @@ public class TreeJavaConvert {
 
 				int i = 0;
 				for (EXPRESSION arg : f.getArgs()) {
-					if(i++ != 0)
+					if (i++ != 0)
 						buff.append(',');
-						
+
 					arg.visit(exprVisitor);
 				}
 
@@ -278,16 +278,19 @@ public class TreeJavaConvert {
 		@Override
 		public void term(DOUBLE d) {
 
-			double val = d.getVal();
+			Number val = d.getVal();
 
 			buff.append(val);
 		}
 
 		@Override
 		public void term(INTEGER i) {
-			int val = i.getVal();
-
+			Number val = i.getVal();
+			
 			buff.append(val);
+			
+			if(val instanceof Long)
+				buff.append('L');
 		}
 
 		@Override
@@ -300,6 +303,11 @@ public class TreeJavaConvert {
 			String name = v.getName();
 
 			buff.append(name);
+		}
+
+		@Override
+		public void term(BOOLEAN d) {
+			buff.append(d.getVal());
 		}
 
 	}

@@ -7,33 +7,30 @@ package org.simplesql.parser.tree;
  */
 public class UNARY {
 
-	
-	enum TYPE{
+	enum TYPE {
 		VARIABLE, CONSTANT, MIXED;
 	}
-	
+
 	TERM term;
 	TYPE type;
-	
-	
+
 	public void term(TERM term) {
 		this.term = term;
-		if(term instanceof VARIABLE){
+		if (term instanceof VARIABLE) {
 			type = TYPE.VARIABLE;
-		}else if(term instanceof NUMBER || term instanceof STRING){
+		} else if (term instanceof NUMBER || term instanceof STRING) {
 			type = TYPE.CONSTANT;
-		}else{
+		} else {
 			type = TYPE.MIXED;
 		}
 	}
-	
-	public TYPE getType(){
+
+	public TYPE getType() {
 		return type;
 	}
 
-	
 	public void visit(Visitor visitor) {
-		
+
 		if (term instanceof EXPRESSION)
 			visitor.term((EXPRESSION) term);
 		else if (term instanceof FUNCTION)
@@ -44,6 +41,8 @@ public class UNARY {
 			visitor.term((INTEGER) term);
 		else if (term instanceof STRING)
 			visitor.term((STRING) term);
+		else if (term instanceof BOOLEAN)
+			visitor.term((BOOLEAN) term);
 		else
 			visitor.term((VARIABLE) term);
 	}
@@ -53,6 +52,8 @@ public class UNARY {
 		void term(EXPRESSION expression);
 
 		void term(FUNCTION f);
+
+		void term(BOOLEAN d);
 
 		void term(DOUBLE d);
 

@@ -123,6 +123,7 @@ term returns [TERM term]:
       ( v=IDENT  {variables.add($v.text.trim());}   
           -> ^(VARIABLE $v) {$term = new VARIABLE($v.text)}  
       | v=INTEGER -> ^(NUMBER $v) { $term = new INTEGER($v.text)}
+      | v=BOOL    -> ^(BOOL $v) { $term = new BOOLEAN($v.text) }
       | v=DOUBLE -> ^(REAL_NUMBER $v) {$term = new DOUBLE($v.text)} 
       | '(' r=expression ')' -> ^(EXPRESSION $r)
           
@@ -143,6 +144,7 @@ LIMIT : 'LIMIT';
 
 DOUBLE : INTEGER '.' INTEGER;
 INTEGER : '0'..'9'+;
+BOOL : ('true') | ('TRUE')  | ('false') | ('FALSE') | '0' | '1';
 
 STRING_LITERAL :
   '"' (~('"'|'\n'|'\r'))* '"' | '\'' (~('\''|'\n'|'\r'))* '\'';

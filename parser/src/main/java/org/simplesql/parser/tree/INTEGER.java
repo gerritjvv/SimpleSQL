@@ -1,17 +1,22 @@
 package org.simplesql.parser.tree;
 
-public class INTEGER extends NUMBER{
+public class INTEGER extends NUMBER {
 
-	final int val;
+	Number val;
 
 	public INTEGER(String val) {
 		super(TYPE.INTEGER);
-		this.val = Integer.parseInt(val);
+		try {
+			this.val = Integer.parseInt(val);
+		} catch (NumberFormatException nfe) {
+			this.val = Long.parseLong(val);
+		}
+
 		setValue(this.val);
 	}
 
-	public int getVal() {
+	public Number getVal() {
 		return val;
 	}
-	
+
 }

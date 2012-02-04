@@ -65,16 +65,15 @@ public class SimpleSQLCompiler implements SQLCompiler {
 	}
 
 	@Override
-	public SQLExecutor compile(TableDef tableDef, String sql) {
+	public SELECT compileSelect(String sql) {
 		try {
 
 			SQLLexer lexer = new SQLLexer(new ANTLRStringStream(sql));
 			SQLParser parser = new SQLParser(new CommonTokenStream(lexer));
 			parser.setTreeAdaptor(new SELECTTreeAdaptor());
 
-			SELECT select = parser.statement().ret;
+			return parser.statement().ret;
 
-			return compile(tableDef, select);
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);
 			excp.setStackTrace(t.getStackTrace());
@@ -83,7 +82,22 @@ public class SimpleSQLCompiler implements SQLCompiler {
 
 	}
 
-	private SQLExecutor compile(TableDef tableDef, SELECT select) {
+	@Override
+	public SQLExecutor compile(TableDef tableDef, String sql) {
+		try {
+
+
+			return compile(tableDef, compileSelect(sql));
+		} catch (Throwable t) {
+			CompilerException excp = new CompilerException(t.toString(), t);
+			excp.setStackTrace(t.getStackTrace());
+			throw excp;
+		}
+
+	}
+
+	@Override
+	public SQLExecutor compile(TableDef tableDef, SELECT select) {
 		try {
 
 			Set<String> variablesUsed = select.getVariables();

@@ -86,7 +86,6 @@ public class SimpleSQLCompiler implements SQLCompiler {
 	public SQLExecutor compile(TableDef tableDef, String sql) {
 		try {
 
-
 			return compile(tableDef, compileSelect(sql));
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);
@@ -161,12 +160,27 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		int usedI = 0;
 
 		for (int i = 0; i < len; i++) {
-			ColumnDef def = defs[i];
+			final ColumnDef def = defs[i];
 
 			final String name = def.getName();
 			if (variablesUsed.contains(name)) {
 				names[usedI] = def.getName();
-				types[usedI] = def.getJavaType();
+				Class<?> javaCls = def.getJavaType();
+				if (Number.class.isAssignableFrom(javaCls)) {
+					if (Integer.class.equals(javaCls)) {
+						javaCls = int.class;
+					} else if (Long.class.equals(javaCls)) {
+						javaCls = long.class;
+					} else if (Double.class.equals(javaCls)) {
+						javaCls = double.class;
+					} else if (Float.class.equals(javaCls)) {
+						javaCls = float.class;
+					}
+				} else if (Boolean.class.equals(javaCls)) {
+					javaCls = boolean.class;
+				}
+
+				types[usedI] = javaCls;
 				usedI++;
 				if (usedI >= usedLen)
 					break;

@@ -19,11 +19,11 @@ public class LOGICAL {
 		}
 
 		public static OP parse(String id) {
-			if (id.equals(AND.val))
+			if (id.equalsIgnoreCase(AND.val))
 				return AND;
-			else if (id.equals(OR.val))
+			else if (id.equalsIgnoreCase(OR.val))
 				return OR;
-			else if (id.equals(JAVA_AND.val))
+			else if (id.equalsIgnoreCase(JAVA_AND.val))
 				return JAVA_AND;
 			else
 				return JAVA_OR;

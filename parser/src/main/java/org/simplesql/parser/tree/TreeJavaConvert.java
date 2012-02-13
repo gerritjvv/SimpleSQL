@@ -286,16 +286,16 @@ public class TreeJavaConvert {
 		@Override
 		public void term(INTEGER i) {
 			Number val = i.getVal();
-			
+
 			buff.append(val);
-			
-			if(val instanceof Long)
+
+			if (val instanceof Long)
 				buff.append('L');
 		}
 
 		@Override
 		public void term(STRING s) {
-			buff.append(s.getVal());
+			buff.append('\"').append(s.getVal()).append('\"');
 		}
 
 		@Override

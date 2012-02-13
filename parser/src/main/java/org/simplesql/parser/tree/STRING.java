@@ -6,7 +6,16 @@ public class STRING extends TERM {
 
 	public STRING(String val) {
 		super(TYPE.STRING);
-		this.val = val;
+
+		// trim and remove starting and ending ' or " characters.
+		String locVal = val.trim();
+
+		if (locVal.startsWith("\'") && locVal.endsWith("\'")
+				|| (locVal.startsWith("\"") && locVal.endsWith("\""))) {
+			locVal = locVal.substring(1, locVal.length() - 2);
+		}
+
+		this.val = locVal;
 		setValue(val);
 	}
 

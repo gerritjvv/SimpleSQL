@@ -43,6 +43,24 @@ public class SimpleColumnDef implements ColumnDef {
 	}
 
 	@Override
+	public byte getByteMax(){
+		Object max = cell.getMax();
+		if(max instanceof String)
+			return (byte)Character.MAX_VALUE*-1;
+		else
+			return Byte.MAX_VALUE;
+	}
+	
+	@Override
+	public byte getByteMin(){
+		Object min = cell.getMin();
+		if(min instanceof String)
+			return (byte)Character.MIN_VALUE;
+		else
+			return Byte.MIN_VALUE;
+	}
+	
+	@Override
 	public Object getMax() {
 		return cell.getMax();
 	}

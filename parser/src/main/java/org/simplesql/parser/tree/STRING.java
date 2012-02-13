@@ -16,7 +16,7 @@ public class STRING extends TERM {
 		}
 
 		this.val = locVal;
-		setValue(val);
+		setValue(locVal);
 	}
 
 	public String getVal() {

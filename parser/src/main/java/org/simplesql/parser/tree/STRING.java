@@ -12,7 +12,7 @@ public class STRING extends TERM {
 
 		if (locVal.startsWith("\'") && locVal.endsWith("\'")
 				|| (locVal.startsWith("\"") && locVal.endsWith("\""))) {
-			locVal = locVal.substring(1, locVal.length() - 2);
+			locVal = locVal.substring(1, locVal.length() - 1);
 		}
 
 		this.val = locVal;

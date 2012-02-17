@@ -12,6 +12,9 @@ public class BOOLEAN extends TERM {
 			int i = Integer.parseInt(val);
 			this.val = i == 1;
 		}
+
+		setValue(this.val);
+
 	}
 
 	public boolean getVal() {

@@ -18,7 +18,8 @@ public class UNARY {
 		this.term = term;
 		if (term instanceof VARIABLE) {
 			type = TYPE.VARIABLE;
-		} else if (term instanceof NUMBER || term instanceof STRING) {
+		} else if (term instanceof NUMBER || term instanceof STRING
+				|| term instanceof BOOLEAN) {
 			type = TYPE.CONSTANT;
 		} else {
 			type = TYPE.MIXED;

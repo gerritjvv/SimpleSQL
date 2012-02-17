@@ -107,9 +107,8 @@ public class VariableRange {
 			lower = Math.max((Integer) lower, ((Number) val).intValue());
 		else if (lower instanceof Float)
 			lower = Math.max((Float) lower, ((Float) val).floatValue());
-		else
+		else if (lower instanceof Long)
 			lower = Math.max((Long) lower, ((Number) val).longValue());
-
 	}
 
 	public void addEq(Object val) {
@@ -122,7 +121,7 @@ public class VariableRange {
 			upper = increaseString(val.toString());
 		} else if (val instanceof Boolean) {
 			lower = val;
-			upper = 2;
+			upper = val;
 		} else {
 			lower = val;
 			upper = Integer.MAX_VALUE;

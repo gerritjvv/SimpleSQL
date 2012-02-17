@@ -107,8 +107,6 @@ public class SimpleSQLCompiler implements SQLCompiler {
 
 			TreeJavaConvert converter = new TreeJavaConvert(select);
 
-			System.out.println("new org.simplesql.data.Cell[]{"
-					+ converter.getSelectExpressions() + "}");
 			ExpressionEvaluator eval = new ExpressionEvaluator(
 					"new org.simplesql.data.Cell[]{"
 							+ converter.getSelectExpressions() + "}",

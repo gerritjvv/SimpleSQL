@@ -100,7 +100,7 @@ relation returns [RELATION ret]
 //      -> ^(RELATION_TOKEN RELATION $e1 $e2);
   ;    
 logical returns [LOGICAL ret = new LOGICAL()]
-        : r1=relation {$ret.relation($r1.ret); select.rangeGroups.addRange($r1.ret.getRange());} 
+        :  r1=relation {$ret.relation($r1.ret); select.rangeGroups.addRange($r1.ret.getRange());} 
           (lotoken=LOGICAL {
               $ret.logical($LOGICAL.text);
               org.simplesql.parser.tree.LOGICAL.OP lop = org.simplesql.parser.tree.LOGICAL.OP.parse($LOGICAL.text);
@@ -109,7 +109,7 @@ logical returns [LOGICAL ret = new LOGICAL()]
               
             }  
            r2=relation {$ret.relation($r2.ret); select.rangeGroups.addRange($r2.ret.getRange());})*
-//      -> ^(LOGICAL_TOKEN $r1 ($lotoken $r2)*);
+          
  ;     
       
 

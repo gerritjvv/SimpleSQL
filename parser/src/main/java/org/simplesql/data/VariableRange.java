@@ -21,6 +21,7 @@ public class VariableRange {
 		super();
 		this.variable = variable;
 		this.numeric = numeric;
+
 		this.upper = upper;
 		this.lower = lower;
 	}
@@ -67,15 +68,34 @@ public class VariableRange {
 
 	public void addSmallerEq(Object val) {
 
-		if (upper instanceof Double)
-			upper = Math.min((Double) upper, ((Number) val).doubleValue());
-		else if (upper instanceof Integer)
-			upper = Math.min((Integer) upper, ((Number) val).intValue());
-		else if (upper instanceof Long)
-			upper = Math.min((Long) upper, ((Number) val).longValue());
-		else
-			// if(upper instanceof Long || val instanceof Long)
-			lower = Math.min((Long) lower, ((Number) val).longValue());
+		if (upper instanceof Double) {
+			double dval = ((Number) val).doubleValue();
+			if (dval != Double.MAX_VALUE)
+				dval++;
+
+			upper = Math.min((Double) upper, dval);
+
+		} else if (upper instanceof Integer) {
+			int ival = ((Number) val).intValue();
+			if (ival != Integer.MAX_VALUE)
+				ival++;
+
+			upper = Math.min((Integer) upper, ival);
+		} else if (upper instanceof Float) {
+			float fval = ((Float) val).floatValue();
+			if (fval != Float.MAX_VALUE)
+				fval++;
+
+			upper = Math.min((Float) upper, fval);
+		} else if (upper instanceof Long) {
+			long lval = ((Number) val).longValue();
+			if (lval != Long.MAX_VALUE)
+				lval++;
+
+			upper = Math.min((Long) upper, lval);
+		} else
+			throw new RuntimeException("Value type: " + val.getClass()
+					+ " is not supported");
 
 	}
 
@@ -85,6 +105,8 @@ public class VariableRange {
 			lower = Math.max((Double) lower, ((Number) val).doubleValue());
 		else if (lower instanceof Integer)
 			lower = Math.max((Integer) lower, ((Number) val).intValue());
+		else if (lower instanceof Float)
+			lower = Math.max((Float) lower, ((Float) val).floatValue());
 		else
 			lower = Math.max((Long) lower, ((Number) val).longValue());
 
@@ -95,12 +117,40 @@ public class VariableRange {
 		if (val instanceof Number) {
 			addSmallerEq(val);
 			addBiggerEq(val);
+		} else if (val instanceof String) {
+			lower = val;
+			upper = increaseString(val.toString());
+		} else if (val instanceof Boolean) {
+			lower = val;
+			upper = 2;
 		} else {
 			lower = val;
-			upper = val;
+			upper = Integer.MAX_VALUE;
 		}
 
 	}
 
-	
+	/**
+	 * This function will increase the string by one. is used in calculating
+	 * upper ranges for strings.
+	 * 
+	 * @param str
+	 * @return String
+	 */
+	private static final String increaseString(String str) {
+		final int len = str.length();
+		final StringBuilder buff = new StringBuilder(len);
+
+		for (int i = 0; i < len; i++) {
+			char ch = str.charAt(i);
+			if (ch <= Character.MAX_VALUE) {
+				// increase by one
+				buff.append(((char) (ch + 1)));
+				break;
+			}
+		}
+
+		return buff.toString();
+	}
+
 }

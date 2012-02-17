@@ -58,7 +58,7 @@ public class TestRangeGroups extends TestCase{
 				assertEquals(1, ((Integer)ranges.getRange("a").getLower()).intValue());
 				assertEquals(Integer.MAX_VALUE, ((Integer)ranges.getRange("a").getUpper()).intValue());
 				
-				assertEquals(5, ((Integer)ranges.getRange("b").getUpper()).intValue());
+				assertEquals(6, ((Integer)ranges.getRange("b").getUpper()).intValue());
 				assertEquals(Integer.MIN_VALUE, ((Integer)ranges.getRange("b").getLower()).intValue());
 				
 		}
@@ -100,9 +100,9 @@ public class TestRangeGroups extends TestCase{
 				assertTrue(vars.contains("a"));
 				assertTrue(vars.contains("b"));
 				assertEquals(1, ((Integer)ranges.getRange("a").getLower()).intValue());
-				assertEquals(2, ((Integer)ranges.getRange("a").getUpper()).intValue());
+				assertEquals(4, ((Integer)ranges.getRange("a").getUpper()).intValue());
 				
-				assertEquals(5, ((Integer)ranges.getRange("b").getUpper()).intValue());
+				assertEquals(6, ((Integer)ranges.getRange("b").getUpper()).intValue());
 				assertEquals(0, ((Integer)ranges.getRange("b").getLower()).intValue());
 				
 		}
@@ -145,9 +145,9 @@ public class TestRangeGroups extends TestCase{
 				assertTrue(vars.contains("a"));
 				assertTrue(vars.contains("b"));
 				assertEquals(2, ((Integer)ranges.getRange("a").getLower()).intValue());
-				assertEquals(9, ((Integer)ranges.getRange("a").getUpper()).intValue());
+				assertEquals(11, ((Integer)ranges.getRange("a").getUpper()).intValue());
 				
-				assertEquals(5, ((Integer)ranges.getRange("b").getUpper()).intValue());
+				assertEquals(6, ((Integer)ranges.getRange("b").getUpper()).intValue());
 				assertEquals(0, ((Integer)ranges.getRange("b").getLower()).intValue());
 				
 		}
@@ -190,7 +190,7 @@ public class TestRangeGroups extends TestCase{
 				assertNotNull(vars);
 				assertTrue(vars.contains("a"));
 				assertEquals(1, ((Integer)ranges.getRange("a").getLower()).intValue());
-				assertEquals(10, ((Integer)ranges.getRange("a").getUpper()).intValue());
+				assertEquals(12, ((Integer)ranges.getRange("a").getUpper()).intValue());
 				
 			}else{
 				System.out.println("B: " + ranges.getRange("b").getLower() + ", " + ranges.getRange("b").getUpper());
@@ -199,7 +199,7 @@ public class TestRangeGroups extends TestCase{
 				assertNotNull(vars);
 				assertTrue(vars.contains("b"));
 				assertEquals(0, ((Integer)ranges.getRange("b").getLower()).intValue());
-				assertEquals(5, ((Integer)ranges.getRange("b").getUpper()).intValue());
+				assertEquals(6, ((Integer)ranges.getRange("b").getUpper()).intValue());
 			}
 				
 				
@@ -243,7 +243,7 @@ public class TestRangeGroups extends TestCase{
 				assertTrue(vars.contains("a"));
 				
 				assertEquals(1, ((Integer)ranges.getRange("a").getLower()).intValue());
-				assertEquals(10, ((Integer)ranges.getRange("a").getUpper()).intValue());
+				assertEquals(12, ((Integer)ranges.getRange("a").getUpper()).intValue());
 				//no range for b
 				assertFalse(vars.contains("b"));			
 		}
@@ -284,7 +284,7 @@ public class TestRangeGroups extends TestCase{
 				assertNotNull(vars);
 				assertTrue(vars.contains("a"));
 				assertEquals(1, ((Integer)ranges.getRange("a").getLower()).intValue());
-				assertEquals(1, ((Integer)ranges.getRange("a").getUpper()).intValue());
+				assertEquals(2, ((Integer)ranges.getRange("a").getUpper()).intValue());
 				
 				
 		}
@@ -326,7 +326,7 @@ public class TestRangeGroups extends TestCase{
 				assertNotNull(vars);
 				assertTrue(vars.contains("a"));
 				assertEquals(1, ((Integer)ranges.getRange("a").getLower()).intValue());
-				assertEquals(1, ((Integer)ranges.getRange("a").getUpper()).intValue());
+				assertEquals(3, ((Integer)ranges.getRange("a").getUpper()).intValue());
 				
 				
 		}

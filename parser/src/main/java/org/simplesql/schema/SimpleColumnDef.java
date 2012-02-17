@@ -5,7 +5,7 @@ import org.simplesql.data.Cell;
 /**
  * 
  * Defines an immutable column definition
- *
+ * 
  * @param <T>
  */
 public class SimpleColumnDef implements ColumnDef {
@@ -15,8 +15,7 @@ public class SimpleColumnDef implements ColumnDef {
 	final Cell<?> cell;
 	final boolean isNumber;
 
-	public SimpleColumnDef(Class<?> javaType, String name,
-			Cell<?> cell) {
+	public SimpleColumnDef(Class<?> javaType, String name, Cell<?> cell) {
 		super();
 		this.javaType = javaType;
 		this.name = name;
@@ -26,47 +25,47 @@ public class SimpleColumnDef implements ColumnDef {
 
 	}
 
-	public Class<?> getJavaType() {
+	public final Class<?> getJavaType() {
 		return javaType;
 	}
 
-	public String getName() {
+	public final String getName() {
 		return name;
 	}
 
-	public Cell<?> getCell() {
+	public final Cell<?> getCell() {
 		return cell;
 	}
 
-	public boolean isNumber() {
+	public final boolean isNumber() {
 		return isNumber;
 	}
 
 	@Override
-	public byte getByteMax(){
+	public final byte getByteMax() {
 		Object max = cell.getMax();
-		if(max instanceof String)
-			return (byte)Character.MAX_VALUE*-1;
+		if (max instanceof String)
+			return (byte) Character.MAX_VALUE * -1;
 		else
 			return Byte.MAX_VALUE;
 	}
-	
+
 	@Override
-	public byte getByteMin(){
+	public final byte getByteMin() {
 		Object min = cell.getMin();
-		if(min instanceof String)
-			return (byte)Character.MIN_VALUE;
+		if (min instanceof String)
+			return (byte) Character.MIN_VALUE;
 		else
 			return Byte.MIN_VALUE;
 	}
-	
+
 	@Override
-	public Object getMax() {
+	public final Object getMax() {
 		return cell.getMax();
 	}
 
 	@Override
-	public Object getMin() {
+	public final Object getMin() {
 		return cell.getMin();
 	}
 

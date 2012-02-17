@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-02-13 10:51:56
+// $ANTLR 3.4 /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g 2012-02-13 21:30:22
 
   package org.simplesql.parser;
   
@@ -1094,12 +1094,12 @@ public TreeAdaptor getTreeAdaptor() {
 
         try {
             // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:103:9: (r1= relation (lotoken= LOGICAL r2= relation )* )
-            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:103:11: r1= relation (lotoken= LOGICAL r2= relation )*
+            // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:103:12: r1= relation (lotoken= LOGICAL r2= relation )*
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_relation_in_logical765);
+            pushFollow(FOLLOW_relation_in_logical766);
             r1=relation();
 
             state._fsp--;
@@ -1123,7 +1123,7 @@ public TreeAdaptor getTreeAdaptor() {
             	case 1 :
             	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:104:12: lotoken= LOGICAL r2= relation
             	    {
-            	    lotoken=(Token)match(input,LOGICAL,FOLLOW_LOGICAL_in_logical783); 
+            	    lotoken=(Token)match(input,LOGICAL,FOLLOW_LOGICAL_in_logical784); 
             	    lotoken_tree = 
             	    (Object)adaptor.create(lotoken)
             	    ;
@@ -1138,7 +1138,7 @@ public TreeAdaptor getTreeAdaptor() {
             	                  
             	                
 
-            	    pushFollow(FOLLOW_relation_in_logical802);
+            	    pushFollow(FOLLOW_relation_in_logical803);
             	    r2=relation();
 
             	    state._fsp--;
@@ -1217,7 +1217,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (Object)adaptor.nil();
 
 
-            IDENT15=(Token)match(input,IDENT,FOLLOW_IDENT_in_funct839); 
+            IDENT15=(Token)match(input,IDENT,FOLLOW_IDENT_in_funct850); 
             IDENT15_tree = 
             (Object)adaptor.create(IDENT15)
             ;
@@ -1226,14 +1226,14 @@ public TreeAdaptor getTreeAdaptor() {
 
             retval.f.name((IDENT15!=null?IDENT15.getText():null));
 
-            char_literal16=(Token)match(input,32,FOLLOW_32_in_funct842); 
+            char_literal16=(Token)match(input,32,FOLLOW_32_in_funct853); 
             char_literal16_tree = 
             (Object)adaptor.create(char_literal16)
             ;
             adaptor.addChild(root_0, char_literal16_tree);
 
 
-            pushFollow(FOLLOW_expression_in_funct846);
+            pushFollow(FOLLOW_expression_in_funct857);
             fe1=expression();
 
             state._fsp--;
@@ -1257,14 +1257,14 @@ public TreeAdaptor getTreeAdaptor() {
             	case 1 :
             	    // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:117:85: ',' fe2= expression
             	    {
-            	    char_literal17=(Token)match(input,36,FOLLOW_36_in_funct851); 
+            	    char_literal17=(Token)match(input,36,FOLLOW_36_in_funct862); 
             	    char_literal17_tree = 
             	    (Object)adaptor.create(char_literal17)
             	    ;
             	    adaptor.addChild(root_0, char_literal17_tree);
 
 
-            	    pushFollow(FOLLOW_expression_in_funct855);
+            	    pushFollow(FOLLOW_expression_in_funct866);
             	    fe2=expression();
 
             	    state._fsp--;
@@ -1282,7 +1282,7 @@ public TreeAdaptor getTreeAdaptor() {
             } while (true);
 
 
-            char_literal18=(Token)match(input,33,FOLLOW_33_in_funct861); 
+            char_literal18=(Token)match(input,33,FOLLOW_33_in_funct872); 
             char_literal18_tree = 
             (Object)adaptor.create(char_literal18)
             ;
@@ -1408,7 +1408,7 @@ public TreeAdaptor getTreeAdaptor() {
                         case 1 :
                             // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:123:9: v= IDENT
                             {
-                            v=(Token)match(input,IDENT,FOLLOW_IDENT_in_term888);  
+                            v=(Token)match(input,IDENT,FOLLOW_IDENT_in_term899);  
                             stream_IDENT.add(v);
 
 
@@ -1452,7 +1452,7 @@ public TreeAdaptor getTreeAdaptor() {
                         case 2 :
                             // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:125:9: v= INTEGER
                             {
-                            v=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_term929);  
+                            v=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_term940);  
                             stream_INTEGER.add(v);
 
 
@@ -1494,7 +1494,7 @@ public TreeAdaptor getTreeAdaptor() {
                         case 3 :
                             // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:126:9: v= BOOL
                             {
-                            v=(Token)match(input,BOOL,FOLLOW_BOOL_in_term952);  
+                            v=(Token)match(input,BOOL,FOLLOW_BOOL_in_term963);  
                             stream_BOOL.add(v);
 
 
@@ -1536,7 +1536,7 @@ public TreeAdaptor getTreeAdaptor() {
                         case 4 :
                             // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:127:9: v= DOUBLE
                             {
-                            v=(Token)match(input,DOUBLE,FOLLOW_DOUBLE_in_term978);  
+                            v=(Token)match(input,DOUBLE,FOLLOW_DOUBLE_in_term989);  
                             stream_DOUBLE.add(v);
 
 
@@ -1578,18 +1578,18 @@ public TreeAdaptor getTreeAdaptor() {
                         case 5 :
                             // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:128:9: '(' r= expression ')'
                             {
-                            char_literal19=(Token)match(input,32,FOLLOW_32_in_term1000);  
+                            char_literal19=(Token)match(input,32,FOLLOW_32_in_term1011);  
                             stream_32.add(char_literal19);
 
 
-                            pushFollow(FOLLOW_expression_in_term1004);
+                            pushFollow(FOLLOW_expression_in_term1015);
                             r=expression();
 
                             state._fsp--;
 
                             stream_expression.add(r.getTree());
 
-                            char_literal20=(Token)match(input,33,FOLLOW_33_in_term1006);  
+                            char_literal20=(Token)match(input,33,FOLLOW_33_in_term1017);  
                             stream_33.add(char_literal20);
 
 
@@ -1635,7 +1635,7 @@ public TreeAdaptor getTreeAdaptor() {
                 case 2 :
                     // /home/gvanvuuren/checkouts/SimpleSQL/parser/src/main/antlr3/org/simplesql/parser/SQL.g:131:9: v= STRING_LITERAL
                     {
-                    v=(Token)match(input,STRING_LITERAL,FOLLOW_STRING_LITERAL_in_term1046);  
+                    v=(Token)match(input,STRING_LITERAL,FOLLOW_STRING_LITERAL_in_term1057);  
                     stream_STRING_LITERAL.add(v);
 
 
@@ -1737,22 +1737,22 @@ public TreeAdaptor getTreeAdaptor() {
     public static final BitSet FOLLOW_expression_in_relation717 = new BitSet(new long[]{0x0000000000800000L});
     public static final BitSet FOLLOW_RELATION_in_relation719 = new BitSet(new long[]{0x0000000108001850L});
     public static final BitSet FOLLOW_expression_in_relation723 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_relation_in_logical765 = new BitSet(new long[]{0x0000000000004002L});
-    public static final BitSet FOLLOW_LOGICAL_in_logical783 = new BitSet(new long[]{0x0000000108001850L});
-    public static final BitSet FOLLOW_relation_in_logical802 = new BitSet(new long[]{0x0000000000004002L});
-    public static final BitSet FOLLOW_IDENT_in_funct839 = new BitSet(new long[]{0x0000000100000000L});
-    public static final BitSet FOLLOW_32_in_funct842 = new BitSet(new long[]{0x0000000108001850L});
-    public static final BitSet FOLLOW_expression_in_funct846 = new BitSet(new long[]{0x0000001200000000L});
-    public static final BitSet FOLLOW_36_in_funct851 = new BitSet(new long[]{0x0000000108001850L});
-    public static final BitSet FOLLOW_expression_in_funct855 = new BitSet(new long[]{0x0000001200000000L});
-    public static final BitSet FOLLOW_33_in_funct861 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_term888 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INTEGER_in_term929 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BOOL_in_term952 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_DOUBLE_in_term978 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_32_in_term1000 = new BitSet(new long[]{0x0000000108001850L});
-    public static final BitSet FOLLOW_expression_in_term1004 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_33_in_term1006 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STRING_LITERAL_in_term1046 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_relation_in_logical766 = new BitSet(new long[]{0x0000000000004002L});
+    public static final BitSet FOLLOW_LOGICAL_in_logical784 = new BitSet(new long[]{0x0000000108001850L});
+    public static final BitSet FOLLOW_relation_in_logical803 = new BitSet(new long[]{0x0000000000004002L});
+    public static final BitSet FOLLOW_IDENT_in_funct850 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_32_in_funct853 = new BitSet(new long[]{0x0000000108001850L});
+    public static final BitSet FOLLOW_expression_in_funct857 = new BitSet(new long[]{0x0000001200000000L});
+    public static final BitSet FOLLOW_36_in_funct862 = new BitSet(new long[]{0x0000000108001850L});
+    public static final BitSet FOLLOW_expression_in_funct866 = new BitSet(new long[]{0x0000001200000000L});
+    public static final BitSet FOLLOW_33_in_funct872 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_term899 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INTEGER_in_term940 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BOOL_in_term963 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_DOUBLE_in_term989 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_32_in_term1011 = new BitSet(new long[]{0x0000000108001850L});
+    public static final BitSet FOLLOW_expression_in_term1015 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_33_in_term1017 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STRING_LITERAL_in_term1057 = new BitSet(new long[]{0x0000000000000002L});
 
 }

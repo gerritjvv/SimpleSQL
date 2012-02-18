@@ -78,6 +78,12 @@
 			<version>2.6</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.sleepycat</groupId>
+			<artifactId>je</artifactId>
+			<version>4.0.92</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

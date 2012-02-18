@@ -1,6 +1,8 @@
 package org.simplesql.data;
 
-public interface Cell<T> extends Counter {
+import java.io.Serializable;
+
+public interface Cell<T> extends Counter, Serializable {
 
 	T getData();
 	

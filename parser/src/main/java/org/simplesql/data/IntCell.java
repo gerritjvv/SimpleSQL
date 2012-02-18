@@ -1,5 +1,9 @@
 package org.simplesql.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class IntCell implements Cell<Number> {
 
 	int val = 0;
@@ -81,6 +85,14 @@ public class IntCell implements Cell<Number> {
 	@Override
 	public Object getMin() {
 		return Integer.MIN_VALUE;
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeInt(val);
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException {
+		val = in.readInt();
 	}
 
 }

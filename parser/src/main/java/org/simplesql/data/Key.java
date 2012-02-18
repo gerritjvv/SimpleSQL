@@ -1,7 +1,9 @@
 package org.simplesql.data;
 
+import java.io.Serializable;
 
-public interface Key extends Comparable<Key>{
+
+public interface Key extends Comparable<Key>, Serializable{
 
 	String asString();
 

@@ -3,66 +3,34 @@ package org.simplesql.data;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * 
- * Combines the Cell values into a single String. The single String is used to
- * calculate hashcode and equality.
- * 
+ * Combines cells into a serializable tuple
  */
-public class SimpleCellKey implements Key {
+public class CellTuple implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	String str;
 	Cell[] cells;
 
 	/**
 	 * To be used only for serialization
 	 */
-	public SimpleCellKey() {
+	public CellTuple() {
 
 	}
 
-	public SimpleCellKey(Cell... cells) {
-		StringBuilder buff = new StringBuilder();
-		for (Cell cell : cells) {
-			buff.append(cell.getData().toString());
-		}
+	public CellTuple(Cell... cells) {
 		this.cells = cells;
-		this.str = buff.toString();
 	}
 
-	@Override
-	public String asString() {
-		return str;
-	}
-
-	@Override
 	public Cell[] getCells() {
 		return cells;
-	}
-
-	@Override
-	public int hashCode() {
-		return str.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object key) {
-		return str.equals(((Key) key).asString());
-	}
-
-	@Override
-	public int compareTo(Key key) {
-		return str.compareTo(key.asString());
-	}
-
-	public String toString() {
-		return "SimpleCellKey(" + str + ")";
 	}
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
@@ -80,7 +48,6 @@ public class SimpleCellKey implements Key {
 		try {
 			for (int i = 0; i < len; i++) {
 				Cell cell = (Cell) in.readObject();
-				buff.append(cell.getData().toString());
 				cells[i] = cell;
 			}
 		} catch (ClassNotFoundException e) {
@@ -88,6 +55,6 @@ public class SimpleCellKey implements Key {
 			rte.setStackTrace(e.getStackTrace());
 			throw rte;
 		}
-		this.str = buff.toString();
 	}
+
 }

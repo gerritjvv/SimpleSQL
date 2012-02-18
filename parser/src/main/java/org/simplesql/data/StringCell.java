@@ -1,5 +1,9 @@
 package org.simplesql.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 /**
  * 
  * Store a String. All increment methods are ignored or zero is returned.
@@ -83,4 +87,22 @@ public class StringCell implements Cell<String> {
 		return (char) 0;
 	}
 
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		if (val == null) {
+			out.writeInt(0);
+		} else {
+			byte[] bts = val.getBytes("UTF-8");
+			out.writeInt(bts.length);
+			out.write(bts);
+		}
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException {
+		int len = in.readInt();
+		if (len > 0) {
+			byte[] bts = new byte[len];
+			int size = in.read(bts);
+			val = new String(bts, 0, size);
+		}
+	}
 }

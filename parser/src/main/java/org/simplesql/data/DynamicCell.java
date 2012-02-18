@@ -1,5 +1,9 @@
 package org.simplesql.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 /**
  * 
  * Accepts as argument an Object.<br/>
@@ -158,4 +162,17 @@ public class DynamicCell implements Cell<String> {
 		return min;
 	}
 
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeObject(val);
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException {
+		try {
+			val = in.readObject();
+		} catch (ClassNotFoundException e) {
+			RuntimeException rte = new RuntimeException(e.toString(), e);
+			rte.setStackTrace(e.getStackTrace());
+			throw rte;
+		}
+	}
 }

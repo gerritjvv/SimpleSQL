@@ -1,5 +1,9 @@
 package org.simplesql.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class DoubleCell implements Cell<Number> {
 
 	double val = 0.0D;
@@ -83,5 +87,14 @@ public class DoubleCell implements Cell<Number> {
 	public Object getMin() {
 		return Double.MIN_VALUE;
 	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeDouble(val);
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException {
+		val = in.readDouble();
+	}
 	
 }
+

@@ -1,5 +1,9 @@
 package org.simplesql.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class LongCell implements Cell<Number> {
 
 	long val = 0L;
@@ -81,6 +85,14 @@ public class LongCell implements Cell<Number> {
 	@Override
 	public Object getMin() {
 		return Long.MIN_VALUE;
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeLong(val);
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException {
+		val = in.readLong();
 	}
 
 }

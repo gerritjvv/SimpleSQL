@@ -1,6 +1,15 @@
 package org.simplesql.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class BooleanCell implements Cell<Number> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	boolean val = false;
 
@@ -81,6 +90,14 @@ public class BooleanCell implements Cell<Number> {
 	@Override
 	public Object getMin() {
 		return false;
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeBoolean(val);
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException {
+		val = in.readBoolean();
 	}
 
 }

@@ -27,6 +27,10 @@ public class SimpleCellKey implements Key {
 
 	}
 
+	public SimpleCellKey(String val) {
+		this(new StringCell(val));
+	}
+
 	public SimpleCellKey(Cell... cells) {
 		StringBuilder buff = new StringBuilder();
 		for (Cell cell : cells) {

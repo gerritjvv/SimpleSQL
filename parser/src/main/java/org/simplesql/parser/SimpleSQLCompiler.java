@@ -22,6 +22,7 @@ import org.simplesql.data.KeyParser;
 import org.simplesql.data.SimpleCellKey;
 import org.simplesql.data.SimpleObjectKey;
 import org.simplesql.data.SimpleStringKey;
+import org.simplesql.data.StringCell;
 import org.simplesql.parser.tree.SELECT;
 import org.simplesql.parser.tree.SELECTTreeAdaptor;
 import org.simplesql.parser.tree.TreeJavaConvert;
@@ -207,7 +208,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 
 		@Override
 		public Key makeKey(Object[] data) {
-			return new SimpleStringKey(String.valueOf(id.getAndIncrement()));
+			return new SimpleCellKey(new StringCell(String.valueOf(id.getAndIncrement())));
 		}
 
 	}

@@ -16,19 +16,21 @@ public interface AggregateStore<T> extends Iterable<DataEntry> {
 	 * @return boolean true if data was accepted, false if limit was reached
 	 *         etc.
 	 */
+	@SuppressWarnings("rawtypes")
 	boolean put(Key key, Cell[] cells);
 
 	DataEntry get(Key key);
 
 	Iterator<DataEntry> iterator();
 
-	Set<Key> keys();
+	Set<? extends Key> keys();
 
-	
 	void setLimit(int limit);
 
 	int getLimit();
 
 	void write(DataSink sink);
+
+	void close();
 
 }

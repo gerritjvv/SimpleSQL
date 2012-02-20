@@ -37,7 +37,7 @@ public class CellTuple implements Serializable {
 		int len = cells.length;
 		out.writeInt(len);
 		for (int i = 0; i < len; i++) {
-			out.writeObject(cells[0]);
+			out.writeObject(cells[i]);
 		}
 	}
 

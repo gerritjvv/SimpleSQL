@@ -93,7 +93,7 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 	}
 
 	@Override
-	public Set<Key> keys() {
+	public Set<? extends Key> keys() {
 		return map.keySet();
 	}
 
@@ -118,4 +118,9 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 
 	}
 
+	@Override
+	public void close(){
+		
+	}
+	
 }

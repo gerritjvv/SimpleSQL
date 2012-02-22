@@ -1,0 +1,49 @@
+package org.reducedata.server.om;
+
+option java_outer_classname = "ClientInfoTemplate";
+option java_package = "org.simplesql.om";
+option optimize_for = SPEED;
+
+
+message Projection{
+   
+   optional int64 clientId = 1;
+   optional int32 id = 2;
+   optional string name = 3;
+   repeated Column column = 4;
+
+   enum HIT_TYPE{
+     HOURLY = 0;
+     DAILY = 1;
+   }
+   
+   optional HIT_TYPE hitType = 5 [ default = DAILY ];
+   //hits for the projection
+   optional int64 hits = 6;
+   //date value in milliseconds if hitType is DAILY then this value contains
+   //only values accurate to the DAY.
+   optional int64 date = 7;
+   
+}
+
+message Column{
+
+   optional string name = 1;
+   optional int32 order = 2;
+   optional string defaultValue = 3;
+   optional string type = 4;
+   optional int32 width = 5; 
+    
+}
+
+
+
+message ClientInfo{
+
+  optional int64 clientId = 1;
+  optional bool  enabled = 2 [default = true];
+  repeated Projection projection = 3;
+  
+}
+
+

@@ -1,0 +1,28 @@
+package org.reducedata.server.om;
+
+option java_outer_classname = "RequestTemplate";
+option java_package = "org.simplesql.om";
+option optimize_for = SPEED;
+
+message QueryParam{
+
+ optional string key = 1;
+ optional string value = 2;
+
+}
+
+message Request{
+
+  optional string host = 1;
+  optional string ua = 2;
+  optional string ip = 3;
+  optional string referer = 5;
+  optional int64 timestamp = 6;
+  optional int64 clientId = 7;
+  optional string projectionName = 8;  
+  repeated QueryParam params = 4;
+  
+    
+}
+
+

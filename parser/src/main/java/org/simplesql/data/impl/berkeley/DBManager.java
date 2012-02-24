@@ -9,6 +9,7 @@ import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.serial.StoredClassCatalog;
 import com.sleepycat.collections.StoredMap;
+import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.Environment;
@@ -85,9 +86,10 @@ public class DBManager{
 	public Database openDatabase(String name) {
 		return env.openDatabase(null, name, dbConfig);
 	}
+	public Database openDatabas
 
-	public StoredMap<SimpleCellKey, CellTuple> createMap(Database db) {
-		return new StoredMap<SimpleCellKey, CellTuple>(db, keyBinding,
+	public StoredSortedMap<SimpleCellKey, CellTuple> createMap(Database db) {
+		return new StoredSortedMap<SimpleCellKey, CellTuple> (db, keyBinding,
 				valueBinding, true);
 	}
 

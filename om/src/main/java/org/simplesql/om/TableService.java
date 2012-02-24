@@ -2,7 +2,7 @@ package org.simplesql.om;
 
 import org.simplesql.om.ClientInfoTemplate.Column;
 import org.simplesql.om.ClientInfoTemplate.Projection;
-import org.simplesql.om.util.Bytes;
+import org.simplesql.util.Bytes;
 import org.streams.commons.app.ApplicationService;
 
 /**

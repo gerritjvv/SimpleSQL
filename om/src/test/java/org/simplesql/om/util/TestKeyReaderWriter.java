@@ -10,7 +10,7 @@ import org.simplesql.om.ClientInfoTemplate.Column;
 import org.simplesql.om.ClientInfoTemplate.Projection;
 import org.simplesql.om.key.KeyWriterReader;
 import org.simplesql.om.key.ProjectionColumnType;
-import org.simplesql.om.util.Bytes;
+import org.simplesql.util.Bytes;
 
 public class TestKeyReaderWriter {
 

@@ -2,6 +2,8 @@ package org.simplesql.om.util;
 
 import java.util.concurrent.TimeUnit;
 
+import org.simplesql.util.Bytes;
+
 /**
  * 
  * Converts Date's to the byte columns value and back

@@ -5,6 +5,7 @@ package org.simplesql.data;
  * Wraps a Single String as the key object.
  * 
  */
+@Deprecated
 public class SimpleStringKey implements Key {
 
 	final String str;
@@ -26,11 +27,10 @@ public class SimpleStringKey implements Key {
 
 	@Override
 	public boolean equals(Object obj) {
-		Key key = (Key)obj;
+		Key key = (Key) obj;
 		return key.asString().equals(this.str);
 	}
 
-	
 	@Override
 	public int compareTo(Key key) {
 		return str.compareTo(key.asString());
@@ -41,8 +41,13 @@ public class SimpleStringKey implements Key {
 		return str.hashCode();
 	}
 
-	public String toString(){
+	public String toString() {
 		return "SimpleStringKey(" + str + ")";
 	}
-	
+
+	@Override
+	public int compareAt(int i, Cell cell) {
+		return -1;
+	}
+
 }

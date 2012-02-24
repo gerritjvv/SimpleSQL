@@ -14,12 +14,12 @@ import org.simplesql.om.projection.ProjectionLexer;
 import org.simplesql.om.projection.ProjectionParser;
 import org.simplesql.om.projection.ProjectionParser.projection_return;
 import org.simplesql.om.key.KeyWriterReader;
-import org.simplesql.om.util.Bytes;
 import org.simplesql.om.util.ProjectionKeyUtil;
 import org.simplesql.parser.SQLCompiler;
 import org.simplesql.parser.SQLExecutor;
 import org.simplesql.parser.SimpleSQLCompiler;
 import org.simplesql.schema.TableDef;
+import org.simplesql.util.Bytes;
 
 /**
  * Test the key range settings of the ProjectionKeyUtil class

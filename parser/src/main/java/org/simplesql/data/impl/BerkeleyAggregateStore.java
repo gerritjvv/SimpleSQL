@@ -1,12 +1,12 @@
 package org.simplesql.data.impl;
 
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
-import org.simplesql.data.CellTuple;
+import org.simplesql.data.CellsByteWrapper;
 import org.simplesql.data.DataEntry;
 import org.simplesql.data.DataEntryBuilder;
 import org.simplesql.data.DataSink;
@@ -15,8 +15,10 @@ import org.simplesql.data.SimpleCellKey;
 import org.simplesql.data.TransformFunction;
 import org.simplesql.data.impl.berkeley.DBManager;
 
-import com.sleepycat.collections.StoredMap;
+import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;
+import com.sleepycat.je.DatabaseEntry;
+import com.sleepycat.je.OperationStatus;
 
 /**
  * 
@@ -32,16 +34,27 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 	final String dbName;
 	final DBManager dbManager;
 	final Database db;
-	final StoredMap<SimpleCellKey, CellTuple> map;
 
 	final TransformFunction[] functions;
 
-	int limit = Integer.MAX_VALUE;
-	int rowCount = 0;
+	// Byte Key Values
+
+	CellsByteWrapper keyWrapper;
+	CellsByteWrapper dataWrapper;
 
 	DataEntryBuilder builder;
 	SimpleCellKey currentKey;
 	DataEntry currentDataEntry;
+
+	DatabaseEntry rowDataKey, rowData;
+
+	// ORDER AND LMIT VALUES
+
+	int limit = Integer.MAX_VALUE;
+	int rowCount = 0;
+
+	int[] cellIndexes;
+	ORDER order = ORDER.ASC;
 
 	boolean dirty = false;
 
@@ -66,8 +79,15 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 		dbName = "aggStore_" + System.nanoTime();
 		// open the db and create a map wrapper
 		db = dbManager.openDatabase(dbName);
-		map = dbManager.createMap(db);
 
+		cellIndexes = new int[] { 0 };
+
+	}
+
+	private final OrderedCursor getCursor() {
+		return ORDER.ASC.equals(order) ? new AscCursor(
+				db.openCursor(null, null)) : new DescCursor(db.openCursor(null,
+				null));
 	}
 
 	/**
@@ -77,6 +97,11 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean put(Key key, Cell[] cells) {
+
+		if (keyWrapper == null) {
+			keyWrapper = new CellsByteWrapper(key.getCells());
+			dataWrapper = new CellsByteWrapper(cells);
+		}
 
 		// here we should increment and add top to any values required
 		final SimpleCellKey cellKey;
@@ -99,25 +124,24 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 
 			flushCurrent();
 
-			CellTuple tuple = map.get(cellKey);
+			byte[] keybytes = keyWrapper.getBytes(key.getCells());
+			rowDataKey = new DatabaseEntry(keybytes);
+			rowData = new DatabaseEntry();
 
-			if (tuple == null) {
+			OperationStatus opStatus = db.get(null, rowDataKey, rowData, null);
+
+			if (!opStatus.equals(OperationStatus.SUCCESS)) {
+				// key not found
 
 				if (builder == null) {
 					builder = new DataEntryBuilder(cells, functions);
 				}
 
-				if (rowCount++ >= limit) {
-					// check for limit on key
-					// this implementation expects that all keys are delivered
-					// in
-					// order.
-					return false;
-				}
-
 				entry = builder.create(cellKey);
 
-				map.put(cellKey, new CellTuple(entry.getCells()));
+				rowData.setData(dataWrapper.getBytes(cells));
+				// put data entry
+				db.put(null, rowDataKey, rowData);
 
 			} else {
 				// else create a DataEntry from the builder.
@@ -142,7 +166,9 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 		if (dirty) {
 			if (currentKey != null) {
 				// save last current key and value
-				map.put(currentKey, new CellTuple(currentDataEntry.getCells()));
+				rowData.setData(dataWrapper.getBytes(currentDataEntry
+						.getCells()));
+				db.put(null, rowDataKey, rowData);
 			}
 
 			dirty = false;
@@ -154,30 +180,48 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 	@Override
 	public DataEntry get(Key key) {
 		flushCurrent();
-		final CellTuple tuple = map.get((SimpleCellKey) key);
-		return (tuple == null) ? null : new DataEntry(key, tuple.getCells(),
-				functions);
+
+		DatabaseEntry itKey = new DatabaseEntry(keyWrapper.getBytes(key
+				.getCells()));
+		DatabaseEntry itData = new DatabaseEntry();
+
+		if (db.get(null, itKey, itData, null).equals(OperationStatus.SUCCESS)) {
+			return new DataEntry(key,
+					dataWrapper.readFrom(itData.getData(), 0), functions);
+		} else {
+			return null;
+		}
+
 	}
 
 	@Override
 	public Iterator<DataEntry> iterator() {
 		flushCurrent();
-		final Iterator<Entry<SimpleCellKey, CellTuple>> tupleIt = map
-				.entrySet().iterator();
-
+		final OrderedCursor cursor = getCursor();
+		final DatabaseEntry itKey = new DatabaseEntry();
+		final DatabaseEntry itData = new DatabaseEntry();
+		final int l = limit;
 		// we wrap the CellTuple iterator into a DataEntry Iterator
 		return new Iterator<DataEntry>() {
+			int row = 0;
 
 			@Override
 			public boolean hasNext() {
-				return tupleIt.hasNext();
+				if ((row++ < l)
+						&& cursor.getNext(itKey, itData).equals(
+								OperationStatus.SUCCESS)) {
+					return true;
+				} else {
+					cursor.close();
+					return false;
+				}
 			}
 
 			@Override
 			public DataEntry next() {
-				Entry<SimpleCellKey, CellTuple> entry = tupleIt.next();
-				return new DataEntry(entry.getKey(), entry.getValue()
-						.getCells(), functions);
+				return new DataEntry(new SimpleCellKey(keyWrapper.readFrom(
+						itKey.getData(), 0)), dataWrapper.readFrom(
+						itData.getData(), 0), functions);
 			}
 
 			@Override
@@ -188,9 +232,35 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 		};
 	}
 
+	/**
+	 * Scans the whole database and add keys to a Set. This method should only
+	 * be called for testing and debugging.
+	 */
 	@Override
 	public Set<? extends Key> keys() {
-		return map.keySet();
+		Set<SimpleCellKey> keys = new TreeSet<SimpleCellKey>();
+
+		final OrderedCursor cursor = getCursor();
+
+		final DatabaseEntry itKey = new DatabaseEntry();
+		final DatabaseEntry itData = new DatabaseEntry();
+		itData.setPartial(true);
+		itData.setPartialLength(0);
+		int row = 0;
+		try {
+
+			while ((row++ < limit)
+					&& cursor.getNext(itKey, itData).equals(
+							OperationStatus.SUCCESS)) {
+				keys.add(new SimpleCellKey(keyWrapper.readFrom(itKey.getData(),
+						0)));
+			}
+
+		} finally {
+			cursor.close();
+		}
+
+		return keys;
 	}
 
 	@Override
@@ -206,12 +276,30 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 	@Override
 	public void write(DataSink sink) {
 		flushCurrent();
-		final Set<Entry<SimpleCellKey, CellTuple>> values = map.entrySet();
+		// final Set<Entry<SimpleCellKey, CellTuple>> values = map.entrySet();
+		//
+		// for (Entry<SimpleCellKey, CellTuple> entry : values) {
+		// sink.fill(entry.getKey(), entry.getValue().getCells());
+		// }
 
-		for (Entry<SimpleCellKey, CellTuple> entry : values) {
-			sink.fill(entry.getKey(), entry.getValue().getCells());
+		final OrderedCursor cursor = getCursor();
+		final DatabaseEntry itKey = new DatabaseEntry();
+		final DatabaseEntry itData = new DatabaseEntry();
+		try {
+			int rows = 0;
+			while (cursor.getNext(itKey, itData)
+					.equals(OperationStatus.SUCCESS)) {
+				if (rows++ < limit)
+					sink.fill(
+							new SimpleCellKey(keyWrapper.readFrom(
+									itKey.getData(), 0)),
+							dataWrapper.readFrom(itData.getData(), 0));
+				else
+					break;
+			}
+		} finally {
+			cursor.close();
 		}
-
 	}
 
 	@Override
@@ -221,4 +309,63 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 		db.close();
 	}
 
+	@Override
+	public void setOrderKeyBy(int[] cellIndexes,
+			org.simplesql.data.AggregateStore.ORDER order) {
+		this.order = order;
+		this.cellIndexes = cellIndexes;
+	}
+
+	/**
+	 * 
+	 * Define an ordered cursor
+	 * 
+	 */
+	static interface OrderedCursor {
+		OperationStatus getNext(DatabaseEntry key, DatabaseEntry data);
+
+		void close();
+	}
+
+	/**
+	 * Gets data in the Ascending order
+	 * 
+	 */
+	static class AscCursor implements OrderedCursor {
+		final Cursor cursor;
+
+		public AscCursor(Cursor cursor) {
+			super();
+			this.cursor = cursor;
+		}
+
+		public void close() {
+			cursor.close();
+		}
+
+		public OperationStatus getNext(DatabaseEntry key, DatabaseEntry data) {
+			return cursor.getNext(key, data, null);
+		}
+	}
+
+	/**
+	 * Get data in the Desc order
+	 * 
+	 */
+	static class DescCursor implements OrderedCursor {
+		final Cursor cursor;
+
+		public DescCursor(Cursor cursor) {
+			super();
+			this.cursor = cursor;
+		}
+
+		public void close() {
+			cursor.close();
+		}
+
+		public OperationStatus getNext(DatabaseEntry key, DatabaseEntry data) {
+			return cursor.getPrev(key, data, null);
+		}
+	}
 }

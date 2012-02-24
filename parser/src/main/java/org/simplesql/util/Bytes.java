@@ -1,4 +1,4 @@
-package org.simplesql.om.util;
+package org.simplesql.util;
 
 import java.io.UnsupportedEncodingException;
 

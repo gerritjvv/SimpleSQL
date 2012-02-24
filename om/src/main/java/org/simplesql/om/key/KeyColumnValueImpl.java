@@ -3,7 +3,7 @@ package org.simplesql.om.key;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-import org.simplesql.om.util.Bytes;
+import org.simplesql.util.Bytes;
 
 /**
  * 

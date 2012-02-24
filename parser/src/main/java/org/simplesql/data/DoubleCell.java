@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.simplesql.util.Bytes;
+
+import com.google.common.hash.Hasher;
+
 public class DoubleCell implements Cell<Number> {
 
 	double val = 0.0D;
@@ -71,10 +75,10 @@ public class DoubleCell implements Cell<Number> {
 
 	@Override
 	public Cell<Number> copy(boolean resetToDefaults) {
-		return new DoubleCell((resetToDefaults)? 0.0D : val);
+		return new DoubleCell((resetToDefaults) ? 0.0D : val);
 	}
 
-	public String toString(){
+	public String toString() {
 		return String.valueOf(val);
 	}
 
@@ -95,6 +99,43 @@ public class DoubleCell implements Cell<Number> {
 	private void readObject(ObjectInputStream in) throws IOException {
 		val = in.readDouble();
 	}
-	
-}
 
+	@Override
+	public int compareTo(Cell<Number> cell) {
+		double d = cell.getDoubleValue();
+		if (val < d)
+			return -1;
+		else if (val > d)
+			return 1;
+		else
+			return 0;
+	}
+
+	@Override
+	public Hasher putHash(Hasher hasher) {
+		return hasher.putDouble(val);
+	}
+
+	@Override
+	public int byteLength() {
+		return 8;
+	}
+
+	@Override
+	public int write(byte[] arr, int from) {
+		Bytes.writeBytes(val, arr, from);
+		return 8;
+	}
+
+	@Override
+	public int read(byte[] arr, int from) {
+		val = Bytes.readDouble(arr, from);
+		return 8;
+	}
+
+	@Override
+	public org.simplesql.data.Cell.SCHEMA getSchema() {
+		return SCHEMA.DOUBLE;
+	}
+
+}

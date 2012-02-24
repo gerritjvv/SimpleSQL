@@ -29,6 +29,10 @@ public class CellTuple implements Serializable {
 		this.cells = cells;
 	}
 
+	public int compareAt(int i, Cell cell) {
+		return cells[i].compareTo(cell);
+	}
+
 	public Cell[] getCells() {
 		return cells;
 	}

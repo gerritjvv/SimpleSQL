@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
+
 /**
  * 
  * Combines the Cell values into a single String. The single String is used to
@@ -19,6 +23,7 @@ public class SimpleCellKey implements Key {
 
 	String str;
 	Cell[] cells;
+	int hashCode;
 
 	/**
 	 * To be used only for serialization
@@ -32,17 +37,24 @@ public class SimpleCellKey implements Key {
 	}
 
 	public SimpleCellKey(Cell... cells) {
-		StringBuilder buff = new StringBuilder();
-		for (Cell cell : cells) {
-			buff.append(cell.getData().toString());
-		}
+
 		this.cells = cells;
-		this.str = buff.toString();
+		HashFunction hashFunct = Hashing.goodFastHash(10);
+		Hasher hasher = hashFunct.newHasher();
+		int len = cells.length;
+		for (int i = 0; i < len; i++)
+			cells[i].putHash(hasher);
+
+		hashCode = hasher.hash().hashCode();
 	}
 
 	@Override
 	public String asString() {
-		return str;
+		StringBuilder buff = new StringBuilder();
+		for (Cell cell : cells) {
+			buff.append(cell.getData().toString());
+		}
+		return buff.toString();
 	}
 
 	@Override
@@ -52,21 +64,33 @@ public class SimpleCellKey implements Key {
 
 	@Override
 	public int hashCode() {
-		return str.hashCode();
+		return hashCode;
 	}
 
 	@Override
 	public boolean equals(Object key) {
-		return str.equals(((Key) key).asString());
+		return (compareTo((Key) key) == 0);
 	}
 
 	@Override
 	public int compareTo(Key key) {
-		return str.compareTo(key.asString());
+		
+		Cell[] kcells = key.getCells();
+		if (cells.length == kcells.length) {
+			int c = 0;
+			for (int i = 0; i < cells.length; i++) {
+				c = cells[i].compareTo(kcells[i]);
+				if (c != 0)
+					break;
+			}
+			return c;
+		} else {
+			return -1;
+		}
 	}
 
 	public String toString() {
-		return "SimpleCellKey(" + str + ")";
+		return "SimpleCellKey(" + asString() + ")";
 	}
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
@@ -93,5 +117,15 @@ public class SimpleCellKey implements Key {
 			throw rte;
 		}
 		this.str = buff.toString();
+	}
+
+	@Override
+	public int compareAt(int i, Key key) {
+		return cells[i].compareTo(key.cellAt(i));
+	}
+
+	@Override
+	public Cell cellAt(int i) {
+		return cells[i];
 	}
 }

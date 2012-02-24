@@ -1,5 +1,6 @@
 package org.simplesql.data;
 
+@Deprecated
 public class SimpleObjectKey implements Key {
 
 	final String str;
@@ -37,6 +38,11 @@ public class SimpleObjectKey implements Key {
 	@Override
 	public Cell[] getCells() {
 		return null;
+	}
+
+	@Override
+	public int compareAt(int i, Cell cell) {
+		return -1;
 	}
 
 }

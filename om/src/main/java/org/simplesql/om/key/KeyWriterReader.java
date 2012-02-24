@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.simplesql.om.ClientInfoTemplate.Projection;
-import org.simplesql.om.util.Bytes;
 import org.simplesql.om.util.ProjectionKeyUtil;
+import org.simplesql.util.Bytes;
 
 /**
  * 

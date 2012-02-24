@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.simplesql.util.Bytes;
+
+import com.google.common.hash.Hasher;
+
 public class IntCell implements Cell<Number> {
 
 	int val = 0;
@@ -93,6 +97,42 @@ public class IntCell implements Cell<Number> {
 
 	private void readObject(ObjectInputStream in) throws IOException {
 		val = in.readInt();
+	}
+
+	public int byteLength() {
+		return 4;
+	}
+
+	public int write(byte[] arr, int from) {
+		Bytes.writeBytes(val, arr, from);
+		return 4;
+	}
+
+	@Override
+	public int read(byte[] arr, int from) {
+		val = Bytes.readInt(arr, from);
+		return 4;
+	}
+
+	@Override
+	public int compareTo(Cell<Number> cell) {
+		int v = cell.getIntValue();
+		if (val < v)
+			return -1;
+		else if (val > v)
+			return 1;
+		else
+			return 0;
+	}
+
+	@Override
+	public Hasher putHash(Hasher hasher) {
+		return hasher.putInt(val);
+	}
+
+	@Override
+	public org.simplesql.data.Cell.SCHEMA getSchema() {
+		return SCHEMA.INT;
 	}
 
 }

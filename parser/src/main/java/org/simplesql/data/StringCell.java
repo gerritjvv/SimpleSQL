@@ -3,6 +3,11 @@ package org.simplesql.data;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+
+import org.simplesql.util.Bytes;
+
+import com.google.common.hash.Hasher;
 
 /**
  * 
@@ -105,4 +110,71 @@ public class StringCell implements Cell<String> {
 			val = new String(bts, 0, size);
 		}
 	}
+
+	@Override
+	public int compareTo(Cell<String> cell) {
+		String v = cell.getData();
+		if (val == null || v == null)
+			return 0;
+		else {
+			return val.compareTo(v);
+		}
+	}
+
+	@Override
+	public Hasher putHash(Hasher hasher) {
+		return hasher.putString(val);
+	}
+
+	@Override
+	public int byteLength() {
+		try {
+			return val.getBytes("UTF-8").length + 4;
+		} catch (UnsupportedEncodingException e) {
+			RuntimeException rte = new RuntimeException(e.toString(), e);
+			rte.setStackTrace(e.getStackTrace());
+			throw rte;
+		}
+
+	}
+
+	@Override
+	public int write(byte[] arr, int from) {
+		try {
+
+			final byte[] strbytes = val.getBytes("UTF-8");
+			int len = strbytes.length;
+			Bytes.writeBytes(len, arr, from);
+
+			System.arraycopy(strbytes, 0, arr, from + 4, len);
+			return len + 4;
+
+		} catch (UnsupportedEncodingException e) {
+			RuntimeException rte = new RuntimeException(e.toString(), e);
+			rte.setStackTrace(e.getStackTrace());
+			throw rte;
+		}
+	}
+
+	@Override
+	public int read(byte[] arr, int from) {
+		try {
+
+			final int len = Bytes.readInt(arr, from);
+			final byte[] strbytes = new byte[len];
+			System.arraycopy(arr, from + 4, strbytes, 0, len);
+			val = new String(strbytes, "UTF-8");
+			return len + 4;
+		} catch (UnsupportedEncodingException e) {
+			RuntimeException rte = new RuntimeException(e.toString(), e);
+			rte.setStackTrace(e.getStackTrace());
+			throw rte;
+		}
+	}
+
+	@Override
+	public org.simplesql.data.Cell.SCHEMA getSchema() {
+		return SCHEMA.STRING;
+	}
+
 }

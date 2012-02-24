@@ -1,10 +1,10 @@
 package org.simplesql.data.impl;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.TreeMap;
 
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
@@ -22,12 +22,21 @@ import org.simplesql.data.TransformFunction;
  */
 public class HashMapAggregateStore<T> implements AggregateStore<T> {
 
-	final Map<Key, DataEntry> map = new ConcurrentHashMap<Key, DataEntry>();
+	private final ConstraintDescComparator DESC_COMP = new ConstraintDescComparator();
+	private final ConstraintAscComparator ASC_COMP = new ConstraintAscComparator();
+
+	TreeMap<Key, DataEntry> map = new TreeMap<Key, DataEntry>(ASC_COMP);
 
 	final TransformFunction[] functions;
 
 	int limit = Integer.MAX_VALUE;
 	int rowCount = 0;
+
+	ORDER order = ORDER.NONE;
+	ORDER orderData = ORDER.NONE;
+
+	int[] orderCellIndexes;
+	int[] orderDataCellIndexes;
 
 	DataEntryBuilder builder;
 
@@ -45,6 +54,7 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 		}
 
 		this.functions = functions;
+		orderCellIndexes = new int[] { 0 };
 	}
 
 	/**
@@ -64,13 +74,6 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 				builder = new DataEntryBuilder(cells, functions);
 			}
 
-			if (rowCount++ >= limit) {
-				// check for limit on key
-				// this implementation expects that all keys are delivered in
-				// order.
-				return false;
-			}
-
 			entry = builder.create(key);
 
 			map.put(key, entry);
@@ -78,6 +81,8 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 		}
 
 		entry.apply(cells);
+
+		// apply constraint;
 
 		return true;
 	}
@@ -108,19 +113,88 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 	}
 
 	@Override
+	public void setOrderKeyBy(int[] cellIndexes,
+			org.simplesql.data.AggregateStore.ORDER order) {
+		orderCellIndexes = cellIndexes;
+		this.order = order;
+		if (order.equals(ORDER.DESC)) {
+			map = new TreeMap<Key, DataEntry>(DESC_COMP);
+		} else {
+			map = new TreeMap<Key, DataEntry>(ASC_COMP);
+		}
+	}
+
+	@Override
 	public void write(DataSink sink) {
 
 		Collection<DataEntry> values = map.values();
-
+		int rows = 0;
 		for (DataEntry entry : values) {
-			entry.write(sink);
+			if (rows++ < limit)
+				entry.write(sink);
+			else
+				break;
 		}
 
 	}
 
 	@Override
-	public void close(){
-		
+	public void setOrderByData(int[] cellIndexes,
+			org.simplesql.data.AggregateStore.ORDER order) {
+		this.orderDataCellIndexes = cellIndexes;
+		this.orderData = order;
 	}
-	
+
+	@Override
+	public void close() {
+
+	}
+
+	/**
+	 * 
+	 * Compare cells in DESC
+	 * 
+	 */
+	private class ConstraintAscComparator implements Comparator<Key> {
+
+		@Override
+		public int compare(Key key1, Key key2) {
+			// we compare by a cell index;
+			final int[] indexes = orderCellIndexes;
+			final int len = indexes.length;
+			if (len < key2.getCells().length) {
+				int c = 0;
+
+				for (int i = 0; i < len; i++) {
+					c = key1.compareAt(i, key2);
+					if (c != 0)
+						break;
+				}
+
+				if (c == 0)
+					return key1.compareTo(key2);
+				else
+					return c;
+			} else {
+				return key1.compareTo(key2);
+			}
+
+		}
+
+	}
+
+	/**
+	 * 
+	 * Compare cells in DESC
+	 * 
+	 */
+	private class ConstraintDescComparator extends ConstraintAscComparator {
+
+		@Override
+		public int compare(Key key1, Key key2) {
+			return super.compare(key1, key2) * -1;
+		}
+
+	}
+
 }

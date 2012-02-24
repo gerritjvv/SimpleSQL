@@ -10,6 +10,10 @@ import java.util.Set;
  */
 public interface AggregateStore<T> extends Iterable<DataEntry> {
 
+	enum ORDER {
+		DESC, ASC, NONE
+	};
+
 	/**
 	 * @param key
 	 * @param cells
@@ -25,6 +29,15 @@ public interface AggregateStore<T> extends Iterable<DataEntry> {
 
 	Set<? extends Key> keys();
 
+	/**
+	 * Does ordering on the key i.e. anything inside the GROUP function.
+	 * @param cellIndexes
+	 * @param order
+	 */
+	void setOrderKeyBy(int[] cellIndexes, ORDER order);
+	
+	void setOrderByData(int[] cellIndexes, ORDER order);
+	
 	void setLimit(int limit);
 
 	int getLimit();

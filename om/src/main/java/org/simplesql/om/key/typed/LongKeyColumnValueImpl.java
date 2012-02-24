@@ -1,7 +1,7 @@
 package org.simplesql.om.key.typed;
 
 import org.simplesql.om.key.KeyColumnValueImpl;
-import org.simplesql.om.util.Bytes;
+import org.simplesql.util.Bytes;
 
 /**
  * 

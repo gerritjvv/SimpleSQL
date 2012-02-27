@@ -1,4 +1,4 @@
-package org.reducedata.server.om;
+package org.simplesql.om;
 
 option java_outer_classname = "RequestTemplate";
 option java_package = "org.simplesql.om";

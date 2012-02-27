@@ -45,7 +45,7 @@ tokens {
 
 statement returns [SELECT ret = new SELECT(variables);]
            : SELECT (se1=expression { select = $ret;  $ret.select($se1.expr);}) 
-                    (',' (se1=expression {$ret.select($se1.expr);}))* FROM IDENT {$ret.table($IDENT.text);} 
+                    (',' (se1=expression {$ret.select($se1.expr);}))* FROM tbl=IDENT {$ret.table($tbl.text);} 
             (
             (WHERE w1=logical {$ret.where($logical.ret);})
                       |

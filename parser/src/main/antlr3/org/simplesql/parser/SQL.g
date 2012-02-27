@@ -52,8 +52,8 @@ statement returns [SELECT ret = new SELECT(variables);]
             ('GROUP' 'BY' (gpe1=expression {$ret.groupBy($gpe1.expr);}) 
                      (',' (gpe1=expression {$ret.groupBy($gpe1.expr);}))*)
                      |
-            ('ORDER' 'BY' (ope1=expression {$ret.orderBy($ope1.expr);}) 
-                     (',' (ope1=expression {$ret.orderBy($ope1.expr);}))*)
+            ('ORDER' 'BY' (ope1=IDENT {$ret.orderBy($ope1.text);}) 
+                     (',' (ope1=IDENT {$ret.orderBy($ope1.text);}))*)
                      |
             ('LIMIT' l=INTEGER {$ret.limit($l.text);})
             )*

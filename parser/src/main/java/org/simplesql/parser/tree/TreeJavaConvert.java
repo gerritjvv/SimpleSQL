@@ -29,8 +29,7 @@ public class TreeJavaConvert {
 				new StringBuilder());
 		final ExpressionPrinter groupByExpressions = new ExpressionPrinter(
 				new StringBuilder());
-		final ExpressionPrinter orderByExpressions = new ExpressionPrinter(
-				new StringBuilder());
+		final StringBuilder orderByExpressions = new StringBuilder();
 
 		final LogicalPrinter logicalPrinter = new LogicalPrinter(
 				new StringBuilder());
@@ -62,11 +61,11 @@ public class TreeJavaConvert {
 			}
 
 			@Override
-			public void orderBy(int i, EXPRESSION expr) {
+			public void orderBy(int i, String expr) {
 				if (i != 0)
-					orderByExpressions.addComma();
+					orderByExpressions.append(',');
 
-				expr.visit(orderByExpressions);
+				orderByExpressions.append(expr);
 			}
 
 			@Override

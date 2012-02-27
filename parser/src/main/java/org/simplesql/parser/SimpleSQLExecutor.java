@@ -44,10 +44,13 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	final Set<String> columnsUsed;
 	final RangeGroups rangeGroups;
 
+	final Set<String> orderByColumns;
+
 	public SimpleSQLExecutor(RangeGroups rangeGroups, Set<String> columnsUsed,
 			ExecutorService execService, TableDef tableDef,
 			ExpressionEvaluator eval, KeyParser keyParser,
-			WhereFilter whereFilter, List<TransformFunction> transforms) {
+			WhereFilter whereFilter, List<TransformFunction> transforms,
+			Set<String> orderByColumns) {
 		super();
 		this.rangeGroups = rangeGroups;
 		this.columnsUsed = columnsUsed;
@@ -57,6 +60,11 @@ public class SimpleSQLExecutor implements SQLExecutor {
 		this.keyParser = keyParser;
 		this.whereFilter = whereFilter;
 		this.transforms = transforms;
+		this.orderByColumns = orderByColumns;
+	}
+
+	public Set<String> getOrderByColumns() {
+		return orderByColumns;
 	}
 
 	public RangeGroups getRangeGroups() {

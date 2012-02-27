@@ -125,7 +125,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 
 			return new SimpleSQLExecutor(select.getRangeGroups(),
 					variablesUsed, execService, tableDef, eval, keyParser,
-					whereFilter, select.getTransforms());
+					whereFilter, select.getTransforms(), select.getOrderBy());
 
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);

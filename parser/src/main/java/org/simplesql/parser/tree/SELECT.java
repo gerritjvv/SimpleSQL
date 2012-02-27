@@ -19,7 +19,11 @@ public class SELECT {
 	final List<EXPRESSION> selects = new ArrayList<EXPRESSION>();
 	final List<LOGICAL> where = new ArrayList<LOGICAL>();
 	final List<EXPRESSION> groupBy = new ArrayList<EXPRESSION>();
-	final List<EXPRESSION> orderBy = new ArrayList<EXPRESSION>();
+
+	/**
+	 * Holds the order by variables
+	 */
+	final Set<String> orderBy = new HashSet<String>();
 
 	public Set<String> variables = new HashSet<String>();
 	public final RangeGroups rangeGroups = new RangeGroups();
@@ -78,8 +82,8 @@ public class SELECT {
 		groupBy.add(expr);
 	}
 
-	public void orderBy(EXPRESSION expr) {
-		orderBy.add(expr);
+	public void orderBy(String varName) {
+		orderBy.add(varName);
 	}
 
 	public void limit(String limit) {
@@ -118,7 +122,7 @@ public class SELECT {
 		return groupBy;
 	}
 
-	public List<EXPRESSION> getOrderBy() {
+	public Set<String> getOrderBy() {
 		return orderBy;
 	}
 
@@ -134,8 +138,9 @@ public class SELECT {
 			visitor.groupBy(i, groupBy.get(i));
 		}
 
-		for (int i = 0; i < orderBy.size(); i++) {
-			visitor.orderBy(i, orderBy.get(i));
+		int index = 0;
+		for (String var : orderBy) {
+			visitor.orderBy(index++, var);
 		}
 
 		for (int i = 0; i < where.size(); i++) {
@@ -156,7 +161,7 @@ public class SELECT {
 
 		void groupBy(int i, EXPRESSION expr);
 
-		void orderBy(int i, EXPRESSION expr);
+		void orderBy(int i, String expr);
 
 	}
 

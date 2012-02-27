@@ -26,8 +26,9 @@ import com.lmax.disruptor.dsl.Disruptor;
 
 /**
  * 
+ * Pumps data through a DataStore, not much execution is done in here, most of
+ * the execution is left to the DataStore itself.
  * 
- *
  */
 public class SimpleSQLExecutor implements SQLExecutor {
 

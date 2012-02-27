@@ -1,6 +1,7 @@
 package org.simplesql.data.impl.berkeley;
 
 import java.io.File;
+import java.util.Comparator;
 
 import org.simplesql.data.CellTuple;
 import org.simplesql.data.SimpleCellKey;
@@ -8,12 +9,14 @@ import org.simplesql.data.SimpleCellKey;
 import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.serial.StoredClassCatalog;
-import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.SecondaryConfig;
+import com.sleepycat.je.SecondaryDatabase;
+import com.sleepycat.je.SecondaryKeyCreator;
 
 /**
  * 
@@ -21,7 +24,7 @@ import com.sleepycat.je.EnvironmentConfig;
  * Only create one instance of this class.<br/>
  * All databases returned are temporary.<br/>
  */
-public class DBManager{
+public class DBManager {
 
 	private static final String NAME_CATALOG_DB = "dbcatalog";
 
@@ -32,6 +35,8 @@ public class DBManager{
 	final DatabaseConfig dbConfig;
 	final Database catalogDB;
 	final ClassCatalog classCatalog;
+
+	SecondaryConfig secDbConfig;
 
 	final SerialBinding<SimpleCellKey> keyBinding;
 	final SerialBinding<CellTuple> valueBinding;
@@ -86,17 +91,55 @@ public class DBManager{
 	public Database openDatabase(String name) {
 		return env.openDatabase(null, name, dbConfig);
 	}
-	public Database openDatabas
+
+	/**
+	 * Open a secondary database for the Database db.
+	 * 
+	 * @param db
+	 * @param keyCreator
+	 * @return
+	 */
+	public SecondaryDatabase openSecondaryDatabase(Database db,
+			SecondaryKeyCreator keyCreator) {
+		SecondaryConfig secDbConfig = new SecondaryConfig();
+		secDbConfig.setAllowCreate(true);
+		// Duplicates are required for secondary databases.
+		secDbConfig.setSortedDuplicates(true);
+
+		secDbConfig.setKeyCreator(keyCreator);
+
+		return env.openSecondaryDatabase(null, db.getDatabaseName() + "_sec_"
+				+ System.nanoTime(), db, secDbConfig);
+
+	}
+
+	/**
+	 * Same as openDatabase but allows a BTree comparator to be specified.
+	 * 
+	 * @param name
+	 * @param comp
+	 * @return
+	 */
+	public Database openDatabase(String name, Comparator<byte[]> comp) {
+		// create global db config
+		DatabaseConfig dbConfig = new DatabaseConfig();
+		dbConfig.setTransactional(false);
+		dbConfig.setTemporary(true);
+		dbConfig.setAllowCreate(true);
+		dbConfig.setBtreeComparator(comp);
+
+		return env.openDatabase(null, name, dbConfig);
+	}
 
 	public StoredSortedMap<SimpleCellKey, CellTuple> createMap(Database db) {
-		return new StoredSortedMap<SimpleCellKey, CellTuple> (db, keyBinding,
+		return new StoredSortedMap<SimpleCellKey, CellTuple>(db, keyBinding,
 				valueBinding, true);
 	}
 
-	public void destroyDb(String name){
+	public void destroyDb(String name) {
 		env.removeDatabase(null, name);
 	}
-	
+
 	public void close() {
 		try {
 			catalogDB.close();

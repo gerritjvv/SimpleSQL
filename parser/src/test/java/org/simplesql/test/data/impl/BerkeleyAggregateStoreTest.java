@@ -28,6 +28,8 @@ import org.simplesql.funct.COUNT;
 import org.simplesql.funct.PassThroughTransform;
 import org.simplesql.funct.SUM;
 
+import com.google.common.util.concurrent.AtomicDouble;
+
 /**
  * 
  * Test the Map implementation of AggregateStore
@@ -36,6 +38,62 @@ import org.simplesql.funct.SUM;
 public class BerkeleyAggregateStoreTest extends TestCase {
 
 	static DBManager dbManager;
+
+	public void testOrderByDataDescLimit() {
+		/**
+		 * 
+		 * COUNT IntCell start=10 expect 10 COUNT LongCell start=10 expect 10
+		 * SUM DoubleCell start=0.02 expect 0.2
+		 * 
+		 * StringCell("Test");
+		 */
+		setup();
+		BerkeleyAggregateStore map = new BerkeleyAggregateStore(dbManager,
+				new COUNT(0), new COUNT(1), new SUM(2),
+				new PassThroughTransform(3));
+
+		map.setOrderKeyBy(null, ORDER.DESC);
+		// we order by data that is accumulated as the query proceeds,
+		// i.e. the order is constantly changing.
+		map.setOrderByData(new int[] { 2 });
+
+		int limit = 10;
+
+		// get the top 10
+		map.setLimit(limit);
+
+		int rows = 100;
+		for (int i = 0; i < rows; i++) {
+			// add the same key twice
+			map.put(new SimpleCellKey(new IntCell(i), new DoubleCell(i + 2)),
+					getCells(i, i, i));
+			map.put(new SimpleCellKey(new IntCell(i), new DoubleCell(i + 2)),
+					getCells(i, i, i));
+
+		}
+
+		final AtomicInteger counter = new AtomicInteger(0);
+		final AtomicDouble keyCounter = new AtomicDouble(198);
+		// we expect the keys with values at index 0: values 100-95
+		map.write(new DataSink() {
+
+			@Override
+			public boolean fill(Key key, Cell<?>[] data) {
+				// ensure that the key that the ordering was done on is the data
+				// key
+				assertEquals(key.getCells()[0], data[2]);
+
+				counter.getAndIncrement();
+
+				// check that values follow 198, 196
+				assertEquals(keyCounter.getAndAdd(-2D),
+						data[2].getDoubleValue());
+				return true;
+			}
+		});
+
+		assertEquals(limit, counter.get());
+	}
 
 	public void testOrderByKeyAscLimit() {
 		/**
@@ -52,7 +110,6 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 
 		map.setOrderKeyBy(new int[] { 0 }, ORDER.ASC);
 
-		int limit = 10;
 
 		// get the top 10
 		map.setLimit(10);
@@ -98,8 +155,6 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 				new PassThroughTransform(3));
 
 		map.setOrderKeyBy(new int[] { 0 }, ORDER.DESC);
-
-		int limit = 10;
 
 		// get the top 10
 		map.setLimit(10);
@@ -248,6 +303,19 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 	@AfterClass
 	public static void shutdown() {
 		dbManager.close();
+	}
+
+	private Cell[] getCells(int a, long b, double c) {
+
+		Cell[] cells = new Cell[4];
+		int i = 0;
+
+		cells[i++] = new IntCell(a);
+		cells[i++] = new LongCell(b);
+		cells[i++] = new DoubleCell(c);
+		cells[i++] = new StringCell("Test");
+
+		return cells;
 	}
 
 	private Cell[] getCells() {

@@ -33,7 +33,6 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 	int rowCount = 0;
 
 	ORDER order = ORDER.NONE;
-	ORDER orderData = ORDER.NONE;
 
 	int[] orderCellIndexes;
 	int[] orderDataCellIndexes;
@@ -139,10 +138,8 @@ public class HashMapAggregateStore<T> implements AggregateStore<T> {
 	}
 
 	@Override
-	public void setOrderByData(int[] cellIndexes,
-			org.simplesql.data.AggregateStore.ORDER order) {
+	public void setOrderByData(int[] cellIndexes) {
 		this.orderDataCellIndexes = cellIndexes;
-		this.orderData = order;
 	}
 
 	@Override

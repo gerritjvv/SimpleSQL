@@ -36,6 +36,42 @@ public class SimpleCellKey implements Key {
 		this(new StringCell(val));
 	}
 
+	/**
+	 * Receives and array of objects and wraps them into the correct cell.
+	 * 
+	 * @param vals
+	 */
+	public SimpleCellKey(Object... vals) {
+
+		final int len = vals.length;
+		cells = new Cell[len];
+		final HashFunction hashFunct = Hashing.goodFastHash(10);
+		final Hasher hasher = hashFunct.newHasher();
+
+		for (int i = 0; i < len; i++) {
+			final Object val = vals[i];
+			final Cell cell;
+			if (val instanceof Integer) {
+				cell = new IntCell((Integer) val);
+			} else if (val instanceof Long) {
+				cell = new LongCell((Long) val);
+			} else if (val instanceof Double) {
+				cell = new DoubleCell((Double) val);
+			} else if (val instanceof Boolean) {
+				cell = new BooleanCell((Boolean) val);
+			} else if (val instanceof String) {
+				cell = new StringCell((String) val);
+			} else {
+				cell = new DynamicCell(val);
+			}
+
+			cell.putHash(hasher);
+			cells[i] = cell;
+		}
+
+		hashCode = hasher.hash().hashCode();
+	}
+
 	public SimpleCellKey(Cell... cells) {
 
 		this.cells = cells;
@@ -74,7 +110,7 @@ public class SimpleCellKey implements Key {
 
 	@Override
 	public int compareTo(Key key) {
-		
+
 		Cell[] kcells = key.getCells();
 		if (cells.length == kcells.length) {
 			int c = 0;

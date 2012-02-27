@@ -36,6 +36,10 @@ public class CellsByteWrapper implements Serializable {
 		}
 	}
 
+	public SCHEMA schemaAt(int i) {
+		return schemas[i];
+	}
+
 	public void writeTo(byte[] bytes, int from, Cell... cells) {
 		int index = from;
 		for (int i = 0; i < cells.length; i++) {

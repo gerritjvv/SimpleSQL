@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.TestCase;
 
 import org.junit.Test;
+import org.simplesql.data.AggregateStore.ORDER;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.DoubleCell;
@@ -17,9 +18,7 @@ import org.simplesql.data.IntCell;
 import org.simplesql.data.Key;
 import org.simplesql.data.LongCell;
 import org.simplesql.data.SimpleCellKey;
-import org.simplesql.data.SimpleStringKey;
 import org.simplesql.data.StringCell;
-import org.simplesql.data.AggregateStore.ORDER;
 import org.simplesql.data.impl.HashMapAggregateStore;
 import org.simplesql.funct.COUNT;
 import org.simplesql.funct.PassThroughTransform;
@@ -135,10 +134,10 @@ public class HashMapAggregateStoreTest extends TestCase {
 
 		int rows = 10;
 		List<Key> keys = new ArrayList<Key>();
-		keys.add(new SimpleStringKey("A"));
-		keys.add(new SimpleStringKey("B"));
-		keys.add(new SimpleStringKey("C"));
-		keys.add(new SimpleStringKey("D"));
+		keys.add(new SimpleCellKey("A"));
+		keys.add(new SimpleCellKey("B"));
+		keys.add(new SimpleCellKey("C"));
+		keys.add(new SimpleCellKey("D"));
 
 		for (Key key : keys) {
 			for (int i = 0; i < rows; i++) {
@@ -165,10 +164,10 @@ public class HashMapAggregateStoreTest extends TestCase {
 
 		int rows = 10;
 		List<Key> keys = new ArrayList<Key>();
-		keys.add(new SimpleStringKey("A"));
-		keys.add(new SimpleStringKey("B"));
-		keys.add(new SimpleStringKey("C"));
-		keys.add(new SimpleStringKey("D"));
+		keys.add(new SimpleCellKey("A"));
+		keys.add(new SimpleCellKey("B"));
+		keys.add(new SimpleCellKey("C"));
+		keys.add(new SimpleCellKey("D"));
 
 		for (Key key : keys) {
 			for (int i = 0; i < rows; i++) {
@@ -178,7 +177,7 @@ public class HashMapAggregateStoreTest extends TestCase {
 
 		
 		for (String key : Arrays.asList("A", "B")) {
-			assertEquals(4, map.get(new SimpleStringKey(key)).getCells().length);
+			assertEquals(4, map.get(new SimpleCellKey(key)).getCells().length);
 		}
 
 
@@ -191,10 +190,10 @@ public class HashMapAggregateStoreTest extends TestCase {
 
 		int rows = 10;
 		Set<Key> keys = new HashSet<Key>();
-		keys.add(new SimpleStringKey("A"));
-		keys.add(new SimpleStringKey("B"));
-		keys.add(new SimpleStringKey("C"));
-		keys.add(new SimpleStringKey("D"));
+		keys.add(new SimpleCellKey("A"));
+		keys.add(new SimpleCellKey("B"));
+		keys.add(new SimpleCellKey("C"));
+		keys.add(new SimpleCellKey("D"));
 
 		for (Key key : keys) {
 			for (int i = 0; i < rows; i++) {

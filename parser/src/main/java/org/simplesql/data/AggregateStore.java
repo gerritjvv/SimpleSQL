@@ -31,13 +31,19 @@ public interface AggregateStore<T> extends Iterable<DataEntry> {
 
 	/**
 	 * Does ordering on the key i.e. anything inside the GROUP function.
+	 * 
 	 * @param cellIndexes
 	 * @param order
 	 */
 	void setOrderKeyBy(int[] cellIndexes, ORDER order);
-	
-	void setOrderByData(int[] cellIndexes, ORDER order);
-	
+
+	/**
+	 * DESC or ASC is specified by calling the setOrderKeyBy.
+	 * 
+	 * @param cellIndexes
+	 */
+	void setOrderByData(int[] cellIndexes);
+
 	void setLimit(int limit);
 
 	int getLimit();

@@ -1,6 +1,8 @@
 package org.simplesql.data.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,6 +21,8 @@ import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.SecondaryDatabase;
+import com.sleepycat.je.SecondaryKeyCreator;
 
 /**
  * 
@@ -34,6 +38,8 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 	final String dbName;
 	final DBManager dbManager;
 	final Database db;
+	SecondaryDatabase secDb;
+	CellKeyDataCreator secKeyCreator;
 
 	final TransformFunction[] functions;
 
@@ -54,6 +60,8 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 	int rowCount = 0;
 
 	int[] cellIndexes;
+	int[] dataCellIndexes;
+
 	ORDER order = ORDER.ASC;
 
 	boolean dirty = false;
@@ -80,14 +88,18 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 		// open the db and create a map wrapper
 		db = dbManager.openDatabase(dbName);
 
-		cellIndexes = new int[] { 0 };
-
 	}
 
 	private final OrderedCursor getCursor() {
-		return ORDER.ASC.equals(order) ? new AscCursor(
-				db.openCursor(null, null)) : new DescCursor(db.openCursor(null,
-				null));
+		if (secDb == null) {
+			// if the secondary db was not used, open a normal cursor
+			return ORDER.ASC.equals(order) ? new AscCursor(db.openCursor(null,
+					null)) : new DescCursor(db.openCursor(null, null));
+		} else {
+			// else use the secondary database
+			return ORDER.ASC.equals(order) ? new AscCursor(secDb.openCursor(
+					null, null)) : new DescCursor(secDb.openCursor(null, null));
+		}
 	}
 
 	/**
@@ -101,6 +113,16 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 		if (keyWrapper == null) {
 			keyWrapper = new CellsByteWrapper(key.getCells());
 			dataWrapper = new CellsByteWrapper(cells);
+
+			// we also open the secondary database here.
+			// passing in the cellIndexes and the dataCellIndexes
+			// we only create a secondary index if
+			if (!(cellIndexes == null && dataCellIndexes == null)) {
+				secKeyCreator = new CellKeyDataCreator(cellIndexes,
+						dataCellIndexes, keyWrapper, dataWrapper);
+				secDb = dbManager.openSecondaryDatabase(db, secKeyCreator);
+			}
+
 		}
 
 		// here we should increment and add top to any values required
@@ -124,7 +146,7 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 
 			flushCurrent();
 
-			byte[] keybytes = keyWrapper.getBytes(key.getCells());
+			final byte[] keybytes = keyWrapper.getBytes(key.getCells());
 			rowDataKey = new DatabaseEntry(keybytes);
 			rowData = new DatabaseEntry();
 
@@ -200,6 +222,8 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 		final OrderedCursor cursor = getCursor();
 		final DatabaseEntry itKey = new DatabaseEntry();
 		final DatabaseEntry itData = new DatabaseEntry();
+		final CellsByteWrapper cursorKeyWrapper = (secKeyCreator == null) ? keyWrapper
+				: secKeyCreator.getSecondaryKeyWrapper();
 		final int l = limit;
 		// we wrap the CellTuple iterator into a DataEntry Iterator
 		return new Iterator<DataEntry>() {
@@ -219,9 +243,9 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 
 			@Override
 			public DataEntry next() {
-				return new DataEntry(new SimpleCellKey(keyWrapper.readFrom(
-						itKey.getData(), 0)), dataWrapper.readFrom(
-						itData.getData(), 0), functions);
+				return new DataEntry(new SimpleCellKey(
+						cursorKeyWrapper.readFrom(itKey.getData(), 0)),
+						dataWrapper.readFrom(itData.getData(), 0), functions);
 			}
 
 			@Override
@@ -247,13 +271,15 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 		itData.setPartial(true);
 		itData.setPartialLength(0);
 		int row = 0;
+		final CellsByteWrapper cursorKeyWrapper = (secKeyCreator == null) ? keyWrapper
+				: secKeyCreator.getSecondaryKeyWrapper();
 		try {
 
 			while ((row++ < limit)
 					&& cursor.getNext(itKey, itData).equals(
 							OperationStatus.SUCCESS)) {
-				keys.add(new SimpleCellKey(keyWrapper.readFrom(itKey.getData(),
-						0)));
+				keys.add(new SimpleCellKey(cursorKeyWrapper.readFrom(
+						itKey.getData(), 0)));
 			}
 
 		} finally {
@@ -276,22 +302,22 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 	@Override
 	public void write(DataSink sink) {
 		flushCurrent();
-		// final Set<Entry<SimpleCellKey, CellTuple>> values = map.entrySet();
-		//
-		// for (Entry<SimpleCellKey, CellTuple> entry : values) {
-		// sink.fill(entry.getKey(), entry.getValue().getCells());
-		// }
 
+		// the cursor will be opened depending on the ORDER used.
+		// either ASC or DESC
 		final OrderedCursor cursor = getCursor();
 		final DatabaseEntry itKey = new DatabaseEntry();
 		final DatabaseEntry itData = new DatabaseEntry();
+		final CellsByteWrapper cursorKeyWrapper = (secKeyCreator == null) ? keyWrapper
+				: secKeyCreator.getSecondaryKeyWrapper();
+
 		try {
 			int rows = 0;
 			while (cursor.getNext(itKey, itData)
 					.equals(OperationStatus.SUCCESS)) {
 				if (rows++ < limit)
 					sink.fill(
-							new SimpleCellKey(keyWrapper.readFrom(
+							new SimpleCellKey(cursorKeyWrapper.readFrom(
 									itKey.getData(), 0)),
 							dataWrapper.readFrom(itData.getData(), 0));
 				else
@@ -307,13 +333,26 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 		flushCurrent();
 		// db is temporary, i.e. on close the db is removed.
 		db.close();
+
+		if (secDb != null)
+			secDb.close();
 	}
 
+	/**
+	 * In the case of the Berkeley Aggregate Store the data is already ordered
+	 * by key.<br/>
+	 * The cell indexes for ordering is ignored.
+	 */
 	@Override
 	public void setOrderKeyBy(int[] cellIndexes,
 			org.simplesql.data.AggregateStore.ORDER order) {
 		this.order = order;
 		this.cellIndexes = cellIndexes;
+	}
+
+	@Override
+	public void setOrderByData(int[] cellIndexes) {
+		this.dataCellIndexes = cellIndexes;
 	}
 
 	/**
@@ -368,4 +407,131 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 			return cursor.getPrev(key, data, null);
 		}
 	}
+
+	/**
+	 * 
+	 * Create's a secondary database key based on the keyCellIndexes and
+	 * datCellIndexes.<br/>
+	 * All keys are sorted in the berkeley database due to the BTree
+	 * implementation it uses, which if we only needed to order/sort by key
+	 * there is not need for comparators and secondary indexes, we need to be
+	 * able to sort/order by data i.e. information not in the key, and or
+	 * including the key. The only way to accomplish this is with a secondary
+	 * key.
+	 * <p/>
+	 * <b>SCHEMA</b><br/>
+	 * The schema is created as follows: keyCells, dataCells so that if the
+	 * keyCells point to {String, int} and the data cells point to {long} the
+	 * schema is {String, int, long}
+	 * 
+	 */
+	static class CellKeyDataCreator implements SecondaryKeyCreator {
+
+		final int keyCellIndexes[];
+		final int datCellIndexes[];
+		final int keyLen;
+		final int datLen;
+		final int resultLen;
+
+		final CellsByteWrapper keyWrapper, dataWrapper, secKeyWrapper;
+		@SuppressWarnings("rawtypes")
+		final Cell[] resultCells;
+
+		/**
+		 * 
+		 * @param keyCells
+		 *            can be null
+		 * @param datCells
+		 *            can be null
+		 * @param keyWrapper
+		 * @param dataWrapper
+		 *            can be null
+		 */
+		public CellKeyDataCreator(int[] keyCells, int[] datCells,
+				CellsByteWrapper keyWrapper, CellsByteWrapper dataWrapper) {
+			super();
+			this.keyCellIndexes = keyCells;
+			this.datCellIndexes = datCells;
+			this.keyWrapper = keyWrapper;
+			this.dataWrapper = dataWrapper;
+
+			// create the result key schema from the merged schemas of the key
+			// and the data
+			Cell.SCHEMA[] schemas;
+			if (keyCells == null && datCells != null) {
+				schemas = new Cell.SCHEMA[datCells.length];
+				addSchema(datCells, dataWrapper, 0, schemas);
+			} else if (datCells == null && keyCells != null) {
+				schemas = new Cell.SCHEMA[keyCells.length];
+				addSchema(keyCells, keyWrapper, 0, schemas);
+			} else {
+				schemas = new Cell.SCHEMA[keyCells.length + datCells.length];
+				addSchema(keyCells, keyWrapper, 0, schemas);
+				addSchema(datCells, dataWrapper, keyCells.length, schemas);
+
+			}
+
+			// precreate the result key wrapper and cell array.
+			secKeyWrapper = new CellsByteWrapper(schemas);
+
+			keyLen = (keyCellIndexes == null) ? 0 : keyCellIndexes.length;
+			datLen = (datCellIndexes == null) ? 0 : datCellIndexes.length;
+			resultLen = keyLen + datLen;
+			resultCells = new Cell[resultLen];
+		}
+
+		/**
+		 * helper method to add schemas
+		 * 
+		 * @param indexes
+		 * @param wrapper
+		 * @param from
+		 * @param schemas
+		 */
+		private static final void addSchema(final int[] indexes,
+				final CellsByteWrapper wrapper, final int from,
+				final Cell.SCHEMA[] schemas) {
+			final int len = indexes.length;
+			for (int i = 0; i < len; i++) {
+				schemas[i + from] = wrapper.schemaAt(indexes[i]);
+			}
+
+		}
+
+		public CellsByteWrapper getSecondaryKeyWrapper() {
+			return secKeyWrapper;
+		}
+
+		/**
+		 * We create the secondary indexes based on the keyCellIndexes and the
+		 * dataCellIndexes.
+		 */
+		@Override
+		public boolean createSecondaryKey(SecondaryDatabase db,
+				DatabaseEntry key, DatabaseEntry dat, DatabaseEntry secKey) {
+
+			if (keyCellIndexes != null) {
+				final Cell[] keyCells = keyWrapper.readFrom(key.getData(), 0);
+				for (int i = 0; i < keyLen; i++) {
+					// get the keycells as specified in the key cell indexes
+					resultCells[i] = keyCells[keyCellIndexes[i]];
+				}
+			}
+
+			if (datCellIndexes != null) {
+				final Cell[] datCells = dataWrapper.readFrom(dat.getData(), 0);
+				for (int i = keyLen; i < resultLen; i++) {
+					// get the data cells as specified in the data cell indexes
+					resultCells[i] = datCells[datCellIndexes[i]];
+				}
+			}
+
+			// set the secondary key
+			secKey.setData(secKeyWrapper.getBytes(resultCells));
+
+			return true;
+		}
+
+	}
+
 }

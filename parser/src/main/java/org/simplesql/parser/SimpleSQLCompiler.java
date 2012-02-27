@@ -16,12 +16,9 @@ import org.codehaus.janino.CompileException;
 import org.codehaus.janino.ExpressionEvaluator;
 import org.codehaus.janino.Parser.ParseException;
 import org.codehaus.janino.Scanner.ScanException;
-import org.simplesql.data.Cell;
 import org.simplesql.data.Key;
 import org.simplesql.data.KeyParser;
 import org.simplesql.data.SimpleCellKey;
-import org.simplesql.data.SimpleObjectKey;
-import org.simplesql.data.SimpleStringKey;
 import org.simplesql.data.StringCell;
 import org.simplesql.parser.tree.SELECT;
 import org.simplesql.parser.tree.SELECTTreeAdaptor;
@@ -208,7 +205,8 @@ public class SimpleSQLCompiler implements SQLCompiler {
 
 		@Override
 		public Key makeKey(Object[] data) {
-			return new SimpleCellKey(new StringCell(String.valueOf(id.getAndIncrement())));
+			return new SimpleCellKey(new StringCell(String.valueOf(id
+					.getAndIncrement())));
 		}
 
 	}
@@ -433,7 +431,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 				ScanException {
 
 			evalKeyCreator = new ExpressionEvaluator("new "
-					+ SimpleObjectKey.class.getName() + "( new Object[]{"
+					+ SimpleCellKey.class.getName() + "( new Object[]{"
 					+ converter.getGroupByExpressions() + "})", Key.class,
 					columnNames, columnTypes);
 

@@ -8,6 +8,7 @@ import org.antlr.runtime.CommonTokenStream;
 import org.junit.Test;
 import org.simplesql.om.ClientInfoTemplate.Column;
 import org.simplesql.om.ClientInfoTemplate.Projection;
+import org.simplesql.om.projection.ProjectionParser.projection_return;
 
 /**
  * 

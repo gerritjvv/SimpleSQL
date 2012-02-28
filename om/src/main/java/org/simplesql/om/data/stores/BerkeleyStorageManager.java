@@ -1,7 +1,5 @@
 package org.simplesql.om.data.stores;
 
-import java.util.Set;
-
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.TransformFunction;
 import org.simplesql.om.ClientInfoTemplate.Projection;
@@ -43,11 +41,16 @@ public class BerkeleyStorageManager implements StorageManager {
 		// which columns were used in the key itself, we can infer this by
 		// checking if it is in the select columns, then it is a data value.
 		store.setLimit(exec.getLimit());
-		store.setOrderKeyBy(exec.getKeyOrderIndexes(), exec.getOrder());
-		store.setOrderByData(exec.getDataOrderIndexes());
+		store.setOrderKeyBy(exec.getGroupOrderIndexes(), exec.getOrder());
+		store.setOrderByData(exec.getSelectOrderIndexes());
 
 		// -------------------------------------- Create data stor
 
 		return store;
 	}
+
+	public void close() {
+		dbManager.close();
+	}
+
 }

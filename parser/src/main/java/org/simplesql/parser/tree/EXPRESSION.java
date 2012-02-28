@@ -69,7 +69,12 @@ public class EXPRESSION extends TERM {
 			complex = mult.isComplex();
 			unaryType = mult.unaryType;
 			setValue(mult.unaryValue);
+
+			setAssignedName(mult.getAssignedName());
+		} else {
+			setAssignedName(String.valueOf(System.nanoTime()));
 		}
+
 	}
 
 	public boolean isComplex() {

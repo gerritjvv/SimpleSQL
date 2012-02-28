@@ -54,8 +54,8 @@ statement returns [SELECT ret = new SELECT(variables);]
                      (',' (gpe1=expression {$ret.groupBy($gpe1.expr);}))*)
                      |
             ('ORDER' 'BY' (ope1=IDENT {$ret.orderBy($ope1.text);}) 
-                     (',' (ope1=IDENT {$ret.orderBy($ope1.text);}))*) ('ASC' {$ret.setOrder(SELECT.ORDER.ASC); }
-                                                                        | 'DESC' {$ret.setOrder(SELECT.ORDER.DESC); } )
+                     (',' (ope1=IDENT {$ret.orderBy($ope1.text);}))*) ('ASC' {$ret.setOrder(org.simplesql.parser.tree.SELECT.ORDER.ASC); }
+                                                                        | 'DESC' {$ret.setOrder(org.simplesql.parser.tree.SELECT.ORDER.DESC); } )
                      |
             ('LIMIT' l=INTEGER {$ret.limit($l.text);})
             )*

@@ -22,4 +22,6 @@ public interface StorageManager {
 	@SuppressWarnings("rawtypes")
 	AggregateStore newAggregateStore(Projection projection, SQLExecutor exec);
 
+	void close();
+
 }

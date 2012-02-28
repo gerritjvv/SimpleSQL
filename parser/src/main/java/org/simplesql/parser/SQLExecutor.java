@@ -29,9 +29,9 @@ public interface SQLExecutor {
 
 	int getLimit();
 
-	int[] getKeyOrderIndexes();
+	int[] getGroupOrderIndexes();
 
-	int[] getDataOrderIndexes();
+	int[] getSelectOrderIndexes();
 	/**
 	 * Get the order direction that was specified by the select order by
 	 * statement
@@ -51,7 +51,8 @@ public interface SQLExecutor {
 
 	RangeGroups getRangeGroups();
 
-	Set<String> getOrderByColumns();
+	Set<String> getSelectOrderByColumns();
+	Set<String> getGroupOrderByColumns();
 
 	/**
 	 * 

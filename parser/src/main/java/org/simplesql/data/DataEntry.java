@@ -2,6 +2,7 @@ package org.simplesql.data;
 
 
 
+
 /**
  * 
  * Contain the cells for each row entry. In case of an aggregate only one entry

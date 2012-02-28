@@ -1,8 +1,10 @@
 package org.simplesql.parser.tree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.simplesql.data.RangeGroups;
@@ -13,6 +15,10 @@ import org.simplesql.funct.SUM;
 
 public class SELECT {
 
+	public enum ORDER {
+		DESC, ASC
+	};
+
 	/**
 	 * Holds the SELECT a,b,d ... part
 	 */
@@ -20,13 +26,35 @@ public class SELECT {
 	final List<LOGICAL> where = new ArrayList<LOGICAL>();
 	final List<EXPRESSION> groupBy = new ArrayList<EXPRESSION>();
 
+	ORDER order = ORDER.ASC;
 	/**
 	 * Holds the order by variables
 	 */
-	final Set<String> orderBy = new HashSet<String>();
-
+	final Set<String> selectOrderBy = new HashSet<String>();
+	final Set<String> groupOrderBy = new HashSet<String>();
+	
+	int[] selectOrderIndexes;
+	int selectOrderIndexesLen;
+	int[] groupOrderIndexes;
+	int groupOderderIndexesLen;
+	
 	public Set<String> variables = new HashSet<String>();
 	public final RangeGroups rangeGroups = new RangeGroups();
+
+	Map<String, EXPRESSION> selectExpressionsMap = new HashMap<String, EXPRESSION>();
+	Map<String, EXPRESSION> groupExpressionsMap = new HashMap<String, EXPRESSION>();
+	
+	/**
+	 * Used to keep track of the index of each select expression e.g. select a,b
+	 * will give a.index = 0, b.index = 1<br/>
+	 * For internal use only
+	 */
+	private int selectIndexCounter;
+	/**
+	 * Same as selectIndexCounter but for group statements.<br/>
+	 * For internal use only
+	 */
+	private int groupIndexCounter;
 
 	/**
 	 * Contain the identified transform functions for the select expressions.
@@ -58,6 +86,7 @@ public class SELECT {
 
 	public void select(EXPRESSION expr) {
 		selects.add(expr);
+		selectExpressionsMap.put(expr.getAssignedName(), expr);
 
 		final TERM.TYPE type = expr.getType();
 
@@ -72,6 +101,7 @@ public class SELECT {
 			transforms.add(new PassThroughTransform(selects.indexOf(expr)));
 		}
 
+		expr.setIndex(selectIndexCounter++);
 	}
 
 	public void where(LOGICAL logical) {
@@ -80,12 +110,36 @@ public class SELECT {
 
 	public void groupBy(EXPRESSION expr) {
 		groupBy.add(expr);
+		expr.setIndex(groupIndexCounter++);
+		groupExpressionsMap.put(expr.getAssignedName(), expr);
 	}
 
 	public void orderBy(String varName) {
-		orderBy.add(varName);
+		
+		
+		EXPRESSION expr = null;
+		if (  (expr = groupExpressionsMap.get(varName)) != null) {
+			groupOrderBy.add(varName);
+			if(groupOrderIndexes == null)
+				groupOrderIndexes = new int[groupIndexCounter];
+			
+			groupOrderIndexes[groupOderderIndexesLen++] = expr.getIndex();
+		} else if ( (expr = selectExpressionsMap.get(varName)) != null) {
+			selectOrderBy.add(varName);
+			
+			if(selectOrderIndexes == null)
+				selectOrderIndexes = new int[selectIndexCounter];
+			
+			selectOrderIndexes[selectOrderIndexesLen++] = expr.getIndex();
+		} else {
+			throw new RuntimeException(
+					"The variable "
+							+ varName
+							+ " must exist either in the group by or in the select statement");
+		}
 	}
 
+	
 	public void limit(String limit) {
 		this.limit = Integer.parseInt(limit);
 	}
@@ -122,8 +176,12 @@ public class SELECT {
 		return groupBy;
 	}
 
-	public Set<String> getOrderBy() {
-		return orderBy;
+	public Set<String> getSelectOrderBy() {
+		return selectOrderBy;
+	}
+
+	public Set<String> getGroupOrderBy() {
+		return groupOrderBy;
 	}
 
 	public void visit(Visitor visitor) {
@@ -139,7 +197,11 @@ public class SELECT {
 		}
 
 		int index = 0;
-		for (String var : orderBy) {
+		for (String var : selectOrderBy) {
+			visitor.orderBy(index++, var);
+		}
+
+		for (String var : groupOrderBy) {
 			visitor.orderBy(index++, var);
 		}
 
@@ -163,6 +225,30 @@ public class SELECT {
 
 		void orderBy(int i, String expr);
 
+	}
+
+	public ORDER getOrder() {
+		return order;
+	}
+
+	public void setOrder(ORDER order) {
+		this.order = order;
+	}
+
+	public int[] getSelectOrderIndexes() {
+		return selectOrderIndexes;
+	}
+
+	public int getSelectOrderIndexesLen() {
+		return selectOrderIndexesLen;
+	}
+
+	public int[] getGroupOrderIndexes() {
+		return groupOrderIndexes;
+	}
+
+	public int getGroupOrderIndexesLen() {
+		return groupOderderIndexesLen;
 	}
 
 }

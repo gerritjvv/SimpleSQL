@@ -1,5 +1,6 @@
 package org.simplesql.data;
 
+
 /**
  * 
  * Create's a new DataEntry from a Cell array and functions.

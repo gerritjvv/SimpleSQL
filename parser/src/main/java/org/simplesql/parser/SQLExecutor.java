@@ -14,8 +14,9 @@ public interface SQLExecutor {
 	 * 
 	 * @param source
 	 *            DataSource to read cells from
-	 *            
-	 * @param keyParser keyParser
+	 * 
+	 * @param keyParser
+	 *            keyParser
 	 * 
 	 * @param store
 	 *            AggregateStore The AggregateStore implementation to use to
@@ -26,22 +27,38 @@ public interface SQLExecutor {
 	@SuppressWarnings("rawtypes")
 	void pump(DataSource source, AggregateStore store, Progress progressListener);
 
+	int getLimit();
+
+	int[] getKeyOrderIndexes();
+
+	int[] getDataOrderIndexes();
+	/**
+	 * Get the order direction that was specified by the select order by
+	 * statement
+	 * 
+	 * @return
+	 */
+	AggregateStore.ORDER getOrder();
+	
 	/**
 	 * Returns all of the columns used from the table
+	 * 
 	 * @return Set of String
 	 */
 	Set<String> getColumnsUsed();
-	
+
 	WhereFilter getWhereFilter();
-	
+
 	RangeGroups getRangeGroups();
-	
+
+	Set<String> getOrderByColumns();
+
 	/**
 	 * 
 	 * @return List of transforms
 	 */
 	List<TransformFunction> getTransforms();
-	
+
 	/**
 	 * 
 	 * Each Progress update will be sent an object of this type. Contains the

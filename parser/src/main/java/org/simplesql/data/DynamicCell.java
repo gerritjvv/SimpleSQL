@@ -31,6 +31,7 @@ public class DynamicCell implements Cell<String> {
 
 	}
 
+	String name;
 	Object val;
 
 	public DynamicCell() {
@@ -40,6 +41,12 @@ public class DynamicCell implements Cell<String> {
 	public DynamicCell(Object val) {
 		super();
 		this.val = (val == null) ? "" : val;
+	}
+
+	public DynamicCell(Object val, String name) {
+		super();
+		this.val = (val == null) ? "" : val;
+		this.name = name;
 	}
 
 	@Override
@@ -346,5 +353,12 @@ public class DynamicCell implements Cell<String> {
 		return true;
 	}
 
-	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

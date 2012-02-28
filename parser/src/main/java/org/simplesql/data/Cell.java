@@ -36,6 +36,8 @@ public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 
 	}
 
+	String getName();
+
 	T getData();
 
 	SCHEMA getSchema();

@@ -1,4 +1,4 @@
-package org.simplesql.data.impl;
+package org.simplesql.om.data.stores;
 
 import java.util.Collection;
 import java.util.Comparator;

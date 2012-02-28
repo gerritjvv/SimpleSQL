@@ -35,6 +35,10 @@ public class TERM {
 
 	}
 
+	/**
+	 * The name of the variable used or via the "as" keyword
+	 */
+	String assignedName;
 	TYPE type;
 	Object value;
 
@@ -63,6 +67,14 @@ public class TERM {
 
 	public void setValue(Object value) {
 		this.value = value;
+	}
+
+	public String getAssignedName() {
+		return assignedName;
+	}
+
+	public void setAssignedName(String assignedName) {
+		this.assignedName = assignedName;
 	}
 
 }

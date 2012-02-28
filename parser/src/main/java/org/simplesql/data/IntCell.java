@@ -11,6 +11,7 @@ import com.google.common.hash.Hasher;
 public class IntCell implements Cell<Number> {
 
 	int val = 0;
+	String name;
 
 	public IntCell() {
 	}
@@ -18,6 +19,12 @@ public class IntCell implements Cell<Number> {
 	public IntCell(int val) {
 		super();
 		this.val = val;
+	}
+
+	public IntCell(int val, String name) {
+		super();
+		this.val = val;
+		this.name = name;
 	}
 
 	@Override
@@ -155,6 +162,14 @@ public class IntCell implements Cell<Number> {
 		if (val != other.val)
 			return false;
 		return true;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

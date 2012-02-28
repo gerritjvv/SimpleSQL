@@ -1,4 +1,4 @@
-package org.simplesql.data.impl.berkeley;
+package org.simplesql.om.data.stores.berkeley;
 
 import java.io.File;
 import java.util.Comparator;

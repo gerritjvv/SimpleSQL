@@ -1,8 +1,6 @@
-package org.simplesql.data.impl;
+package org.simplesql.om.data.stores;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -15,7 +13,7 @@ import org.simplesql.data.DataSink;
 import org.simplesql.data.Key;
 import org.simplesql.data.SimpleCellKey;
 import org.simplesql.data.TransformFunction;
-import org.simplesql.data.impl.berkeley.DBManager;
+import org.simplesql.om.data.stores.berkeley.DBManager;
 
 import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;

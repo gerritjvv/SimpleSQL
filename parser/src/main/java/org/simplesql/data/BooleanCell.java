@@ -17,12 +17,20 @@ public class BooleanCell implements Cell<Boolean> {
 
 	boolean val = false;
 
+	String name;
+
 	public BooleanCell() {
 	}
 
 	public BooleanCell(boolean val) {
 		super();
 		this.val = val;
+	}
+
+	public BooleanCell(boolean val, String name) {
+		super();
+		this.val = val;
+		this.name = name;
 	}
 
 	@Override
@@ -163,5 +171,12 @@ public class BooleanCell implements Cell<Boolean> {
 		return true;
 	}
 
-	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

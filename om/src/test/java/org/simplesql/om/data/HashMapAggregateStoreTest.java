@@ -1,4 +1,4 @@
-package org.simplesql.test.data.impl;
+package org.simplesql.om.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.TestCase;
 
 import org.junit.Test;
-import org.simplesql.data.AggregateStore.ORDER;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.DoubleCell;
@@ -19,10 +18,10 @@ import org.simplesql.data.Key;
 import org.simplesql.data.LongCell;
 import org.simplesql.data.SimpleCellKey;
 import org.simplesql.data.StringCell;
-import org.simplesql.data.impl.HashMapAggregateStore;
 import org.simplesql.funct.COUNT;
 import org.simplesql.funct.PassThroughTransform;
 import org.simplesql.funct.SUM;
+import org.simplesql.om.data.stores.HashMapAggregateStore;
 
 /**
  * 
@@ -31,7 +30,6 @@ import org.simplesql.funct.SUM;
  */
 public class HashMapAggregateStoreTest extends TestCase {
 
-	
 	public void testOrderByKeyAscLimit() {
 		/**
 		 * 
@@ -41,7 +39,8 @@ public class HashMapAggregateStoreTest extends TestCase {
 		 * StringCell("Test");
 		 */
 		HashMapAggregateStore map = new HashMapAggregateStore();
-		map.setOrderKeyBy(new int[] { 0 }, ORDER.ASC);
+		map.setOrderKeyBy(new int[] { 0 },
+				org.simplesql.data.AggregateStore.ORDER.ASC);
 
 		int limit = 10;
 
@@ -74,7 +73,7 @@ public class HashMapAggregateStoreTest extends TestCase {
 		// check that only 10 rows were read
 		assertEquals(10, counter.get());
 	}
-	
+
 	public void testOrderByKeyDescLimit() {
 		/**
 		 * 
@@ -84,7 +83,8 @@ public class HashMapAggregateStoreTest extends TestCase {
 		 * StringCell("Test");
 		 */
 		HashMapAggregateStore map = new HashMapAggregateStore();
-		map.setOrderKeyBy(new int[] { 0 }, ORDER.DESC);
+		map.setOrderKeyBy(new int[] { 0 },
+				org.simplesql.data.AggregateStore.ORDER.DESC);
 
 		int limit = 10;
 
@@ -175,11 +175,9 @@ public class HashMapAggregateStoreTest extends TestCase {
 			}
 		}
 
-		
 		for (String key : Arrays.asList("A", "B")) {
 			assertEquals(4, map.get(new SimpleCellKey(key)).getCells().length);
 		}
-
 
 	}
 

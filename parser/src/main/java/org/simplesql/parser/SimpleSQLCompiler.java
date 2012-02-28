@@ -123,9 +123,8 @@ public class SimpleSQLCompiler implements SQLCompiler {
 					.trim().isEmpty()) ? new AlwaysTrueWhereFilter()
 					: new SimpleWhereFilter(converter, columnNames, columnTypes);
 
-			return new SimpleSQLExecutor(select.getRangeGroups(),
-					variablesUsed, execService, tableDef, eval, keyParser,
-					whereFilter, select.getTransforms(), select.getOrderBy());
+			return new SimpleSQLExecutor(execService, tableDef, eval,
+					keyParser, whereFilter, select.getTransforms(), select);
 
 		} catch (Throwable t) {
 			CompilerException excp = new CompilerException(t.toString(), t);

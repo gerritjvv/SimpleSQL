@@ -12,12 +12,20 @@ public class LongCell implements Cell<Number> {
 
 	long val = 0L;
 
+	String name;
+
 	public LongCell() {
 	}
 
 	public LongCell(long val) {
 		super();
 		this.val = val;
+	}
+
+	public LongCell(long val, String name) {
+		super();
+		this.val = val;
+		this.name = name;
 	}
 
 	@Override
@@ -159,6 +167,12 @@ public class LongCell implements Cell<Number> {
 		return true;
 	}
 
-	
-	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

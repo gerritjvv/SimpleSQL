@@ -8,6 +8,7 @@ public class VARIABLE extends TERM {
 		super(TYPE.UKNOWN);
 		this.name = name;
 		setValue(name);
+		setAssignedName(name);
 	}
 
 	public String getName() {

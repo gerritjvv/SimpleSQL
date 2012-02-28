@@ -56,6 +56,8 @@ public class TreeJavaConvert {
 				selectExpressions.addString("new "
 						+ cellType.getCanonicalName() + "(");
 				expr.visit(selectExpressions);
+				selectExpressions.addString(",");
+				selectExpressions.addString(expr.getAssignedName());
 				selectExpressions.addString(")");
 
 			}

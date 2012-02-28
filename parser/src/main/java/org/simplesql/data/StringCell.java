@@ -17,6 +17,7 @@ import com.google.common.hash.Hasher;
 public class StringCell implements Cell<String> {
 
 	String val;
+	String name;
 
 	public StringCell() {
 
@@ -25,6 +26,12 @@ public class StringCell implements Cell<String> {
 	public StringCell(String val) {
 		super();
 		this.val = val;
+	}
+
+	public StringCell(String val, String name) {
+		super();
+		this.val = val;
+		this.name = name;
 	}
 
 	@Override
@@ -200,6 +207,14 @@ public class StringCell implements Cell<String> {
 		} else if (!val.equals(other.val))
 			return false;
 		return true;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

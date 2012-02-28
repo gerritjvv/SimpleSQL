@@ -275,8 +275,11 @@ public class KeyWriterReader implements Comparable<KeyWriterReader> {
 
 		final Object[] javaValues = new Object[len];
 
+		final int olen = orderdValues.length;
+		KeyColumnValue value;
 		int i = 0;
-		for (KeyColumnValue value : orderdValues) {
+		for (int a = 0; a < olen; a++) {
+			value = orderdValues[a];
 			String name = value.getName();
 			if (ignoreColumns.contains(name)) {
 				i++;
@@ -300,9 +303,9 @@ public class KeyWriterReader implements Comparable<KeyWriterReader> {
 		this.key = key;
 		this.from = from;
 		this.len = len;
-
+		final int olen = orderdValues.length - 2;
 		// dont reset the last two values
-		for (int i = 0; i < orderdValues.length - 2; i++) {
+		for (int i = 0; i < olen; i++) {
 			orderdValues[i].setKey(key, from, len);
 
 		}

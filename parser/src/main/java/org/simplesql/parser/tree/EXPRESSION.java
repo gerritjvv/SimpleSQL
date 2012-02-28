@@ -31,6 +31,8 @@ public class EXPRESSION extends TERM {
 
 	List<Object> children = new ArrayList<Object>();
 
+	int index = 0;
+
 	/**
 	 * An expression is considered complex if it contains anything other than a
 	 * simple constant or variable.
@@ -63,7 +65,7 @@ public class EXPRESSION extends TERM {
 		// if the expressions is only madeup of a
 		// single constant or variable we propogate the
 		// value and type upwards from the MULT and UNARY.
-		if(!complex){
+		if (!complex) {
 			complex = mult.isComplex();
 			unaryType = mult.unaryType;
 			setValue(mult.unaryValue);
@@ -102,5 +104,13 @@ public class EXPRESSION extends TERM {
 
 		void mult(MULT mult);
 
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
 }

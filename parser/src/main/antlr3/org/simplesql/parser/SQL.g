@@ -41,6 +41,7 @@ tokens {
   
   public SELECT select;
   public static final java.util.Set<String> variables = new java.util.HashSet<String>();
+  
 }
 
 statement returns [SELECT ret = new SELECT(variables);]
@@ -53,7 +54,8 @@ statement returns [SELECT ret = new SELECT(variables);]
                      (',' (gpe1=expression {$ret.groupBy($gpe1.expr);}))*)
                      |
             ('ORDER' 'BY' (ope1=IDENT {$ret.orderBy($ope1.text);}) 
-                     (',' (ope1=IDENT {$ret.orderBy($ope1.text);}))*)
+                     (',' (ope1=IDENT {$ret.orderBy($ope1.text);}))*) ('ASC' {$ret.setOrder(SELECT.ORDER.ASC); }
+                                                                        | 'DESC' {$ret.setOrder(SELECT.ORDER.DESC); } )
                      |
             ('LIMIT' l=INTEGER {$ret.limit($l.text);})
             )*
@@ -87,7 +89,7 @@ mult returns [MULT ret = new MULT()]
 
 expression returns [EXPRESSION expr = new EXPRESSION()]
    : em1=mult
-   {$expr.mult($em1.ret);} ((t+='-' {$expr.minus();}| t+='+' {$expr.plus();}) em2=mult {$expr.mult($em2.ret);})* 
+   {$expr.mult($em1.ret);} ((t+='-' {$expr.minus();}| t+='+' {$expr.plus();}) em2=mult {$expr.mult($em2.ret);})* ('AS' IDENT { $expr.setAssignedName($IDENT.text); })* 
    
 //   -> ^(EXPRESSION $em1 ($t $em2)* )
    

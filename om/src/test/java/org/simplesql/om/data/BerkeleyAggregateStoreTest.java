@@ -1,4 +1,4 @@
-package org.simplesql.test.data.impl;
+package org.simplesql.om.data;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,7 +13,6 @@ import junit.framework.TestCase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.simplesql.data.AggregateStore.ORDER;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.DoubleCell;
@@ -22,11 +21,11 @@ import org.simplesql.data.Key;
 import org.simplesql.data.LongCell;
 import org.simplesql.data.SimpleCellKey;
 import org.simplesql.data.StringCell;
-import org.simplesql.data.impl.BerkeleyAggregateStore;
-import org.simplesql.data.impl.berkeley.DBManager;
 import org.simplesql.funct.COUNT;
 import org.simplesql.funct.PassThroughTransform;
 import org.simplesql.funct.SUM;
+import org.simplesql.om.data.stores.BerkeleyAggregateStore;
+import org.simplesql.om.data.stores.berkeley.DBManager;
 
 import com.google.common.util.concurrent.AtomicDouble;
 
@@ -52,7 +51,7 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 				new COUNT(0), new COUNT(1), new SUM(2),
 				new PassThroughTransform(3));
 
-		map.setOrderKeyBy(null, ORDER.DESC);
+		map.setOrderKeyBy(null, org.simplesql.data.AggregateStore.ORDER.DESC);
 		// we order by data that is accumulated as the query proceeds,
 		// i.e. the order is constantly changing.
 		map.setOrderByData(new int[] { 2 });
@@ -108,7 +107,7 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 				new COUNT(0), new COUNT(1), new SUM(2),
 				new PassThroughTransform(3));
 
-		map.setOrderKeyBy(new int[] { 0 }, ORDER.ASC);
+		map.setOrderKeyBy(new int[] { 0 }, org.simplesql.data.AggregateStore.ORDER.ASC);
 
 
 		// get the top 10
@@ -154,7 +153,7 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 				new COUNT(0), new COUNT(1), new SUM(2),
 				new PassThroughTransform(3));
 
-		map.setOrderKeyBy(new int[] { 0 }, ORDER.DESC);
+		map.setOrderKeyBy(new int[] { 0 }, org.simplesql.data.AggregateStore.ORDER.DESC);
 
 		// get the top 10
 		map.setLimit(10);

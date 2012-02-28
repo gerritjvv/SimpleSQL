@@ -1,4 +1,4 @@
-package org.simplesql.test.data.impl.berkeley;
+package org.simplesql.om.data;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,7 +9,7 @@ import org.simplesql.data.CellTuple;
 import org.simplesql.data.IntCell;
 import org.simplesql.data.SimpleCellKey;
 import org.simplesql.data.StringCell;
-import org.simplesql.data.impl.berkeley.DBManager;
+import org.simplesql.om.data.stores.berkeley.DBManager;
 
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.je.Database;

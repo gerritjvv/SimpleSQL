@@ -1,6 +1,7 @@
 package org.simplesql.data;
 
 
+
 /**
  * 
  * Data Sink's can receive data.

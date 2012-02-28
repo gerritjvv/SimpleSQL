@@ -1,4 +1,4 @@
-package org.simplesql.test.funct;
+package org.simplesql.om.data;
 
 import java.util.Arrays;
 
@@ -12,11 +12,11 @@ import org.simplesql.data.IntCell;
 import org.simplesql.data.Key;
 import org.simplesql.data.SimpleCellKey;
 import org.simplesql.data.StringCell;
-import org.simplesql.data.impl.HashMapAggregateStore;
 import org.simplesql.funct.COUNT;
 import org.simplesql.funct.GroupBy;
 import org.simplesql.funct.PassThroughTransform;
 import org.simplesql.funct.SUM;
+import org.simplesql.om.data.stores.HashMapAggregateStore;
 
 public class GroupByTest extends TestCase{
 

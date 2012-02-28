@@ -1,5 +1,6 @@
 package org.simplesql.parser;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -15,8 +16,11 @@ import org.simplesql.data.DataSource;
 import org.simplesql.data.KeyParser;
 import org.simplesql.data.RangeGroups;
 import org.simplesql.data.TransformFunction;
+import org.simplesql.parser.tree.EXPRESSION;
+import org.simplesql.parser.tree.SELECT;
 import org.simplesql.schema.TableDef;
 
+import com.google.common.primitives.Primitives;
 import com.lmax.disruptor.ClaimStrategy;
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventHandler;
@@ -45,22 +49,65 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	final RangeGroups rangeGroups;
 
 	final Set<String> orderByColumns;
+	final int limit;
 
-	public SimpleSQLExecutor(RangeGroups rangeGroups, Set<String> columnsUsed,
-			ExecutorService execService, TableDef tableDef,
+	final AggregateStore.ORDER order;
+
+	int[] keyOrderIndexes, dataOrderIndexes;
+
+	public SimpleSQLExecutor(ExecutorService execService, TableDef tableDef,
 			ExpressionEvaluator eval, KeyParser keyParser,
 			WhereFilter whereFilter, List<TransformFunction> transforms,
-			Set<String> orderByColumns) {
+			SELECT select) {
 		super();
-		this.rangeGroups = rangeGroups;
-		this.columnsUsed = columnsUsed;
+		this.rangeGroups = select.getRangeGroups();
+		this.columnsUsed = select.getVariables();
 		this.execService = execService;
 		this.tableDef = tableDef;
 		this.eval = eval;
 		this.keyParser = keyParser;
 		this.whereFilter = whereFilter;
 		this.transforms = transforms;
-		this.orderByColumns = orderByColumns;
+		this.orderByColumns = select.getSelectOrderBy();
+		this.limit = select.getLimit();
+
+		order = (select.getOrder().equals(SELECT.ORDER.DESC)) ? AggregateStore.ORDER.DESC
+				: AggregateStore.ORDER.ASC;
+
+		int[] tmpKeyOrderIndexes = select.getSelectOrderIndexes();
+		if (tmpKeyOrderIndexes != null) {
+			keyOrderIndexes = Arrays.copyOf(tmpKeyOrderIndexes,
+					select.getSelectOrderIndexesLen());
+		}
+
+		int[] tmpDataOrderIndexes = select.getGroupOrderIndexes();
+		if (tmpDataOrderIndexes != null) {
+			dataOrderIndexes = Arrays.copyOf(tmpDataOrderIndexes,
+					select.getGroupOrderIndexesLen());
+		}
+
+	}
+
+	public int[] getKeyOrderIndexes() {
+		return keyOrderIndexes;
+	}
+
+	public int[] getDataOrderIndexes() {
+		return dataOrderIndexes;
+	}
+
+	/**
+	 * Get the order direction that was specified by the select order by
+	 * statement
+	 * 
+	 * @return
+	 */
+	public AggregateStore.ORDER getOrder() {
+		return order;
+	}
+
+	public int getLimit() {
+		return limit;
 	}
 
 	public Set<String> getOrderByColumns() {

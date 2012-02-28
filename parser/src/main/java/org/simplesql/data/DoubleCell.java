@@ -12,6 +12,8 @@ public class DoubleCell implements Cell<Number> {
 
 	double val = 0.0D;
 
+	String name;
+
 	public DoubleCell() {
 
 	}
@@ -19,6 +21,12 @@ public class DoubleCell implements Cell<Number> {
 	public DoubleCell(double val) {
 		super();
 		this.val = val;
+	}
+
+	public DoubleCell(double val, String name) {
+		super();
+		this.val = val;
+		this.name = name;
 	}
 
 	@Override
@@ -160,6 +168,14 @@ public class DoubleCell implements Cell<Number> {
 		if (Double.doubleToLongBits(val) != Double.doubleToLongBits(other.val))
 			return false;
 		return true;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

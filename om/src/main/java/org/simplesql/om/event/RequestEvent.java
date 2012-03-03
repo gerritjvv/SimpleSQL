@@ -12,7 +12,7 @@ import org.simplesql.om.RequestTemplate.Request;
  * A contains for the Request and all related objects when a Request is created.
  * 
  */
-public class RequestEvent {
+public class RequestEvent implements Event<Request>{
 
 	Request request;
 	ClientInfo clientInfo;
@@ -28,6 +28,11 @@ public class RequestEvent {
 
 	boolean valid = true;
 
+	@Override
+	public Request getData(){
+		return request;
+		
+	}
 	public String[][] getExcludes() {
 		return excludes;
 	}

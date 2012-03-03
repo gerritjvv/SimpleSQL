@@ -24,6 +24,18 @@
 			<version>0.1.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.simplesql</groupId>
+			<artifactId>wal</artifactId>
+			<version>0.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>${protobuf-java.version}</version>
+			<optional>false</optional>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
@@ -34,13 +46,6 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>${protobuf-java.version}</version>
-			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>

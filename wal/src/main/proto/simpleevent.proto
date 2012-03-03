@@ -1,0 +1,24 @@
+package org.simplesql.wal.event;
+
+option java_outer_classname = "SimpleEventTemplate";
+option java_package = "org.simplesql.wal.event";
+option optimize_for = SPEED;
+
+/**
+*
+* A very simple event object, that is use more for demonstration purposes of the WAL implemenation.
+*/
+
+message SimpleEvent{
+
+	optional string name = 1;
+	repeated KeyValuePair keyValuePair = 2; 
+    
+}
+
+message KeyValuePair{
+   
+   optional string name = 1;
+   optional string val = 2;
+   
+}

@@ -1,4 +1,4 @@
-package org.simplesql.om.util;
+package org.simplesql.wal.util;
 
 import org.apache.commons.codec.binary.Base64;
 

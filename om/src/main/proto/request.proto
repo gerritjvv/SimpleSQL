@@ -21,9 +21,10 @@ message Request{
   optional int64 clientId = 6;
   optional string projectionName = 7;
   
-  optional string date = 8; //the date column  
+  optional string date = 8; //the date column
+  optional int64 hits = 9 [default = 1];  //number of hits to increment, default = 1
   
-  repeated QueryParam params = 9;
+  repeated QueryParam params = 10;
   
 }
 

@@ -19,7 +19,7 @@ import org.simplesql.om.ClientInfoTemplate.Projection;
 import org.simplesql.om.RequestTemplate;
 import org.simplesql.om.RequestTemplate.Request;
 import org.simplesql.om.event.RequestEvent;
-import org.simplesql.om.wal.impl.DisruptorGPBWAL;
+import org.simplesql.wal.impl.DisruptorGPBWAL;
 import org.simplesql.wal.impl.GPBWALImpl;
 import org.simplesql.wal.impl.WALFile;
 

@@ -6,6 +6,7 @@ import org.simplesql.om.ClientInfoTemplate.ClientInfo;
 import org.simplesql.om.ClientInfoTemplate.Projection;
 import org.simplesql.om.RequestTemplate.QueryParam;
 import org.simplesql.om.RequestTemplate.Request;
+import org.simplesql.wal.Event;
 
 /**
  * 

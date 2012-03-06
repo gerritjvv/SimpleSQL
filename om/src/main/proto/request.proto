@@ -12,17 +12,19 @@ message QueryParam{
 }
 
 message Request{
-
+	
   optional string host = 1;
   optional string ua = 2;
   optional string ip = 3;
-  optional string referer = 5;
-  optional int64 timestamp = 6;
-  optional int64 clientId = 7;
-  optional string projectionName = 8;  
-  repeated QueryParam params = 4;
+  optional string referer = 4;
+  optional int64 timestamp = 5;
+  optional int64 clientId = 6;
+  optional string projectionName = 7;
   
-    
+  optional string date = 8; //the date column  
+  
+  repeated QueryParam params = 9;
+  
 }
 
 

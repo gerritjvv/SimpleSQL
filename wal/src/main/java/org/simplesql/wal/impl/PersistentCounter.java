@@ -8,10 +8,11 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
-import org.simplesql.wal.impl.DisruptorGPBWALTest.MyEvent;
-import org.simplesql.wal.impl.DisruptorGPBWALTest.MyEventFactory;
 
 import com.lmax.disruptor.ClaimStrategy;
 import com.lmax.disruptor.EventFactory;
@@ -56,11 +57,8 @@ public class PersistentCounter {
 
 	private static final Logger LOG = Logger.getLogger(PersistentCounter.class);
 
-	static final int blockSize = 16; // contains 2 long bytes 1 for the counter
-										// value and 1 for the timestamp
+	static final int blockSize = 8; // long value
 	static final int bufferLen = 4096; // this value is a power of two 2^16 and
-										// gives 16 * 4096 = 65536 entries is
-										// 64kb
 										// of memory.
 
 	final MappedByteBuffer buffer;
@@ -68,24 +66,36 @@ public class PersistentCounter {
 	final FileChannel channel;
 	final RingBuffer<CounterEvent> ringBuffer;
 	final Disruptor<CounterEvent> disruptor;
+	final ScheduledExecutorService scheduledService;
+
 	final boolean syncToOs;
 
-	volatile long bufferedVal = 0;
+	final AtomicLong bufferedVal;
 
-	public PersistentCounter(ExecutorService executorService, File file) throws FileNotFoundException, IOException {
+	final long syncFrequency = 10000;
+
+	public PersistentCounter(ExecutorService executorService, File file)
+			throws FileNotFoundException, IOException {
 		this(executorService, file, false);
 	}
 
 	public PersistentCounter(ExecutorService executorService, File file,
 			boolean syncToOs) throws FileNotFoundException, IOException {
+		this(executorService, file, syncToOs, Executors
+				.newScheduledThreadPool(1));
+	}
+
+	@SuppressWarnings("unchecked")
+	public PersistentCounter(ExecutorService executorService, File file,
+			boolean syncToOs, ScheduledExecutorService scheduledService)
+			throws FileNotFoundException, IOException {
 
 		this.syncToOs = syncToOs;
 		randFile = new RandomAccessFile(file, "rw");
 		channel = randFile.getChannel();
 
 		// load the whole file into memory
-		buffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bufferLen
-				* blockSize);
+		buffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, blockSize);
 		buffer.load(); // load into memory
 
 		disruptor = new Disruptor<CounterEvent>(new CounterEventFactory(),
@@ -99,35 +109,54 @@ public class PersistentCounter {
 
 		ringBuffer = disruptor.start();
 
-		here we need to read the file and load the counter value of the oldest entry.
+		final long val = buffer.getLong(0);
+		LOG.info("Loading counter: " + val);
+		bufferedVal = new AtomicLong(val);
+
+		// create background sync variable
+		this.scheduledService = scheduledService;
+		scheduledService.scheduleWithFixedDelay(new Runnable() {
+
+			public void run() {
+				try {
+					ringBuffer.publish(ringBuffer.next());
+				} catch (Throwable t) {
+					// log error and return
+					LOG.error(t.toString(), t);
+				}
+			}
+		}, syncFrequency, syncFrequency, TimeUnit.MILLISECONDS);
+
 	}
 
 	public long inc(long val) {
-		bufferedVal += val;
+		final long currVal = bufferedVal.addAndGet(val);
 
-		long sequence = ringBuffer.next();
-		CounterEvent event = ringBuffer.get(sequence);
+		buffer.putLong(0, currVal);
 
-		// write to buffer
-		int index = event.index * blockSize;
-		// write value
-		try {
-			buffer.putLong(index, bufferedVal);
-			// write timestamp
-			buffer.putLong(index + 8, System.nanoTime());
-		} catch (Throwable t) {
-			t.printStackTrace();
+		if (syncToOs) {
+			// publish async sync
+			ringBuffer.publish(ringBuffer.next());
 		}
-		ringBuffer.publish(sequence);
 
-		return bufferedVal;
+		return currVal;
+	}
+
+	public long getValue() {
+		return bufferedVal.get();
 	}
 
 	public void close() throws IOException {
-		disruptor.halt();
+
+		scheduledService.shutdown();
+
+		if (syncToOs)
+			disruptor.halt();
+
 		buffer.force();
 		channel.close();
 		randFile.close();
+
 	}
 
 	/**
@@ -141,8 +170,7 @@ public class PersistentCounter {
 		public void onEvent(CounterEvent event, long sequence,
 				boolean endOfBatch) throws Exception {
 			if (endOfBatch) {
-				if (syncToOs)
-					buffer.force();
+				buffer.force();
 			}
 		}
 
@@ -158,10 +186,9 @@ public class PersistentCounter {
 	 * 
 	 */
 	static class CounterEventFactory implements EventFactory<CounterEvent> {
-		int index = 0;
 
 		public CounterEvent newInstance() {
-			return new CounterEvent(index++);
+			return new CounterEvent();
 		}
 
 	}
@@ -171,11 +198,8 @@ public class PersistentCounter {
 	 * 
 	 */
 	static class CounterEvent {
-		final int index;
 
-		public CounterEvent(int index) {
-			super();
-			this.index = index;
+		public CounterEvent() {
 		}
 
 	}

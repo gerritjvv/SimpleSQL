@@ -5,6 +5,10 @@ option java_package = "org.simplesql.om";
 option optimize_for = SPEED;
 
 
+message Projections{
+  repeated Projection projection = 1;
+}
+
 message Projection{
    
    optional int64 clientId = 1;
@@ -36,7 +40,9 @@ message Column{
     
 }
 
-
+message Clients{
+   repeated ClientInfo clientInfo = 1;
+}
 
 message ClientInfo{
 

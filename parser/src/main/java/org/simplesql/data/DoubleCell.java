@@ -1,5 +1,7 @@
 package org.simplesql.data;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -28,6 +30,16 @@ public class DoubleCell implements Cell<Number> {
 		this.val = val;
 		this.name = name;
 	}
+	
+
+	public void readFields(DataInput in) throws IOException {
+		val = in.readDouble();
+	}
+
+	public void write(DataOutput out) throws IOException {
+		out.writeDouble(val);
+	}
+	
 
 	@Override
 	public void inc() {

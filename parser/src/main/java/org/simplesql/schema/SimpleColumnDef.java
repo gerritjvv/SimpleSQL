@@ -24,6 +24,7 @@ public class SimpleColumnDef implements ColumnDef {
 		isNumber = Number.class.isAssignableFrom(javaType);
 
 	}
+	
 
 	public final Class<?> getJavaType() {
 		return javaType;

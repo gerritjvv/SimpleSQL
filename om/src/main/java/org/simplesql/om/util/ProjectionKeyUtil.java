@@ -260,6 +260,26 @@ public class ProjectionKeyUtil {
 	}
 
 	/**
+	 * Transforms a Projection object to a TableDef without including the date
+	 * or hits column.
+	 * 
+	 * @param projection
+	 * @return
+	 */
+	public static final TableDef createTableDefNoIds(Projection projection) {
+
+		final int len = projection.getColumnCount();
+		final ColumnDef cols[] = new ColumnDef[len];
+		int i = 0;
+		for (; i < len; i++) {
+			cols[i] = getColumnDef(projection.getColumn(i));
+		}
+
+		return new SimpleTableDef(projection.getName(), cols);
+
+	}
+
+	/**
 	 * Set the start key end key values based on the Ranges detected by the
 	 * SQLExecutor and the min max values for each column type.
 	 * 

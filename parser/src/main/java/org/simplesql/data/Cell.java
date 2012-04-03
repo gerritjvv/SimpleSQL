@@ -1,5 +1,8 @@
 package org.simplesql.data;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.io.Serializable;
 
 import com.google.common.hash.Hasher;
@@ -70,4 +73,9 @@ public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 	 */
 	int read(byte[] arr, int from);
 
+
+	public void readFields(DataInput in) throws IOException;
+
+	public void write(DataOutput out) throws IOException;
+	
 }

@@ -1,5 +1,7 @@
 package org.simplesql.data;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -47,6 +49,16 @@ public class DynamicCell implements Cell<String> {
 		super();
 		this.val = (val == null) ? "" : val;
 		this.name = name;
+	}
+
+	@Override
+	public void readFields(DataInput in) throws IOException {
+		val = in.readUTF();
+	}
+
+	@Override
+	public void write(DataOutput out) throws IOException {
+		out.writeUTF((val == null) ? "" : val.toString());
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package org.simplesql.data;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -156,6 +158,17 @@ public class BooleanCell implements Cell<Boolean> {
 		result = prime * result + (val ? 1231 : 1237);
 		return result;
 	}
+	
+
+	public void readFields(DataInput in) throws IOException {
+	
+		val = (in.readByte() == 1);
+	}
+
+	public void write(DataOutput out) throws IOException {
+		out.write((val) ? 1 : 0);
+	}
+	
 
 	@Override
 	public boolean equals(Object obj) {

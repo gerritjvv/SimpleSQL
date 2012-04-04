@@ -13,15 +13,18 @@ public class STDINDataSource implements DataSource {
 
 	final Iterator<String> it;
 
-	public STDINDataSource(String sep) {
+	final SelectTransform transform;
+
+	public STDINDataSource(SelectTransform transform, String sep) {
 		super();
+		this.transform = transform;
 		this.sep = sep;
 		it = IOUtils.lineIterator(new BufferedReader(new InputStreamReader(
 				System.in)));
 	}
 
 	public Iterator<Object[]> iterator() {
-		return new SplitIterator(it, sep);
+		return new SplitIterator(transform, it, sep);
 	}
 
 	public long getEstimatedSize() {

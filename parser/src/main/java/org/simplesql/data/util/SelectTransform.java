@@ -8,6 +8,7 @@ import org.codehaus.janino.ExpressionEvaluator;
 import org.codehaus.janino.Parser.ParseException;
 import org.codehaus.janino.Scanner.ScanException;
 import org.simplesql.schema.ColumnDef;
+import org.simplesql.util.NumberUtil;
 
 /**
  * 
@@ -21,24 +22,26 @@ public class SelectTransform {
 	public SelectTransform(ColumnDef[] defs, Set<String> colsUsed)
 			throws CompileException, ParseException, ScanException {
 
-		StringBuilder buff = new StringBuilder();
+		final StringBuilder buff = new StringBuilder();
 		final int len = defs.length;
 		buff.append("new Object[").append("]{");
 
-		Class<?>[] colTypes = new Class<?>[defs.length];
+		final Class<?>[] colTypes = new Class<?>[len];
 
 		int a = 0;
-		for (int i = 0; i < defs.length; i++) {
+		for (int i = 0; i < len; i++) {
 			ColumnDef def = defs[i];
 			Class<?> cls = def.getJavaType();
 
 			if (colsUsed.contains(def.getName())) {
-				if (i != 0)
+				if (a++ != 0)
 					buff.append(",");
 
 				if (def.isNumber() || Boolean.class.isAssignableFrom(cls))
-					buff.append("new ").append(cls.getName()).append("(").append("input[")
-							.append(i).append("])");
+					buff.append("new ")
+							.append(NumberUtil.getWrapperClass(cls).getName())
+							.append("(").append("input[").append(i)
+							.append("])");
 				else {
 					buff.append("input[").append(i).append("]");
 				}
@@ -50,14 +53,13 @@ public class SelectTransform {
 
 		buff.append("}");
 
-
 		eval = new ExpressionEvaluator(buff.toString(), Object[].class,
 				new String[] { "input" }, new Class[] { String[].class });
 
 	}
 
 	public Object[] transform(String[] input) throws InvocationTargetException {
-		return (Object[]) eval.evaluate(new Object[]{ input } );
+		return (Object[]) eval.evaluate(new Object[] { input });
 	}
 
 }

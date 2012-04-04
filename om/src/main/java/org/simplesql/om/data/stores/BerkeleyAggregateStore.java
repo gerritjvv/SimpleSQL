@@ -166,6 +166,7 @@ public class BerkeleyAggregateStore<T> implements AggregateStore<T> {
 			} else {
 				// else create a DataEntry from the builder.
 				entry = builder.create(cellKey);
+				entry.apply(dataWrapper.readFrom(rowData.getData(), 0));
 			}
 			// set cellKey and entry to current values
 			currentKey = cellKey;

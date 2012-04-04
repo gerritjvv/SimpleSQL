@@ -14,15 +14,17 @@ public class FileDataSource implements DataSource {
 
 	final String sep;
 	final Iterator<String> it;
+	final SelectTransform transform;
 
-	public FileDataSource(File file, String sep) throws FileNotFoundException {
+	public FileDataSource(SelectTransform transform, File file, String sep) throws FileNotFoundException {
+		this.transform = transform;
 		this.sep = sep;
 		it = IOUtils.lineIterator(new BufferedReader(new InputStreamReader(
 				new FileInputStream(file))));
 	}
 
 	public Iterator<Object[]> iterator() {
-		return new SplitIterator(it, sep);
+		return new SplitIterator(transform, it, sep);
 	}
 
 	public long getEstimatedSize() {

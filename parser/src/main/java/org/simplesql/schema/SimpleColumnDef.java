@@ -1,6 +1,7 @@
 package org.simplesql.schema;
 
 import org.simplesql.data.Cell;
+import org.simplesql.util.NumberUtil;
 
 /**
  * 
@@ -21,10 +22,9 @@ public class SimpleColumnDef implements ColumnDef {
 		this.name = name;
 		this.cell = cell;
 
-		isNumber = Number.class.isAssignableFrom(javaType);
+		isNumber = NumberUtil.isNumber(javaType);
 
 	}
-	
 
 	public final Class<?> getJavaType() {
 		return javaType;

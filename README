@@ -1,0 +1,64 @@
+
+== Simple SQL ==
+
+=== Overview ===
+
+Simple SQL is a collection of projects that work arround using SQL to manipulate data. \\
+The data focused on here is not data in a DB but rather data that would be stored in a Key Value Store e.g. HBase, Berkeley DB, LevelDB ...\\
+
+In SimpleSQL data is devided into five categories:
+
+ *Longterm-Data, Data that is stored long term, on which queries, updates and deletes are performed.\\
+ *Intermediate-Data, data that is stored as result of the intermediate processing of a query or aggregate.\\
+ *Input-Data, data that is received from an outside source.\\
+ *Output-Data, data that is sent in a certain format to an outside source.\\
+ *Intermediate-Inmemory-Data, data that is stored in memory for low latencies and to avoid IO.\\
+
+
+The focus of Simple SQL is not only on how to manipulate the data based on a SQL epression but also \\
+how to deal with the storage requirements for the various categories of data. \\
+
+
+
+=== OM ===
+
+a Collection of classes that are used between the different projects and that provide mostly functionality related to handling\\
+projections and data schemas.\\
+
+Provides classes to handle reading and writing to a byte array based on a projection schema.\\
+For examples see {{{KeyWriterReader}}} and {{{TestKeyWriterReader}}}
+
+==== AggregateStore ====
+
+The idea of an {{{AggregateStore}}} is to abstract how data is stored (simple), also it provides some basic aggregation and ordering\\
+functions that is required for most data manipulations.\\
+
+An implementation for Berkeley JE DB is provided using temporary tables, see {{{ BerkeleyAggregateStore }}}, and is aimed to store\\
+intermediate data.\\
+
+More implementations will be added for and LevelDB, Krati and Hbase.
+
+=== WAL ===
+
+WAL implements a write ahead log. When data is manipulated in memory for performance reasons and persisted later a WAL provides \\
+some kind of data durability.
+
+See {{{DisruptorGPBWALTest}}} on how an asynchronous WAL (for low latencies) is used.
+
+=== Parser ===
+
+Compiles SQL code into an execution plan that will manipulate a stream of data and write the aggregated/manipulated output.\\
+See {{{TestOrderBy}}}, {{{TestRangeGroups}}}, {{{TestWhereFilterSerialize}}} for examples on how to use the execution engine.\\
+
+=== Aggregator ===
+
+This is an application that manipulates and aggregates data using the Simple SQL projects.\\
+
+Data is received, processed with the SQL Parser (Stored into an AggregateStore) and output in some form.\\
+
+The aim for Aggregator is to provide the following three modes:
+
+ * Once-off Data Aggregation. Data In, Aggregate, Data Out. (Can be used to query other data stores to analyse data).\\
+ * Continuous Data Aggregation with snaphot output. Data In, Aggregate, Every N seconds Output Snapsthot and reset.  (For realtime updates).\\
+ * Continuous Data Aggregation to a long term data store. Data In, Aggregate. (Almost like a DB but using Key Value Stores).\\
+

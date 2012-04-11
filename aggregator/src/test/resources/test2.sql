@@ -1,0 +1,1 @@
+SELECT age FROM table

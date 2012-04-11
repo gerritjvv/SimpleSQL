@@ -1,0 +1,1 @@
+SELECT name, COUNT(1) as c, SUM(age) FROM table GROUP BY name WHERE age > 1 ORDER BY c DESC

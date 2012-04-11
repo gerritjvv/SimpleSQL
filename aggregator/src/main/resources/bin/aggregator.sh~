@@ -1,0 +1,52 @@
+###########################
+#
+# Executes the AGG Server
+# e.g. AGG.sh start
+#!/usr/bin/env bash
+
+
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+BIN_HOME=`dirname $abspath`
+
+export AGG_HOME=$BIN_HOME/../
+
+export AGG_CONF_DIR=$AGG_HOME/conf
+
+#source environment variables
+
+# some Java parameters
+if [ "$JAVA_HOME" != "" ]; then
+    #echo "run java in $JAVA_HOME"
+   JAVA_HOME=$JAVA_HOME
+fi
+
+if [ "$JAVA_HOME" = "" ]; then
+     echo "Error: JAVA_HOME is not set."
+     exit 1
+fi
+
+JAVA=$JAVA_HOME/bin/java
+
+
+if [ -z $JAVA_HEAP ]; then
+ export JAVA_HEAP="-Xmx1024m"
+fi
+
+# check envvars which might override default args
+# CLASSPATH initially contains $AGG_CONF_DIR
+CLASSPATH=${CLASSPATH}:$JAVA_HOME/lib/tools.jar
+
+# for developers, add Pig classes to CLASSPATH
+
+# so that filenames w/ spaces are handled correctly in loops below
+IFS=
+# add libs to CLASSPATH.
+CLASSPATH="${CLASSPATH}:$AGG_HOME/lib/*"
+
+CLASS="org.reducedata.server.AGG"
+
+CLASSPATH="$AGG_CONF_DIR:$AGG_CONF_DIR/META-INF:$CLASSPATH"
+
+exec "$JAVA" -XX:+DisableExplicitGC $JAVA_HEAP $JAVA_OPTS -classpath "$CLASSPATH" $CLASS "$@"
+
+

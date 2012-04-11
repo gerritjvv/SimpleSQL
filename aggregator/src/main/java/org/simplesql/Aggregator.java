@@ -124,7 +124,7 @@ public class Aggregator {
 	private static StorageManager getStorageManager(File workingDir)
 			throws Throwable {
 		return new CachedStoreManager(new BerkeleyStorageManager(new DBManager(
-				workingDir)));
+				workingDir)), 500, null);
 	}
 
 	private static Projection createProjection(String line) throws Throwable {

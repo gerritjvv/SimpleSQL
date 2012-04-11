@@ -1,5 +1,6 @@
 package org.simplesql.parser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -160,6 +161,8 @@ public class SimpleSQLExecutor implements SQLExecutor {
 
 		disruptor.handleEventsWith(new EventHandler<DataEvent>() {
 
+			List<CellPut> cellList = new ArrayList<CellPut>();
+
 			@Override
 			public void onEvent(DataEvent dat, long item, boolean batch)
 					throws Exception {
@@ -173,10 +176,20 @@ public class SimpleSQLExecutor implements SQLExecutor {
 					// evaluate data into cells
 					final Cell[] cells = (Cell[]) eval.evaluate(dat.dat);
 
-					// put the cells into the store
-					if (!store.put(keyParser.makeKey(dat.dat), cells)) {
+					cellList.add(new CellPut(cells, dat.dat));
 
-						shouldStop.set(true);
+					if (batch) {
+
+						final List<CellPut> prevList = cellList;
+						cellList = new ArrayList<CellPut>();
+
+						final int len = prevList.size();
+						for (int i = 0; i < len; i++) {
+							final CellPut cellPut = prevList.get(i);
+							if (!store.put(keyParser.makeKey(cellPut.dat),
+									cellPut.cells))
+								shouldStop.set(true);
+						}
 
 					}
 
@@ -269,6 +282,19 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	@Override
 	public Set<String> getGroupOrderByColumns() {
 		return groupOrderByColumns;
+	}
+
+	private static class CellPut {
+
+		Cell[] cells;
+		Object[] dat;
+
+		public CellPut(Cell[] cells, Object[] dat) {
+			super();
+			this.cells = cells;
+			this.dat = dat;
+		}
+
 	}
 
 }

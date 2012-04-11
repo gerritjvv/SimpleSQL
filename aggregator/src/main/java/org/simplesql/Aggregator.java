@@ -23,6 +23,7 @@ import org.simplesql.data.util.SelectTransform;
 import org.simplesql.om.ClientInfoTemplate.Projection;
 import org.simplesql.om.data.StorageManager;
 import org.simplesql.om.data.stores.BerkeleyStorageManager;
+import org.simplesql.om.data.stores.CachedStoreManager;
 import org.simplesql.om.data.stores.berkeley.DBManager;
 import org.simplesql.om.projection.ProjectionLexer;
 import org.simplesql.om.projection.ProjectionParser;
@@ -42,78 +43,88 @@ import org.simplesql.schema.TableDef;
  */
 public class Aggregator {
 
+	static File workingDir;
+
 	public static void main(String[] args) throws Throwable {
 
 		if (!(args.length == 3 || args.length == 4)) {
 			printUsage();
 		}
 
-		List<String> lines = FileUtils.readLines(new File(args[2]));
-
-		// only support one at the moment.
-
-		Projection projection = createProjection(args[0]);
-		final String sep = args[1];
-
-		final TableDef tableDef = createSchema(projection);
-
-		final ExecutorService execService = Executors.newCachedThreadPool();
-		final SQLCompiler compiler = new SimpleSQLCompiler(execService);
-
-		final SQLExecutor exec = compiler.compile(tableDef, lines.get(0));
-
-		final SelectTransform transform = new SelectTransform(
-				tableDef.getColumnDefs(), exec.getColumnsUsed());
-		final DataSource dataSource = (args.length == 4) ? new FileDataSource(
-				transform, new File(args[3]), sep) : new STDINDataSource(
-				transform, sep);
-
-		final StorageManager manager = getStorageManager();
-		AggregateStore storage = null;
+		workingDir = new File("./" + System.currentTimeMillis());
+		workingDir.mkdirs();
 		try {
-			storage = manager.newAggregateStore(projection, exec);
-			exec.pump(dataSource, storage, null);
+			List<String> lines = FileUtils.readLines(new File(args[2]));
 
-			final BufferedWriter out = new BufferedWriter(
-					new OutputStreamWriter(System.out));
+			// only support one at the moment.
 
+			Projection projection = createProjection(args[0]);
+			final String sep = args[1];
+
+			final TableDef tableDef = createSchema(projection);
+
+			final ExecutorService execService = Executors.newCachedThreadPool();
+			final SQLCompiler compiler = new SimpleSQLCompiler(execService);
+
+			final SQLExecutor exec = compiler.compile(tableDef, lines.get(0));
+
+			final SelectTransform transform = new SelectTransform(
+					tableDef.getColumnDefs(), exec.getColumnsUsed());
+			final DataSource dataSource = (args.length == 4) ? new FileDataSource(
+					transform, new File(args[3]), sep) : new STDINDataSource(
+					transform, sep);
+
+			final StorageManager manager = getStorageManager(workingDir);
+			AggregateStore storage = null;
 			try {
-				storage.write(new DataSink() {
+				storage = manager.newAggregateStore(projection, exec);
+				exec.pump(dataSource, storage, null);
 
-					public boolean fill(Key key, Cell<?>[] data) {
-						try {
-							final int len = data.length;
-							for (int i = 0; i < len; i++) {
-								if (i != 0)
-									out.append(sep);
+				final BufferedWriter out = new BufferedWriter(
+						new OutputStreamWriter(System.out));
 
-								out.append(data[i].getData().toString());
+				try {
+					storage.write(new DataSink() {
+
+						public boolean fill(Key key, Cell<?>[] data) {
+							try {
+								final int len = data.length;
+								for (int i = 0; i < len; i++) {
+									if (i != 0)
+										out.append(sep);
+
+									out.append(data[i].getData().toString());
+								}
+								out.append("\n");
+							} catch (IOException exp) {
+								throw new RuntimeException(exp.toString(), exp);
 							}
-							out.append("\n");
-						} catch (IOException exp) {
-							throw new RuntimeException(exp.toString(), exp);
+
+							return true;
+
 						}
-
-						return true;
-
-					}
-				});
+					});
+				} finally {
+					out.close();
+				}
 			} finally {
-				out.close();
+				storage.close();
+				manager.close();
 			}
+
+			execService.shutdown();
+			execService.awaitTermination(2, TimeUnit.SECONDS);
+			execService.shutdownNow();
 		} finally {
-			storage.close();
-			manager.close();
+			FileUtils.deleteDirectory(workingDir);
 		}
 
-		execService.shutdown();
-		execService.awaitTermination(2, TimeUnit.SECONDS);
-		execService.shutdownNow();
-		
 	}
 
-	private static StorageManager getStorageManager() throws Throwable {
-		return new BerkeleyStorageManager(new DBManager(new File(".")));
+	private static StorageManager getStorageManager(File workingDir)
+			throws Throwable {
+		return new CachedStoreManager(new BerkeleyStorageManager(new DBManager(
+				workingDir)));
 	}
 
 	private static Projection createProjection(String line) throws Throwable {

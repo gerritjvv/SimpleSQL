@@ -1,8 +1,5 @@
 package org.simplesql.data;
 
-
-
-
 /**
  * 
  * Contain the cells for each row entry. In case of an aggregate only one entry
@@ -16,12 +13,12 @@ public class DataEntry {
 	final TransformFunction[] functions;
 	final int len;
 	final Key key;
-	
+
 	public DataEntry(Key key, Cell[] cells, TransformFunction[] functions) {
 		this.key = key;
 		this.cells = cells;
 		this.functions = functions;
-		this.len = functions.length;
+		this.len = (functions == null) ? 0 : functions.length;
 	}
 
 	public void apply(Cell[] data) {
@@ -29,17 +26,18 @@ public class DataEntry {
 		for (int i = 0; i < len; i++) {
 			functions[i].apply(cells, data);
 		}
-		
+
 	}
-	
-	public int size(){
+
+	public int size() {
 		return (cells == null) ? 0 : cells.length;
 	}
 
 	public Cell[] getCells() {
 		return cells;
 	}
-	public Key getKey(){
+
+	public Key getKey() {
 		return key;
 	}
 

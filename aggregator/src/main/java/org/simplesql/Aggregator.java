@@ -64,8 +64,9 @@ public class Aggregator {
 
 			final TableDef tableDef = createSchema(projection);
 
-			final Cell.SCHEMA[] schemas = ProjectionKeyUtil.createSCHEMA(tableDef);
-			
+			final Cell.SCHEMA[] schemas = ProjectionKeyUtil
+					.createSCHEMA(tableDef);
+
 			final ExecutorService execService = Executors.newCachedThreadPool();
 			final SQLCompiler compiler = new SimpleSQLCompiler(execService);
 
@@ -77,7 +78,8 @@ public class Aggregator {
 					transform, new File(args[3]), sep) : new STDINDataSource(
 					transform, sep);
 
-			final StorageManager manager = getStorageManager(schemas, workingDir);
+			final StorageManager manager = getStorageManager(schemas,
+					workingDir);
 			AggregateStore storage = null;
 			try {
 				storage = manager.newAggregateStore(projection, exec);
@@ -110,9 +112,13 @@ public class Aggregator {
 				} finally {
 					out.close();
 				}
+			} catch (Throwable t) {
+				t.printStackTrace();
 			} finally {
-				storage.close();
-				manager.close();
+				if (storage != null)
+					storage.close();
+				if (manager != null)
+					manager.close();
 			}
 
 			execService.shutdown();
@@ -124,10 +130,11 @@ public class Aggregator {
 
 	}
 
-	private static StorageManager getStorageManager(Cell.SCHEMA[] schemas, File workingDir)
-			throws Throwable {
-//		return new CachedStoreManager(new BerkeleyStorageManager(new DBManager(
-//				workingDir)), 500, null);
+	private static StorageManager getStorageManager(Cell.SCHEMA[] schemas,
+			File workingDir) throws Throwable {
+		// return new CachedStoreManager(new BerkeleyStorageManager(new
+		// DBManager(
+		// workingDir)), 500, null);
 		return new KratiStoreManager(1000000, workingDir, schemas);
 	}
 

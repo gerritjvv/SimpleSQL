@@ -33,7 +33,6 @@ public class KratiStoreManager implements StorageManager {
 			store = new KratiAggregateStore(keyCount, storeDir, schemas, exec
 					.getTransforms().toArray(new TransformFunction[0]));
 		} catch (Exception e) {
-			e.printStackTrace();
 			RuntimeException rte = new RuntimeException(e.toString(), e);
 			rte.setStackTrace(e.getStackTrace());
 			throw rte;

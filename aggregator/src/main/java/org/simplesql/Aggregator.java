@@ -135,7 +135,7 @@ public class Aggregator {
 		// return new CachedStoreManager(new BerkeleyStorageManager(new
 		// DBManager(
 		// workingDir)), 500, null);
-		return new KratiStoreManager(100, workingDir, schemas);
+		return new KratiStoreManager(1, workingDir, schemas);
 	}
 
 	private static Projection createProjection(String line) throws Throwable {

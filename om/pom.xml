@@ -75,6 +75,13 @@
 			<version>0.2.4</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.sna-projects.krati</groupId>
+			<artifactId>krati</artifactId>
+			<version>0.4.4</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

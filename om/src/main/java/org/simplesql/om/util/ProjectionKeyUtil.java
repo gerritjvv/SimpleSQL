@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.simplesql.om.ClientInfoTemplate.Column;
-import org.simplesql.om.ClientInfoTemplate.Projection;
 import org.simplesql.data.BooleanCell;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DoubleCell;
@@ -18,6 +16,8 @@ import org.simplesql.data.RangeGroups;
 import org.simplesql.data.StringCell;
 import org.simplesql.data.VariableRange;
 import org.simplesql.data.VariableRanges;
+import org.simplesql.om.ClientInfoTemplate.Column;
+import org.simplesql.om.ClientInfoTemplate.Projection;
 import org.simplesql.om.key.DefaultKeys;
 import org.simplesql.om.key.KeyColumnValue;
 import org.simplesql.om.key.KeyWriterReader;
@@ -257,6 +257,18 @@ public class ProjectionKeyUtil {
 
 		return new SimpleTableDef(projection.getName(), cols);
 
+	}
+
+	public static final Cell.SCHEMA[] createSCHEMA(TableDef def) {
+		final ColumnDef[] cols = def.getColumnDefs();
+		final int len = cols.length;
+
+		final Cell.SCHEMA[] schemas = new Cell.SCHEMA[len];
+		for (int i = 0; i < len; i++) {
+			schemas[i] = cols[i].getCell().getSchema();
+		}
+
+		return schemas;
 	}
 
 	/**

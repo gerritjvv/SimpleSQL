@@ -24,6 +24,7 @@ import org.simplesql.om.ClientInfoTemplate.Projection;
 import org.simplesql.om.data.StorageManager;
 import org.simplesql.om.data.stores.BerkeleyStorageManager;
 import org.simplesql.om.data.stores.CachedStoreManager;
+import org.simplesql.om.data.stores.KratiStoreManager;
 import org.simplesql.om.data.stores.berkeley.DBManager;
 import org.simplesql.om.projection.ProjectionLexer;
 import org.simplesql.om.projection.ProjectionParser;
@@ -63,6 +64,8 @@ public class Aggregator {
 
 			final TableDef tableDef = createSchema(projection);
 
+			final Cell.SCHEMA[] schemas = ProjectionKeyUtil.createSCHEMA(tableDef);
+			
 			final ExecutorService execService = Executors.newCachedThreadPool();
 			final SQLCompiler compiler = new SimpleSQLCompiler(execService);
 
@@ -74,7 +77,7 @@ public class Aggregator {
 					transform, new File(args[3]), sep) : new STDINDataSource(
 					transform, sep);
 
-			final StorageManager manager = getStorageManager(workingDir);
+			final StorageManager manager = getStorageManager(schemas, workingDir);
 			AggregateStore storage = null;
 			try {
 				storage = manager.newAggregateStore(projection, exec);
@@ -121,10 +124,11 @@ public class Aggregator {
 
 	}
 
-	private static StorageManager getStorageManager(File workingDir)
+	private static StorageManager getStorageManager(Cell.SCHEMA[] schemas, File workingDir)
 			throws Throwable {
-		return new CachedStoreManager(new BerkeleyStorageManager(new DBManager(
-				workingDir)), 500, null);
+//		return new CachedStoreManager(new BerkeleyStorageManager(new DBManager(
+//				workingDir)), 500, null);
+		return new KratiStoreManager(1000000, workingDir, schemas);
 	}
 
 	private static Projection createProjection(String line) throws Throwable {

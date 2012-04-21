@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.simplesql.data.Cell.SCHEMA;
 
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
@@ -26,6 +27,8 @@ public class SimpleCellKey implements Key {
 	Cell[] cells;
 	int hashCode;
 
+	SCHEMA[] schemas;
+	
 	/**
 	 * To be used only for serialization
 	 */
@@ -85,6 +88,20 @@ public class SimpleCellKey implements Key {
 		hashCode = hasher.hash().hashCode();
 	}
 
+	public SCHEMA[] getSchemas(){
+		
+		if(schemas == null){
+			final int len = cells.length;
+			schemas = new SCHEMA[len];
+			
+			for(int i = 0; i < len; i++){
+				schemas[i] = cells[i].getSchema();
+			}
+		}
+		
+		return schemas;
+	}
+	
 	@Override
 	public String asString() {
 		StringBuilder buff = new StringBuilder();

@@ -275,7 +275,7 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 			throws Exception {
 		int capacity = (int) (keyCount * 1.5);
 		return new DynamicDataStore(storeDir, capacity, /* capacity */
-		1000, /* update batch size */
+		10000, /* update batch size */
 		5, /* number of update batches required to sync indexes.dat */
 		128, /* segment file size in MB */
 		createSegmentFactory());

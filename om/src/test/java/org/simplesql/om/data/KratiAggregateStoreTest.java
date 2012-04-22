@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.simplesql.data.Cell;
@@ -48,8 +49,11 @@ public class KratiAggregateStoreTest extends TestCase {
 		for (int i = 0; i < len; i++) {
 			schemas[i] = cells[i].getSchema();
 		}
+		PropertiesConfiguration conf = new PropertiesConfiguration();
+		conf.setProperty(KratiAggregateStore.CONF.KEY_COUNT.toString(), 1);
+		conf.setProperty(KratiAggregateStore.CONF.UPDATE_BATCH.toString(), 5);
 
-		KratiAggregateStore map = new KratiAggregateStore(1, new File(
+		KratiAggregateStore map = new KratiAggregateStore(conf, new File(
 				"target/test/KratiAggregateStoreTest"), schemas, new COUNT(0),
 				new COUNT(1), new SUM(2), new PassThroughTransform(3));
 
@@ -85,13 +89,14 @@ public class KratiAggregateStoreTest extends TestCase {
 
 				System.out.println("key: " + key.asString() + " data: "
 						+ Arrays.toString(data));
-				 assertEquals(key.getCells()[0].getIntValue(), data[2].getIntValue());
+				assertEquals(key.getCells()[0].getIntValue(),
+						data[2].getIntValue());
 
-				 counter.getAndIncrement();
+				counter.getAndIncrement();
 
 				// check that values follow 198, 196
-//				 assertEquals(keyCounter.getAndAdd(-2D),
-//				 data[2].getDoubleValue());
+				// assertEquals(keyCounter.getAndAdd(-2D),
+				// data[2].getDoubleValue());
 				return true;
 			}
 		});

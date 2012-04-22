@@ -12,6 +12,7 @@ import krati.core.segment.SegmentFactory;
 import krati.store.DataStore;
 import krati.store.DynamicDataStore;
 
+import org.apache.commons.configuration.Configuration;
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
 import org.simplesql.data.Cell.SCHEMA;
@@ -40,6 +41,10 @@ import com.google.common.cache.RemovalNotification;
  */
 public class KratiAggregateStore<T> implements AggregateStore<T> {
 
+	public enum CONF {
+		UPDATE_BATCH, UPDATE_BATCHES, KEY_COUNT, SEGMENT_SIZE, CACHE_SIZE
+	}
+
 	final String dbName;
 
 	final TransformFunction[] functions;
@@ -49,19 +54,14 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 	CellsByteWrapper keyWrapper;
 	CellsByteWrapper dataWrapper;
 
-	Cache<Key, DataEntry> cache = CacheBuilder.newBuilder()
-			.maximumSize(1000000).concurrencyLevel(4)
-			.removalListener(new RemovalListener<Key, DataEntry>() {
-
-				@Override
-				public void onRemoval(RemovalNotification<Key, DataEntry> notf) {
-					saveToStore(notf.getKey(), notf.getValue());
-				}
-
-			}).build();
-
+	final Cache<Key, DataEntry> cache;
 	SimpleCellKey currentKey;
 	DataEntry currentDataEntry;
+
+	final int updateBatch;
+	final int updateBatches;
+	final int segmentSize;
+	final int keyCount;
 
 	// ORDER AND LMIT VALUES
 
@@ -85,8 +85,8 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 	 *            TransformFunction(s) that will be applied to each row put.
 	 * @throws Exception
 	 */
-	public KratiAggregateStore(int keyCount, File storeDir, SCHEMA[] schemas,
-			TransformFunction... functions) throws Exception {
+	public KratiAggregateStore(Configuration conf, File storeDir,
+			SCHEMA[] schemas, TransformFunction... functions) throws Exception {
 		super();
 
 		this.schemas = schemas;
@@ -99,6 +99,24 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 
 		// create a unique name for the db
 		dbName = "aggStore_" + System.nanoTime();
+
+		keyCount = conf.getInt(CONF.KEY_COUNT.toString(), 1);
+		updateBatch = conf.getInt(CONF.UPDATE_BATCH.toString(), 10000);
+		updateBatches = conf.getInt(CONF.UPDATE_BATCHES.toString(), 5);
+		segmentSize = conf.getInt(CONF.SEGMENT_SIZE.toString(), 128);
+
+		cache = CacheBuilder.newBuilder()
+				.maximumSize(conf.getInt(CONF.CACHE_SIZE.toString(), 100000))
+				.concurrencyLevel(4)
+				.removalListener(new RemovalListener<Key, DataEntry>() {
+
+					@Override
+					public void onRemoval(
+							RemovalNotification<Key, DataEntry> notf) {
+						saveToStore(notf.getKey(), notf.getValue());
+					}
+
+				}).build();
 
 		dataStore = createDataStore(keyCount, storeDir);
 	}
@@ -188,14 +206,6 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 				: new DescOrderedComparator();
 	}
 
-	private final CellsByteWrapper getKeyWrapper(Key key) {
-		if (keyWrapper == null) {
-			keyWrapper = new CellsByteWrapper(key.getCells());
-		}
-
-		return keyWrapper;
-	}
-
 	private final CellsByteWrapper getDataWrapper() {
 		if (dataWrapper == null) {
 			dataWrapper = new CellsByteWrapper(schemas);
@@ -229,7 +239,6 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 
 	@Override
 	public void write(DataSink sink) {
-		final Set<Entry<Key, byte[]>> entrySet = keyIndex.entrySet();
 
 		for (Key key : keyIndex.keySet()) {
 
@@ -275,9 +284,9 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 			throws Exception {
 		int capacity = (int) (keyCount * 1.5);
 		return new DynamicDataStore(storeDir, capacity, /* capacity */
-		10000, /* update batch size */
-		5, /* number of update batches required to sync indexes.dat */
-		128, /* segment file size in MB */
+		updateBatch, /* update batch size */
+		updateBatches, /* number of update batches required to sync indexes.dat */
+		segmentSize, /* segment file size in MB */
 		createSegmentFactory());
 	}
 

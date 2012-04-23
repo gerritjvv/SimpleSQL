@@ -26,10 +26,11 @@ public class STDINDataSource implements DataSource {
 
 	final SelectTransform transform;
 	final StreamTokenizer tok;
+	final int fields;
 
-	public STDINDataSource(SelectTransform transform, String sep) {
+	public STDINDataSource(int fields, SelectTransform transform, String sep) {
 		super();
-
+		this.fields = fields;
 		this.transform = transform;
 		this.sep = sep;
 		it = IOUtils.lineIterator(new BufferedReader(new InputStreamReader(
@@ -52,19 +53,19 @@ public class STDINDataSource implements DataSource {
 			public boolean hasNext() {
 
 				int token;
-				ArrayList<Object> list = new ArrayList<Object>(10);
-
+				Object[] list = new Object[fields];
+				int i = 0;
 				try {
 					while ((token = tok.nextToken()) != StreamTokenizer.TT_EOF
 							&& token != StreamTokenizer.TT_EOL) {
-						list.add(
-								(tok.ttype == StreamTokenizer.TT_NUMBER)? tok.nval : tok.sval);
+						list[i++] = (tok.ttype == StreamTokenizer.TT_NUMBER) ? tok.nval
+								: tok.sval;
 					}
 
 					if (token == StreamTokenizer.TT_EOF)
 						arr = null;
 					else
-						arr = list.toArray();
+						arr = list;
 
 				} catch (IOException e) {
 					throw new RuntimeException(e.toString(), e);

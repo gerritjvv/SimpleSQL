@@ -25,9 +25,10 @@ public class SimpleCellKey implements Key {
 
 	String str;
 	Cell[] cells;
-	int hashCode;
+	int hashCode = -1;
 
 	SCHEMA[] schemas;
+	
 	
 	/**
 	 * To be used only for serialization
@@ -49,8 +50,6 @@ public class SimpleCellKey implements Key {
 
 		final int len = vals.length;
 		cells = new Cell[len];
-		final HashFunction hashFunct = Hashing.goodFastHash(10);
-		final Hasher hasher = hashFunct.newHasher();
 
 		for (int i = 0; i < len; i++) {
 			final Object val = vals[i];
@@ -69,23 +68,13 @@ public class SimpleCellKey implements Key {
 				cell = new DynamicCell(val);
 			}
 
-			cell.putHash(hasher);
 			cells[i] = cell;
 		}
 
-		hashCode = hasher.hash().hashCode();
 	}
 
 	public SimpleCellKey(Cell... cells) {
-
 		this.cells = cells;
-		HashFunction hashFunct = Hashing.goodFastHash(10);
-		Hasher hasher = hashFunct.newHasher();
-		int len = cells.length;
-		for (int i = 0; i < len; i++)
-			cells[i].putHash(hasher);
-
-		hashCode = hasher.hash().hashCode();
 	}
 
 	public SCHEMA[] getSchemas(){
@@ -118,6 +107,17 @@ public class SimpleCellKey implements Key {
 
 	@Override
 	public int hashCode() {
+		
+		if(hashCode == -1){
+			final HashFunction hashFunct = Hashing.goodFastHash(10);
+			final Hasher hasher = hashFunct.newHasher();
+			final int len = cells.length;
+			for (int i = 0; i < len; i++)
+				cells[i].putHash(hasher);
+
+			hashCode = hasher.hash().hashCode();
+		}
+		
 		return hashCode;
 	}
 

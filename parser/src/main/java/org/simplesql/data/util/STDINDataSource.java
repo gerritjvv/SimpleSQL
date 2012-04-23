@@ -53,7 +53,7 @@ public class STDINDataSource implements DataSource {
 			public boolean hasNext() {
 
 				int token;
-				Object[] list = new Object[fields];
+				Object[] list = new Object[fields+1];
 				int i = 0;
 				try {
 					while ((token = tok.nextToken()) != StreamTokenizer.TT_EOF

@@ -31,7 +31,8 @@ public class SplitIterator implements Iterator<Object[]> {
 			return (line == null) ? null : transform.transform(StringUtils
 					.split(line, sep));
 		} catch (InvocationTargetException e) {
-			RuntimeException rte = new RuntimeException(e.toString(), e);
+			RuntimeException rte = new RuntimeException(StringUtils.split(line,
+					sep) + ", " + e.toString(), e);
 			rte.setStackTrace(e.getStackTrace());
 			throw rte;
 		}

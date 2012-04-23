@@ -96,10 +96,15 @@ public class Aggregator {
 			final StorageManager manager = getStorageManager(schemas,
 					workingDir);
 			AggregateStore storage = null;
+			
 			try {
 				storage = manager.newAggregateStore(projection, exec);
+				
+				long startReading = System.currentTimeMillis();
+				
 				exec.pump(dataSource, storage, null);
-
+				System.out.println("Read in: " + (System.currentTimeMillis()-startReading) + "ms");
+				
 				final BufferedWriter out = new BufferedWriter(
 						new OutputStreamWriter(System.out));
 

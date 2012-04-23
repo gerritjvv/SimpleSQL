@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.commons.io.IOUtils;
@@ -65,6 +66,7 @@ public class STDINDataSource implements DataSource {
 					else
 						arr = list.toArray();
 
+					System.out.println("Adding: " + Arrays.toString(arr));
 				} catch (IOException e) {
 					throw new RuntimeException(e.toString(), e);
 				}

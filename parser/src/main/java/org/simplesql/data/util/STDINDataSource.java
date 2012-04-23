@@ -56,7 +56,8 @@ public class STDINDataSource implements DataSource {
 				try {
 					while ((token = tok.nextToken()) != StreamTokenizer.TT_EOF
 							&& token == StreamTokenizer.TT_EOL) {
-						list.add(tok.sval);
+						list.add(
+								(tok.ttype == StreamTokenizer.TT_NUMBER)? tok.nval : tok.sval);
 					}
 
 					if (token == StreamTokenizer.TT_EOF)

@@ -56,7 +56,7 @@ public class STDINDataSource implements DataSource {
 
 				try {
 					while ((token = tok.nextToken()) != StreamTokenizer.TT_EOF
-							&& token == StreamTokenizer.TT_EOL) {
+							&& token != StreamTokenizer.TT_EOL) {
 						list.add(
 								(tok.ttype == StreamTokenizer.TT_NUMBER)? tok.nval : tok.sval);
 					}
@@ -66,7 +66,6 @@ public class STDINDataSource implements DataSource {
 					else
 						arr = list.toArray();
 
-					System.out.println("Adding: " + Arrays.toString(arr));
 				} catch (IOException e) {
 					throw new RuntimeException(e.toString(), e);
 				}

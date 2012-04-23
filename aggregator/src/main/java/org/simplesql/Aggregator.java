@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
@@ -22,10 +24,7 @@ import org.simplesql.data.util.STDINDataSource;
 import org.simplesql.data.util.SelectTransform;
 import org.simplesql.om.ClientInfoTemplate.Projection;
 import org.simplesql.om.data.StorageManager;
-import org.simplesql.om.data.stores.BerkeleyStorageManager;
-import org.simplesql.om.data.stores.CachedStoreManager;
 import org.simplesql.om.data.stores.KratiStoreManager;
-import org.simplesql.om.data.stores.berkeley.DBManager;
 import org.simplesql.om.projection.ProjectionLexer;
 import org.simplesql.om.projection.ProjectionParser;
 import org.simplesql.om.projection.ProjectionParser.projection_return;
@@ -45,22 +44,25 @@ import org.simplesql.schema.TableDef;
 public class Aggregator {
 
 	static File workingDir;
-
+	static Configuration conf;
+	
 	public static void main(String[] args) throws Throwable {
 
-		if (!(args.length == 3 || args.length == 4)) {
+		if (!(args.length == 4|| args.length == 5)) {
 			printUsage();
 		}
 
+		conf = new PropertiesConfiguration(args[0]);
+		
 		workingDir = new File("./" + System.currentTimeMillis());
 		workingDir.mkdirs();
 		try {
-			List<String> lines = FileUtils.readLines(new File(args[2]));
+			List<String> lines = FileUtils.readLines(new File(args[3]));
 
 			// only support one at the moment.
 
-			Projection projection = createProjection(args[0]);
-			final String sep = args[1];
+			Projection projection = createProjection(args[1]);
+			final String sep = args[2];
 
 			final TableDef tableDef = createSchema(projection);
 
@@ -75,7 +77,7 @@ public class Aggregator {
 			final SelectTransform transform = new SelectTransform(
 					tableDef.getColumnDefs(), exec.getColumnsUsed());
 			final DataSource dataSource = (args.length == 4) ? new FileDataSource(
-					transform, new File(args[3]), sep) : new STDINDataSource(
+					transform, new File(args[4]), sep) : new STDINDataSource(
 					transform, sep);
 
 			final StorageManager manager = getStorageManager(schemas,
@@ -135,7 +137,7 @@ public class Aggregator {
 		// return new CachedStoreManager(new BerkeleyStorageManager(new
 		// DBManager(
 		// workingDir)), 500, null);
-		return new KratiStoreManager(1, workingDir, schemas);
+		return new KratiStoreManager(conf.subset("krati"), workingDir, schemas);
 	}
 
 	private static Projection createProjection(String line) throws Throwable {
@@ -152,7 +154,7 @@ public class Aggregator {
 
 	private static void printUsage() {
 		System.out
-				.println("<projecton schema> <projection sql file> [data file name]");
+				.println("<config file> <projecton schema> <projection sql file> [data file name]");
 	}
 
 }

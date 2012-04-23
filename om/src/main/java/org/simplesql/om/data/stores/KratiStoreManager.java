@@ -2,6 +2,7 @@ package org.simplesql.om.data.stores;
 
 import java.io.File;
 
+import org.apache.commons.configuration.Configuration;
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
 import org.simplesql.data.Cell.SCHEMA;
@@ -12,25 +13,24 @@ import org.simplesql.parser.SQLExecutor;
 
 public class KratiStoreManager implements StorageManager {
 
-	final int keyCount;
 	final File storeDir;
 	final Cell.SCHEMA[] schemas;
 
+	final Configuration conf;
 
-	public KratiStoreManager(int keyCount, File storeDir, SCHEMA[] schemas) {
+	public KratiStoreManager(Configuration conf, File storeDir, SCHEMA[] schemas) {
 		super();
-		this.keyCount = keyCount;
+		this.conf = conf;
 		this.storeDir = storeDir;
 		this.schemas = schemas;
 	}
-
 
 	@Override
 	public AggregateStore newAggregateStore(Projection projection,
 			SQLExecutor exec) {
 		KratiAggregateStore store;
 		try {
-			store = new KratiAggregateStore(keyCount, storeDir, schemas, exec
+			store = new KratiAggregateStore(conf, storeDir, schemas, exec
 					.getTransforms().toArray(new TransformFunction[0]));
 		} catch (Exception e) {
 			RuntimeException rte = new RuntimeException(e.toString(), e);

@@ -1,6 +1,7 @@
 package org.simplesql.data.util;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,8 +32,9 @@ public class SplitIterator implements Iterator<Object[]> {
 			return (line == null) ? null : transform.transform(StringUtils
 					.split(line, sep));
 		} catch (InvocationTargetException e) {
-			RuntimeException rte = new RuntimeException(StringUtils.split(line,
-					sep) + ", " + e.toString(), e);
+			RuntimeException rte = new RuntimeException(line + ", " +
+		Arrays.toString(StringUtils.split(line,
+					sep)) + ", " + e.toString(), e);
 			rte.setStackTrace(e.getStackTrace());
 			throw rte;
 		}

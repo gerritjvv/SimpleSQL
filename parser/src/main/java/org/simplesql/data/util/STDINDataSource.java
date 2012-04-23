@@ -49,7 +49,7 @@ public class STDINDataSource implements DataSource {
 				try {
 					int nline = (int)'\n';
 					while ((ch = reader.read()) != nline && ch != -1) {
-						buff.append(ch);
+						buff.append((char)ch);
 					}
 
 					if (buff.length() > 0)

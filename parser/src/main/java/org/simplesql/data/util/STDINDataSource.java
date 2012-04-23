@@ -47,7 +47,7 @@ public class STDINDataSource implements DataSource {
 				StringBuilder buff = new StringBuilder(100);
 				int ch = -1;
 				try {
-					while ((ch = reader.read()) != '\n' || ch != -1) {
+					while ((ch = reader.read()) != '\n' && ch != -1) {
 						buff.append(ch);
 					}
 

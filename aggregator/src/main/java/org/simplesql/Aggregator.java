@@ -45,15 +45,15 @@ public class Aggregator {
 
 	static File workingDir;
 	static Configuration conf;
-	
+
 	public static void main(String[] args) throws Throwable {
 
-		if (!(args.length == 4|| args.length == 5)) {
+		if (!(args.length == 4 || args.length == 5)) {
 			printUsage();
 		}
 
 		conf = new PropertiesConfiguration(args[0]);
-		
+
 		workingDir = new File("./" + System.currentTimeMillis());
 		workingDir.mkdirs();
 		try {
@@ -62,7 +62,17 @@ public class Aggregator {
 			// only support one at the moment.
 
 			Projection projection = createProjection(args[1]);
-			final String sep = args[2].trim();
+			String sep = args[2].trim();
+
+			if (sep.equals("tab")) {
+				sep = "\t";
+			} else if (sep.equals("bar")) {
+				sep = "|";
+			} else if (sep.equals("comma")) {
+				sep = ",";
+			} else if(sep.equals("space")){
+				sep = " ";
+			}
 
 			final TableDef tableDef = createSchema(projection);
 

@@ -62,7 +62,7 @@ public class Aggregator {
 			// only support one at the moment.
 
 			Projection projection = createProjection(args[1]);
-			final String sep = args[2];
+			final String sep = args[2].trim();
 
 			final TableDef tableDef = createSchema(projection);
 

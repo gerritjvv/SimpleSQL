@@ -62,16 +62,19 @@ public class Aggregator {
 			// only support one at the moment.
 
 			Projection projection = createProjection(args[1]);
-			String sep = args[2].trim();
+			String sepArg = args[2].trim();
+			final String sep;
 
-			if (sep.equals("tab")) {
+			if (sepArg.equals("tab")) {
 				sep = "\t";
-			} else if (sep.equals("bar")) {
+			} else if (sepArg.equals("bar")) {
 				sep = "|";
-			} else if (sep.equals("comma")) {
+			} else if (sepArg.equals("comma")) {
 				sep = ",";
-			} else if(sep.equals("space")){
+			} else if (sepArg.equals("space")) {
 				sep = " ";
+			} else {
+				sep = sepArg;
 			}
 
 			final TableDef tableDef = createSchema(projection);

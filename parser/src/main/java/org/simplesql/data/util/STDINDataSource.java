@@ -22,7 +22,6 @@ public class STDINDataSource implements DataSource {
 	final Iterator<String> it;
 
 	final SelectTransform transform;
-	final StreamTokenizer tok;
 	
 	public STDINDataSource(SelectTransform transform, String sep) {
 		super();
@@ -30,9 +29,6 @@ public class STDINDataSource implements DataSource {
 		this.transform = transform;
 		this.sep = sep;
 		it = IOUtils.lineIterator(new BufferedReader(new InputStreamReader(
-				System.in)));
-		
-		tok = new StreamTokenizer(new BufferedReader(new InputStreamReader(
 				System.in)));
 		
 		

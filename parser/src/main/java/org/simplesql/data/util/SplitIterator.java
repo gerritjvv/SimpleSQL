@@ -28,9 +28,11 @@ public class SplitIterator implements Iterator<Object[]> {
 		final String line = it.next();
 
 		try {
+			
 			// commons-lang split is much faster than String.split
 			return (line == null) ? null : transform.transform(StringUtils
 					.split(line, sep));
+			
 		} catch (InvocationTargetException e) {
 			RuntimeException rte = new RuntimeException(line + ", " +
 		Arrays.toString(StringUtils.split(line,

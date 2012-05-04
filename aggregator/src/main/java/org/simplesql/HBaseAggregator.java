@@ -21,8 +21,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
-import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -33,9 +33,6 @@ import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.DataSource;
 import org.simplesql.data.Key;
-import org.simplesql.data.util.FileDataSource;
-import org.simplesql.data.util.STDINDataSource;
-import org.simplesql.data.util.SelectTransform;
 import org.simplesql.om.ClientInfoTemplate.Projection;
 import org.simplesql.om.data.StorageManager;
 import org.simplesql.om.data.stores.KratiStoreManager;
@@ -46,6 +43,7 @@ import org.simplesql.om.util.ProjectionKeyUtil;
 import org.simplesql.parser.SQLCompiler;
 import org.simplesql.parser.SQLExecutor;
 import org.simplesql.parser.SimpleSQLCompiler;
+import org.simplesql.parser.tree.SELECT;
 import org.simplesql.schema.TableDef;
 
 /**
@@ -87,22 +85,24 @@ public class HBaseAggregator {
 
 		CommandLine line = new GnuParser().parse(getOptions(), args);
 
-		if (!(line.hasOption("table") && line.hasOption("conf")
-				&& line.hasOption("scanconfig") && line.hasOption("schema") && line
-					.hasOption("sql"))) {
+		if (!(line.hasOption("conf") && line.hasOption("scanconfig")
+				&& line.hasOption("schema") && line.hasOption("sql"))) {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("", getOptions());
 
 			return;
 		}
 
-		final String table = line.getOptionValue("table");
 		final String confDir = line.getOptionValue("conf");
 		final String scanconfig = line.getOptionValue("scanconfig");
 		final String schema = line.getOptionValue("schema");
 		final String parse = line.getOptionValue("parse");
 		final String sql = line.getOptionValue("sql");
 
+		final boolean isColumnCounter = (line.hasOption("colcounter")) ? Boolean
+				.parseBoolean(line.getOptionValue("colcounter").toLowerCase())
+				: false;
+			
 		conf = new PropertiesConfiguration(new File(confDir,
 				"aggregate.properties"));
 
@@ -111,9 +111,11 @@ public class HBaseAggregator {
 		ExpressionEvaluator scanExpr = new ExpressionEvaluator(importStr
 				+ scanconfig, Object.class, new String[] { "scan", "exec" },
 				new Class[] { Scan.class, SQLExecutor.class });
-		
 
-		final ExpressionEvaluator parseExpr = new ExpressionEvaluator(importStr
+		final ExpressionEvaluator parseExpr = (isColumnCounter) ? new ExpressionEvaluator(
+				importStr + parse, Object[].class,
+				new String[] { "res", "kv" }, new Class[] { Result.class,
+						KeyValue.class }) : new ExpressionEvaluator(importStr
 				+ parse, Object[].class, new String[] { "res" },
 				new Class[] { Result.class });
 
@@ -127,22 +129,27 @@ public class HBaseAggregator {
 		workingDir = new File("./" + System.currentTimeMillis());
 		workingDir.mkdirs();
 
-		HTable htable = new HTable(hconfig, table);
+		final Projection projection = createProjection(schema);
+		final TableDef tableDef = createSchema(projection);
+
+		final Cell.SCHEMA[] schemas = ProjectionKeyUtil.createSCHEMA(tableDef);
+
+		final ExecutorService execService = Executors.newCachedThreadPool();
+		final SQLCompiler compiler = new SimpleSQLCompiler(execService);
+		final SELECT select = compiler.compileSelect(sql);
+		
+		final SQLExecutor exec = compiler.compile(tableDef, select);
+
+		final String tableName = select.getTable();
+		System.out.println("TableName: " + tableName);
+
+		HTable htable = new HTable(hconfig, tableName);
 
 		Scan scan = new Scan();
+		final int caching = conf.getInt("hbase.client.scanner.caching", 100000);
+		scan.setCaching(caching);
 
 		try {
-
-			final Projection projection = createProjection(schema);
-			final TableDef tableDef = createSchema(projection);
-
-			final Cell.SCHEMA[] schemas = ProjectionKeyUtil
-					.createSCHEMA(tableDef);
-
-			final ExecutorService execService = Executors.newCachedThreadPool();
-			final SQLCompiler compiler = new SimpleSQLCompiler(execService);
-
-			final SQLExecutor exec = compiler.compile(tableDef, sql);
 
 			// we configure the scan object here
 			scanExpr.evaluate(new Object[] { scan, exec });
@@ -155,7 +162,10 @@ public class HBaseAggregator {
 
 					@Override
 					public Iterator<Object[]> iterator() {
-						return new ResultScannerIterator(parseExpr, scanner);
+						return isColumnCounter ? new ResultColumnCounterIterator(
+								parseExpr, scanner, caching)
+								: new ResultScannerIterator(parseExpr,
+										scanner, caching);
 					}
 
 					@Override
@@ -253,8 +263,14 @@ public class HBaseAggregator {
 	@SuppressWarnings("static-access")
 	private static final Options getOptions() {
 
-		Option table = OptionBuilder.withArgName("table").hasArg()
-				.withDescription("HBase table name").create("table");
+		Option colcounter = OptionBuilder
+				.withArgName("colcounter")
+				.hasArg()
+				.isRequired(false)
+				.withDescription(
+						"True or False if True the columns are expected to be daily,hourly etc counters")
+				.create("colcounter");
+
 		Option confDir = OptionBuilder
 				.withArgName("conf")
 				.hasArg()
@@ -281,7 +297,7 @@ public class HBaseAggregator {
 				.withDescription("Simple sql query").create("sql");
 
 		Options opts = new Options();
-		opts.addOption(table);
+		opts.addOption(colcounter);
 		opts.addOption(confDir);
 		opts.addOption(scanConfig);
 		opts.addOption(parse);
@@ -298,10 +314,14 @@ public class HBaseAggregator {
 
 		Result result;
 
+		int counter = 0;
+		int caching;
+
 		public ResultScannerIterator(ExpressionEvaluator eval,
-				ResultScanner scanner) {
+				ResultScanner scanner, int caching) {
 			this.eval = eval;
 			this.scanner = scanner;
+			this.caching = caching;
 		}
 
 		@Override
@@ -318,7 +338,83 @@ public class HBaseAggregator {
 		@Override
 		public Object[] next() {
 			try {
+				counter++;
+				if (counter % 10000 == 0)
+					System.out.println(counter);
+
 				return (Object[]) eval.evaluate(new Object[] { result });
+			} catch (InvocationTargetException e) {
+				RuntimeException rte = new RuntimeException(e.toString(), e);
+				throw rte;
+			}
+		}
+
+		@Override
+		public void remove() {
+		}
+
+	}
+
+	static class ResultColumnCounterIterator implements Iterator<Object[]> {
+
+		final ResultScanner scanner;
+		final ExpressionEvaluator eval;
+
+		KeyValue[] keyvalues;
+		int index = 0;
+		int len = 0;
+
+		Result result;
+
+		int counter = 0;
+		int caching;
+
+		public ResultColumnCounterIterator(ExpressionEvaluator eval,
+				ResultScanner scanner, int caching) {
+			this.eval = eval;
+			this.scanner = scanner;
+			this.caching = caching;
+		}
+
+		@Override
+		public boolean hasNext() {
+
+			try {
+
+				// check for key values
+				if (index < len) {
+					return true;
+				} else {
+					result = scanner.next();
+					if (result != null) {
+						
+						keyvalues = result.raw();
+						index = 0;
+						len = keyvalues.length;
+						return true;
+					} else {
+						return false;
+					}
+				}
+
+			} catch (IOException e) {
+				RuntimeException rte = new RuntimeException(e.toString(), e);
+				throw rte;
+			}
+		}
+
+		@Override
+		public Object[] next() {
+			try {
+
+				counter++;
+				if (counter % 100== 0)
+					System.out.println(counter + "; kv.len = " + len);
+
+				final KeyValue kv = keyvalues[index++];
+				
+				return (Object[]) eval.evaluate(new Object[] { result, kv });
+
 			} catch (InvocationTargetException e) {
 				RuntimeException rte = new RuntimeException(e.toString(), e);
 				throw rte;

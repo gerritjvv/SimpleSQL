@@ -1,7 +1,5 @@
 package org.simplesql;
 
-import java.io.ByteArrayOutputStream;
-
 import org.junit.Test;
 
 

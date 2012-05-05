@@ -19,6 +19,7 @@ import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.DataSource;
 import org.simplesql.data.Key;
+import org.simplesql.data.util.DisruptorDataSource;
 import org.simplesql.data.util.FileDataSource;
 import org.simplesql.data.util.STDINDataSource;
 import org.simplesql.data.util.SelectTransform;
@@ -90,7 +91,7 @@ public class Aggregator {
 			final SelectTransform transform = new SelectTransform(
 					tableDef.getColumnDefs(), exec.getColumnsUsed());
 			final DataSource dataSource = (args.length == 5) ? new FileDataSource(
-					transform, new File(args[4]), sep) : new STDINDataSource(
+					transform, new File(args[4]), sep) : new DisruptorDataSource(
 					transform, sep);
 
 			final StorageManager manager = getStorageManager(schemas,

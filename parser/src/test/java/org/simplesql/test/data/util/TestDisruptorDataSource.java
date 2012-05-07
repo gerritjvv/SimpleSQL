@@ -1,6 +1,6 @@
 package org.simplesql.test.data.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.simplesql.data.DoubleCell;
+import org.simplesql.data.IntCell;
 import org.simplesql.data.StringCell;
 import org.simplesql.data.util.DisruptorDataSource;
 import org.simplesql.data.util.SelectTransform;
@@ -28,15 +31,21 @@ public class TestDisruptorDataSource {
 	@Test
 	public void test1() throws Throwable {
 
+		
 		Set<String> set = new HashSet<String>();
 		set.add("a");
-		ColumnDef[] defs = new ColumnDef[] { new SimpleColumnDef(String.class,
-				"a", new StringCell()) };
+		ColumnDef[] defs = new ColumnDef[] {
+				new SimpleColumnDef(String.class, "a", new StringCell()),
+				new SimpleColumnDef(int.class, "b", new IntCell()),
+				new SimpleColumnDef(int.class, "c", new IntCell()),
+				new SimpleColumnDef(int.class, "d", new IntCell()),
+				new SimpleColumnDef(Double.class, "e", new DoubleCell()),
+				new SimpleColumnDef(Double.class, "f", new DoubleCell()) };
 
 		InputStream in = getIn();
 		try {
 			DisruptorDataSource datasource = new DisruptorDataSource(
-					new SelectTransform(defs, set), ",");
+					new SelectTransform(defs, set), " ");
 
 			Iterator<Object[]> it = datasource.iterator(in);
 			List<String> list = new ArrayList<String>();
@@ -45,11 +54,9 @@ public class TestDisruptorDataSource {
 			while (it.hasNext()) {
 				i++;
 				Object[] arr = it.next();
-				if (arr.length == 0) {
-					list.add("");
-				} else {
+				System.out.println("arr: " + Arrays.toString(arr));
 					list.add((String) arr[0]);
-				}
+				
 			}
 
 			List<String> lines = FileUtils.readLines(new File(FILE), "UTF-8");

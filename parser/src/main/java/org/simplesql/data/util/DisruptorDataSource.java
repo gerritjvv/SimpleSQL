@@ -39,6 +39,8 @@ public class DisruptorDataSource implements DataSource {
 
 	final SelectTransform transform;
 
+	volatile static StringBuilder builder = new StringBuilder();
+
 	public DisruptorDataSource(SelectTransform transform, String sep) {
 		super();
 
@@ -125,6 +127,7 @@ public class DisruptorDataSource implements DataSource {
 					StrEvent event = ringBuffer.get(nextSequence);
 					nextSequence++;
 					lines.add(event.str);
+					// System.out.println("Line: " + event.str);
 				}
 				sequence.set(nextSequence - 1L);
 			}
@@ -197,47 +200,32 @@ public class DisruptorDataSource implements DataSource {
 						 */
 						final byte[] buff = evt.buff;
 						final int len = evt.len;
-
-						int pos = 0;
-						int n = ByteArrayUtil.findN(buff, pos);
-						int prevN = 0;
-						if (n < 0) {
-							// ifno new line, add this buffer to the lineBytes
-							// array
-							ByteArrayUtil.addTo(lineBytes, lineBytesFrom, buff,
-									0, len, 0.5F);
-							lineBytesFrom += len;
-						} else {
-							// else put to line to queue
-							processed.incrementAndGet();
-							processor.publish(new String(ByteArrayUtil.combine(
-									buff, 0, n, lineBytes, 0, lineBytesFrom)));
-							prevN = n + 1;
-							// look for the next new line till the end of the
-							// buffer is reached.
-							while ((n = ByteArrayUtil.findN(buff, prevN)) > 0
-									&& prevN < len) {
-								if (prevN > n - 1) {
-									processed.incrementAndGet();
-									processor.publish("");
-								} else {
-									processed.incrementAndGet();
-									processor.publish(new String(Arrays
-											.copyOfRange(buff, prevN, n)));
+						
+						int lastN = 0;
+						for(int i  = 0; i < buff.length; i++){
+							if(buff[i] == '\n'){
+								if(lineBytesFrom != 0){
+									processor.publish(new String(
+											ByteArrayUtil.combine(lineBytes, 0, lineBytesFrom, buff, lastN, (i-lastN))
+											));
+									lineBytesFrom = 0;
+								}else{
+								processor.publish(new String(buff, lastN, (i-lastN-1)));
 								}
-								prevN = n + 1;
+								processed.incrementAndGet();
+								lastN = i+1;
 							}
-
-							// here we need to check if the end of the buffer
-							// has been reached
-							// if not add the remaining to line bytes.
-							if (prevN < len) {
-								ByteArrayUtil.addTo(lineBytes, lineBytesFrom,
-										buff, prevN, len - prevN - 1, 0.5F);
-							}
-
 						}
+						
+						if(lastN == 1){
+							ByteArrayUtil.addTo(lineBytes, lineBytesFrom, buff, lastN+1, (len-lastN-1), 0.5F);
+						}else if(lastN < buff.length){
+							ByteArrayUtil.addTo(lineBytes, lineBytesFrom, buff, lastN+1, (len-lastN-1), 0.5F);
+							lineBytesFrom += (len-lastN-1);
+						}
+						
 
+						evt.len = 0;
 					} catch (Throwable t) {
 						t.printStackTrace();
 						shouldStop.set(true);
@@ -261,7 +249,7 @@ public class DisruptorDataSource implements DataSource {
 						do {
 							final long evtId = ringBuffer.next();
 							Event evt = ringBuffer.get(evtId);
-							final int len = in.read(evt.buff);
+							final int len = in.read(evt.buff, 0, evt.buff.length);
 
 							if (len < 1) {
 								shouldStop.set(true);
@@ -294,12 +282,15 @@ public class DisruptorDataSource implements DataSource {
 					Thread.currentThread().interrupt();
 					ret = false;
 				}
-				ret = !((shouldStop.get() || hasError.get()) && processed
-						.get() == 0);
+				ret = !((shouldStop.get() || hasError.get()) && processed.get() == 0);
 			} else {
 				ret = true;
 			}
-			
+
+			if (!ret) {
+
+				System.out.println(builder.toString());
+			}
 			return ret;
 		}
 
@@ -309,10 +300,8 @@ public class DisruptorDataSource implements DataSource {
 
 				final String[] split = StringUtils.split(processor.getNext(),
 						sep);
-				if (split == null || split.length < 1)
-					return new Object[0];
-				else
-					return (Object[]) transform.transform(split);
+				System.out.println("Split: " + Arrays.toString(split));
+				return (Object[]) transform.transform(split);
 			} catch (Throwable e) {
 				RuntimeException rte = new RuntimeException(e.toString(), e);
 				rte.setStackTrace(e.getStackTrace());

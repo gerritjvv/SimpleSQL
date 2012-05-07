@@ -2,6 +2,7 @@ package org.simplesql.parser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -223,16 +224,27 @@ public class SimpleSQLExecutor implements SQLExecutor {
 		int recordsRead = 0;
 
 		// read data and add to the disruptor queue.
-		for (Object[] data : source) {
+		Iterator<Object[]> it = source.iterator();
+		while(it.hasNext()){
 			if (hasError.get() || shouldStop.get())
 				break;
 
 			long seq = ringBuffer.next();
 			DataEvent evt = ringBuffer.get(seq);
-			evt.dat = data;
+			evt.dat = it.next();
 			ringBuffer.publish(seq);
 			recordsRead++;
 		}
+//		for (Object[] data : source) {
+//			if (hasError.get() || shouldStop.get())
+//				break;
+//
+//			long seq = ringBuffer.next();
+//			DataEvent evt = ringBuffer.get(seq);
+//			evt.dat = data;
+//			ringBuffer.publish(seq);
+//			recordsRead++;
+//		}
 
 		// throw any error if an error occurred during the async processing
 		if (hasError.get()) {

@@ -91,7 +91,8 @@ public class Aggregator {
 			final SelectTransform transform = new SelectTransform(
 					tableDef.getColumnDefs(), exec.getColumnsUsed());
 			final DataSource dataSource = (args.length == 5) ? new FileDataSource(
-					transform, new File(args[4]), sep) : new STDINDataSource(transform, sep);
+					transform, new File(args[4]), sep) : new DisruptorDataSource(
+					transform, sep);
 
 			final StorageManager manager = getStorageManager(schemas,
 					workingDir);

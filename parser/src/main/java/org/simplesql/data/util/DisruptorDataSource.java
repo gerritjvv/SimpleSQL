@@ -106,7 +106,7 @@ public class DisruptorDataSource implements DataSource {
 			}
 		}
 
-		final List<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<String>();
 
 		/**
 		 * Returns the next available string
@@ -294,26 +294,26 @@ public class DisruptorDataSource implements DataSource {
 					Thread.currentThread().interrupt();
 					ret = false;
 				}
-				ret = !((shouldStop.get() || hasError.get()) && processed.get() == 0);
+				ret = !((shouldStop.get() || hasError.get()) && processed
+						.get() == 0);
 			} else {
 				ret = true;
 			}
-
+			
 			return ret;
 		}
 
 		@Override
 		public Object[] next() {
-			String[] split = null;
 			try {
 
-				
-				split = StringUtils.split(processor.getNext(), sep);
-				
-				return (Object[]) transform.transform(split);
-
+				final String[] split = StringUtils.split(processor.getNext(),
+						sep);
+				if (split == null || split.length < 1)
+					return new Object[0];
+				else
+					return (Object[]) transform.transform(split);
 			} catch (Throwable e) {
-				System.out.println("!!!!!!!!!1Split: " + Arrays.toString(split));
 				RuntimeException rte = new RuntimeException(e.toString(), e);
 				rte.setStackTrace(e.getStackTrace());
 				throw rte;

@@ -102,11 +102,11 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 
 		keyCount = conf.getInt(CONF.KEY_COUNT.toString(), 1);
 		updateBatch = conf.getInt(CONF.UPDATE_BATCH.toString(), 10000);
-		updateBatches = conf.getInt(CONF.UPDATE_BATCHES.toString(), 5);
+		updateBatches = conf.getInt(CONF.UPDATE_BATCHES.toString(), 1);
 		segmentSize = conf.getInt(CONF.SEGMENT_SIZE.toString(), 128);
 
 		cache = CacheBuilder.newBuilder()
-				.maximumSize(conf.getInt(CONF.CACHE_SIZE.toString(), 100000))
+				.maximumSize(100000)
 				.concurrencyLevel(4)
 				.removalListener(new RemovalListener<Key, DataEntry>() {
 
@@ -284,9 +284,9 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 			throws Exception {
 		int capacity = (int) (keyCount * 1.5);
 		return new DynamicDataStore(storeDir, capacity, /* capacity */
-		updateBatch, /* update batch size */
-		updateBatches, /* number of update batches required to sync indexes.dat */
-		segmentSize, /* segment file size in MB */
+		10000, /* update batch size */
+		5, /* number of update batches required to sync indexes.dat */
+		128, /* segment file size in MB */
 		createSegmentFactory());
 	}
 

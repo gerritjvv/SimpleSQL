@@ -319,7 +319,7 @@ public class DisruptorDataSource implements DataSource {
 
 			} catch (Throwable e) {
 				System.out.println("Sub: " + line + " sep: " + sep + "; "
-						+ StringUtils.split(line, sep));
+						+ Arrays.toString(StringUtils.split(line, sep)));
 				try {
 					line = processor.getNext();
 				} catch (AlertException e1) {
@@ -330,7 +330,7 @@ public class DisruptorDataSource implements DataSource {
 					e1.printStackTrace();
 				}
 				System.out.println("Sub: " + line + " sep: " + sep + "; "
-						+ StringUtils.split(line, sep));
+						+ Arrays.toString(StringUtils.split(line, sep)));
 				RuntimeException rte = new RuntimeException(e.toString(), e);
 				rte.setStackTrace(e.getStackTrace());
 				throw rte;

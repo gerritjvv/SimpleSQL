@@ -304,33 +304,16 @@ public class DisruptorDataSource implements DataSource {
 
 		@Override
 		public Object[] next() {
-			String line = null;
-			try {
-				line = processor.getNext();
-			} catch (AlertException e1) {
-				e1.printStackTrace();
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
+			
 			try {
 
-				final String[] split = StringUtils.split(line, sep);
+				String[] split;
+				while( (split = StringUtils.split(processor.getNext(), sep)).length < 1 && processed.get() > 0);
+				
 				return (Object[]) transform.transform(split);
 
 			} catch (Throwable e) {
-				System.out.println("Sub: " + line + " sep: " + sep + "; "
-						+ Arrays.toString(StringUtils.split(line, sep)));
-				try {
-					line = processor.getNext();
-				} catch (AlertException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				System.out.println("Sub: " + line + " sep: " + sep + "; "
-						+ Arrays.toString(StringUtils.split(line, sep)));
+				
 				RuntimeException rte = new RuntimeException(e.toString(), e);
 				rte.setStackTrace(e.getStackTrace());
 				throw rte;

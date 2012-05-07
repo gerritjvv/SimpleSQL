@@ -39,8 +39,6 @@ public class DisruptorDataSource implements DataSource {
 
 	final SelectTransform transform;
 
-	volatile static StringBuilder builder = new StringBuilder();
-
 	public DisruptorDataSource(SelectTransform transform, String sep) {
 		super();
 
@@ -127,7 +125,6 @@ public class DisruptorDataSource implements DataSource {
 					StrEvent event = ringBuffer.get(nextSequence);
 					nextSequence++;
 					lines.add(event.str);
-					// System.out.println("Line: " + event.str);
 				}
 				sequence.set(nextSequence - 1L);
 			}
@@ -287,10 +284,6 @@ public class DisruptorDataSource implements DataSource {
 				ret = true;
 			}
 
-			if (!ret) {
-
-				System.out.println(builder.toString());
-			}
 			return ret;
 		}
 
@@ -300,7 +293,6 @@ public class DisruptorDataSource implements DataSource {
 
 				final String[] split = StringUtils.split(processor.getNext(),
 						sep);
-				System.out.println("Split: " + Arrays.toString(split));
 				return (Object[]) transform.transform(split);
 			} catch (Throwable e) {
 				RuntimeException rte = new RuntimeException(e.toString(), e);

@@ -106,7 +106,7 @@ public class DisruptorDataSource implements DataSource {
 			}
 		}
 
-		List<String> lines = new ArrayList<String>();
+		final List<String> lines = new ArrayList<String>();
 
 		/**
 		 * Returns the next available string
@@ -306,8 +306,13 @@ public class DisruptorDataSource implements DataSource {
 		@Override
 		public Object[] next() {
 			try {
-
-				final String[] split = StringUtils.split(processor.getNext(),
+				
+				String str = null;
+				while((str=processor.getNext()) == null && hasNext()){
+					;
+				}
+				
+				final String[] split = StringUtils.split(str,
 						sep);
 				if (split == null || split.length < 1)
 					return new Object[0];

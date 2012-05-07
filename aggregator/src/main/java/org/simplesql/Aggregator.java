@@ -91,21 +91,22 @@ public class Aggregator {
 			final SelectTransform transform = new SelectTransform(
 					tableDef.getColumnDefs(), exec.getColumnsUsed());
 			final DataSource dataSource = (args.length == 5) ? new FileDataSource(
-					transform, new File(args[4]), sep) : new DisruptorDataSource(
+					transform, new File(args[4]), sep) : new STDINDataSource(
 					transform, sep);
 
 			final StorageManager manager = getStorageManager(schemas,
 					workingDir);
 			AggregateStore storage = null;
-			
+
 			try {
 				storage = manager.newAggregateStore(projection, exec);
-				
+
 				long startReading = System.currentTimeMillis();
-				
+
 				exec.pump(dataSource, storage, null);
-				System.out.println("Read in: " + (System.currentTimeMillis()-startReading) + "ms");
-				
+				System.out.println("Read in: "
+						+ (System.currentTimeMillis() - startReading) + "ms");
+
 				final BufferedWriter out = new BufferedWriter(
 						new OutputStreamWriter(System.out));
 

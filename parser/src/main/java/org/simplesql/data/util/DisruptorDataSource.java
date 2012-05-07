@@ -308,7 +308,7 @@ public class DisruptorDataSource implements DataSource {
 			try {
 
 				
-				while( (split = StringUtils.split(processor.getNext(), sep)).length < 1 && processed.get() > 0);
+				split = StringUtils.split(processor.getNext(), sep);
 				
 				return (Object[]) transform.transform(split);
 

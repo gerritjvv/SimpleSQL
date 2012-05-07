@@ -313,7 +313,7 @@ public class DisruptorDataSource implements DataSource {
 				return (Object[]) transform.transform(split);
 
 			} catch (Throwable e) {
-				System.out.println("Split: " + Arrays.toString(split));
+				System.out.println("!!!!!!!!!1Split: " + Arrays.toString(split));
 				RuntimeException rte = new RuntimeException(e.toString(), e);
 				rte.setStackTrace(e.getStackTrace());
 				throw rte;

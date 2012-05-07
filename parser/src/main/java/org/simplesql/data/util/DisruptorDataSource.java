@@ -308,10 +308,8 @@ public class DisruptorDataSource implements DataSource {
 			try {
 				line = processor.getNext();
 			} catch (AlertException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			try {

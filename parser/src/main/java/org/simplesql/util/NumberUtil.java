@@ -42,9 +42,9 @@ public final class NumberUtil {
 
 	public static final String getConvertClassMethod(Class<?> cls){
 		if (cls.equals(int.class)) {
-			return NumberUtil.class.getName() + ".intValueOf";
+			return "new Integer(" + NumberUtil.class.getName() + ".intValueOf";
 		} else {
-			return "new " + getWrapperClass(cls).getName();
+			return "(new " + getWrapperClass(cls).getName();
 		}
 	}
 	/**

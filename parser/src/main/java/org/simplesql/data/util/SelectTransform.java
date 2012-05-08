@@ -38,8 +38,8 @@ public class SelectTransform {
 					buff.append(",");
 
 				if (def.isNumber() || Boolean.class.isAssignableFrom(cls))
-					buff
-							.append(NumberUtil.getConvertClassMethod(cls))
+					buff.append("new ")
+							.append(NumberUtil.getWrapperClass(cls).getName())
 							.append("(").append("input[").append(i)
 							.append("])");
 				else {
@@ -52,8 +52,6 @@ public class SelectTransform {
 		}
 
 		buff.append("}");
-		
-		System.out.println("SELECT_TRANSFORM: " + buff.toString());
 		
 		eval = new ExpressionEvaluator(buff.toString(), Object[].class,
 				new String[] { "input" }, new Class[] { String[].class });

@@ -7,16 +7,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
-
-import com.google.common.hash.Hasher;
 
 /**
  * 
  * Store a String. All increment methods are ignored or zero is returned.
  * 
  */
-public class StringCell implements Cell<String> {
+public final class StringCell implements Cell<String> {
 
 	String val;
 	String name;
@@ -141,8 +140,8 @@ public class StringCell implements Cell<String> {
 	}
 
 	@Override
-	public Hasher putHash(Hasher hasher) {
-		return hasher.putString(val);
+	public final void putHash(HashCodeBuilder builder) {
+		builder.append(val);
 	}
 
 	@Override

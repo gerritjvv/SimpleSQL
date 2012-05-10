@@ -6,11 +6,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
 
-import com.google.common.hash.Hasher;
-
-public class IntCell implements Cell<Number> {
+public final class IntCell implements Cell<Number> {
 
 	int val = 0;
 	String name;
@@ -145,8 +144,8 @@ public class IntCell implements Cell<Number> {
 	}
 
 	@Override
-	public Hasher putHash(Hasher hasher) {
-		return hasher.putInt(val);
+	public final void putHash(HashCodeBuilder builder) {
+		builder.append(val);
 	}
 
 	@Override

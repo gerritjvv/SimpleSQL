@@ -5,6 +5,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.Serializable;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import com.google.common.hash.Hasher;
 
 public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
@@ -53,7 +55,7 @@ public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 
 	Object getMin();
 
-	Hasher putHash(Hasher hasher);
+	void putHash(HashCodeBuilder builder);
 
 	int byteLength();
 

@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.data.Cell.SCHEMA;
-
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hasher;
-import com.google.common.hash.Hashing;
 
 /**
  * 
@@ -16,7 +13,7 @@ import com.google.common.hash.Hashing;
  * calculate hashcode and equality.
  * 
  */
-public class SimpleCellKey implements Key {
+public final class SimpleCellKey implements Key {
 
 	/**
 	 * 
@@ -28,8 +25,7 @@ public class SimpleCellKey implements Key {
 	int hashCode = -1;
 
 	SCHEMA[] schemas;
-	
-	
+
 	/**
 	 * To be used only for serialization
 	 */
@@ -77,20 +73,20 @@ public class SimpleCellKey implements Key {
 		this.cells = cells;
 	}
 
-	public SCHEMA[] getSchemas(){
-		
-		if(schemas == null){
+	public SCHEMA[] getSchemas() {
+
+		if (schemas == null) {
 			final int len = cells.length;
 			schemas = new SCHEMA[len];
-			
-			for(int i = 0; i < len; i++){
+
+			for (int i = 0; i < len; i++) {
 				schemas[i] = cells[i].getSchema();
 			}
 		}
-		
+
 		return schemas;
 	}
-	
+
 	@Override
 	public String asString() {
 		StringBuilder buff = new StringBuilder();
@@ -106,18 +102,17 @@ public class SimpleCellKey implements Key {
 	}
 
 	@Override
-	public int hashCode() {
-		
-		if(hashCode == -1){
-			final HashFunction hashFunct = Hashing.goodFastHash(10);
-			final Hasher hasher = hashFunct.newHasher();
-			final int len = cells.length;
-			for (int i = 0; i < len; i++)
-				cells[i].putHash(hasher);
+	public final int hashCode() {
 
-			hashCode = hasher.hash().hashCode();
+		if (hashCode == -1) {
+			final int len = cells.length;
+			HashCodeBuilder builder = new HashCodeBuilder();
+			for (int i = 0; i < len; i++)
+				cells[i].putHash(builder);
+
+			hashCode = builder.toHashCode();
 		}
-		
+
 		return hashCode;
 	}
 

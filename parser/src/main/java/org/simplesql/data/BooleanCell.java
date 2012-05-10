@@ -6,11 +6,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
 
 import com.google.common.hash.Hasher;
 
-public class BooleanCell implements Cell<Boolean> {
+public final class BooleanCell implements Cell<Boolean> {
 
 	/**
 	 * 
@@ -125,8 +126,8 @@ public class BooleanCell implements Cell<Boolean> {
 	}
 
 	@Override
-	public Hasher putHash(Hasher hasher) {
-		return hasher.putBoolean(val);
+	public final void putHash(HashCodeBuilder builder) {
+		builder.append(val);
 	}
 
 	@Override

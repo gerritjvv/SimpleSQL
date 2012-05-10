@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
 
 import com.google.common.hash.Hasher;
@@ -19,7 +20,7 @@ import com.google.common.hash.Hasher;
  * value will change to type double.<br/>
  * 
  */
-public class DynamicCell implements Cell<String> {
+public final class DynamicCell implements Cell<String> {
 
 	enum TYPE {
 		INT((byte) 0), LONG((byte) 1), DOUBLE((byte) 2), BOOLEAN((byte) 3), STRING(
@@ -234,18 +235,8 @@ public class DynamicCell implements Cell<String> {
 	}
 
 	@Override
-	public Hasher putHash(Hasher hasher) {
-		if (Double.class.isAssignableFrom(val.getClass())) {
-			return hasher.putDouble(getDoubleValue());
-		} else if (Long.class.isAssignableFrom(val.getClass())) {
-			return hasher.putLong(getLongValue());
-		} else if (Integer.class.isAssignableFrom(val.getClass())) {
-			return hasher.putInt(getIntValue());
-		} else if (Boolean.class.isAssignableFrom(val.getClass())) {
-			return hasher.putBoolean(getIntValue() == 1);
-		} else {
-			return hasher.putString(getData());
-		}
+	public final void putHash(HashCodeBuilder builder) {
+		builder.append(getData());
 	}
 
 	@Override

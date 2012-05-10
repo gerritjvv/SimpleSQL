@@ -6,11 +6,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
 
 import com.google.common.hash.Hasher;
 
-public class DoubleCell implements Cell<Number> {
+public final class DoubleCell implements Cell<Number> {
 
 	double val = 0.0D;
 
@@ -132,8 +133,8 @@ public class DoubleCell implements Cell<Number> {
 	}
 
 	@Override
-	public Hasher putHash(Hasher hasher) {
-		return hasher.putDouble(val);
+	public final void putHash(HashCodeBuilder builder) {
+		builder.append(val);
 	}
 
 	@Override

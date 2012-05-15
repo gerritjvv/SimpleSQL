@@ -24,5 +24,7 @@ public interface ColumnDef {
 	byte getByteMin();
 
 	byte getByteMax();
-
+	
+	boolean isKey();
+	
 }

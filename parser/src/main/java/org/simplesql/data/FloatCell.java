@@ -9,35 +9,38 @@ import java.io.ObjectOutputStream;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
 
-public final class LongCell implements Cell<Number> {
+import com.google.common.hash.Hasher;
 
-	long val = 0L;
+public final class FloatCell implements Cell<Number> {
+
+	float val = 0.0F;
 
 	String name;
 
-	public LongCell() {
+	public FloatCell() {
+
 	}
 
-	public LongCell(long val) {
+	public FloatCell(float val) {
 		super();
 		this.val = val;
 	}
 
-	public LongCell(long val, String name) {
+	public FloatCell(float val, String name) {
 		super();
 		this.val = val;
 		this.name = name;
 	}
+	
 
-	@Override
 	public void readFields(DataInput in) throws IOException {
-		val = in.readLong();
+		val = in.readFloat();
 	}
 
-	@Override
 	public void write(DataOutput out) throws IOException {
-		out.writeLong(val);
+		out.writeFloat(val);
 	}
+	
 
 	@Override
 	public void inc() {
@@ -55,18 +58,18 @@ public final class LongCell implements Cell<Number> {
 	}
 
 	@Override
-	public void inc(double val) {
+	public void inc(float val) {
 		this.val += val;
 	}
 
 	@Override
-	public double getDoubleValue() {
+	public float getFloatValue() {
 		return val;
 	}
 
 	@Override
 	public long getLongValue() {
-		return val;
+		return (long) val;
 	}
 
 	@Override
@@ -83,17 +86,17 @@ public final class LongCell implements Cell<Number> {
 	public void setData(Number dat) {
 		if (dat == null)
 			val = 0L;
-		val = dat.longValue();
+		val = dat.floatValue();
 	}
 
 	@Override
 	public void inc(Counter counter) {
-		val += counter.getLongValue();
+		val += counter.getFloatValue();
 	}
 
 	@Override
 	public Cell<Number> copy(boolean resetToDefaults) {
-		return new LongCell((resetToDefaults) ? 0L : val);
+		return new FloatCell((resetToDefaults) ? 0.0F : val);
 	}
 
 	public String toString() {
@@ -102,28 +105,28 @@ public final class LongCell implements Cell<Number> {
 
 	@Override
 	public Object getMax() {
-		return Long.MAX_VALUE;
+		return Float.MAX_VALUE;
 	}
 
 	@Override
 	public Object getMin() {
-		return Long.MIN_VALUE;
+		return Float.MIN_VALUE;
 	}
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.writeLong(val);
+		out.writeFloat(val);
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException {
-		val = in.readLong();
+		val = in.readFloat();
 	}
 
 	@Override
 	public int compareTo(Cell<Number> cell) {
-		long v = cell.getLongValue();
-		if (val < v)
+		float d = cell.getFloatValue();
+		if (val < d)
 			return -1;
-		else if (val > v)
+		else if (val > d)
 			return 1;
 		else
 			return 0;
@@ -136,31 +139,33 @@ public final class LongCell implements Cell<Number> {
 
 	@Override
 	public int byteLength() {
-		return 8;
+		return 4;
 	}
 
 	@Override
 	public int write(byte[] arr, int from) {
-		Bytes.writeBytes(val, arr, from);
-		return 8;
+		Bytes.writeBytes(Float.floatToIntBits(val), arr, from);
+		return 4;
 	}
 
 	@Override
 	public int read(byte[] arr, int from) {
-		val = Bytes.readLong(arr, from);
-		return 8;
+		val = Float.intBitsToFloat(Bytes.readInt(arr, from));
+		return 4;
 	}
 
 	@Override
 	public org.simplesql.data.Cell.SCHEMA getSchema() {
-		return SCHEMA.LONG;
+		return SCHEMA.FLOAT;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (val ^ (val >>> 32));
+		long temp;
+		temp = Float.floatToIntBits(val);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -172,8 +177,8 @@ public final class LongCell implements Cell<Number> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LongCell other = (LongCell) obj;
-		if (val != other.val)
+		FloatCell other = (FloatCell) obj;
+		if (Float.floatToIntBits(val) != Float.floatToIntBits(other.val))
 			return false;
 		return true;
 	}
@@ -187,7 +192,7 @@ public final class LongCell implements Cell<Number> {
 	}
 
 	@Override
-	public void inc(float val) {
+	public void inc(double val) {
 		this.val += val;
 	}
 
@@ -198,7 +203,7 @@ public final class LongCell implements Cell<Number> {
 
 	@Override
 	public void inc(byte val) {
-		this.val += val;		
+		this.val += val;
 	}
 
 	@Override
@@ -207,8 +212,8 @@ public final class LongCell implements Cell<Number> {
 	}
 
 	@Override
-	public float getFloatValue() {
-		return (float)val;
+	public double getDoubleValue() {
+		return (double)val;
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public class SimpleTableDef implements TableDef {
 	final ColumnDef[] columnDefs;
 	final String name;
 	final Map<String, ColumnDef> columnMap = new HashMap<String, ColumnDef>();
-
+	
 	public SimpleTableDef(String name, ColumnDef... columnDefs) {
 		this.name = name;
 		this.columnDefs = columnDefs;

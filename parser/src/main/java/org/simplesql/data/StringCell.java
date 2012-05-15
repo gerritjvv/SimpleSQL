@@ -228,4 +228,31 @@ public final class StringCell implements Cell<String> {
 		this.name = name;
 	}
 
+	@Override
+	public void inc(float val) {
+	}
+
+	@Override
+	public void inc(short val) {
+	}
+
+	@Override
+	public void inc(byte val) {
+	}
+
+	@Override
+	public byte getByteValue() {
+		return 0;
+	}
+
+	@Override
+	public float getFloatValue() {
+		return 0;
+	}
+
+	@Override
+	public short getShortValue() {
+		return 0;
+	}
+
 }

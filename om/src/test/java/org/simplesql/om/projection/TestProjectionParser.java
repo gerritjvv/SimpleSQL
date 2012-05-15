@@ -46,7 +46,7 @@ public class TestProjectionParser {
 
 	@Test
 	public void testCreate() throws Throwable {
-		String str = "TABLE mytable (col LONG)";
+		String str = "TABLE mytable (col LONG KEY)";
 		ProjectionLexer lexer = new ProjectionLexer(new ANTLRStringStream(str));
 		ProjectionParser parser = new ProjectionParser(new CommonTokenStream(
 				lexer));
@@ -58,6 +58,7 @@ public class TestProjectionParser {
 
 		for (Column column : projection.getColumnList()) {
 			if (column.getName().equals("col")) {
+				assertTrue(column.getKey());
 				assertEquals("LONG", column.getType());
 				assertEquals(0, column.getOrder());
 			}

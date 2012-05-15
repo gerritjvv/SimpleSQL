@@ -9,103 +9,94 @@ import java.io.ObjectOutputStream;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
 
-public final class BooleanCell implements Cell<Boolean> {
+import com.google.common.hash.Hasher;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public final class ByteCell implements Cell<Number> {
 
-	boolean val = false;
+	byte val = 0;
 
 	String name;
 
-	public BooleanCell() {
+	public ByteCell() {
+
 	}
 
-	public BooleanCell(boolean val) {
+	public ByteCell(byte val) {
 		super();
 		this.val = val;
 	}
 
-	public BooleanCell(boolean val, String name) {
+	public ByteCell(byte val, String name) {
 		super();
 		this.val = val;
 		this.name = name;
 	}
+	
+
+	public void readFields(DataInput in) throws IOException {
+		val = in.readByte();
+	}
+
+	public void write(DataOutput out) throws IOException {
+		out.write(val);
+	}
+	
 
 	@Override
 	public void inc() {
-		val = !val;
+		val++;
 	}
 
 	@Override
-	public void inc(int n) {
-		inc();
+	public void inc(int val) {
+		this.val += val;
 	}
 
 	@Override
 	public void inc(long val) {
-		inc();
-	}
-
-	@Override
-	public void inc(double val) {
-		inc();
+		this.val += val;
 	}
 
 	@Override
 	public void inc(float val) {
-		inc();
-	}
-
-	@Override
-	public void inc(short val) {
-		inc();
-	}
-
-	@Override
-	public double getDoubleValue() {
-		return (val) ? 1 : 0;
-	}
-
-	public boolean getBooleanValue() {
-		return this.val;
-	}
-
-	@Override
-	public short getShortValue() {
-		return (short) ((val) ? 1 : 0);
-	}
-
-	@Override
-	public long getLongValue() {
-		return (val) ? 1 : 0;
+		this.val += val;
 	}
 
 	@Override
 	public float getFloatValue() {
-		return (val) ? 1 : 0;
-	}
-
-	@Override
-	public int getIntValue() {
-		return (val) ? 1 : 0;
-	}
-
-	@Override
-	public Boolean getData() {
 		return val;
 	}
 
 	@Override
-	public void inc(Counter counter) {
-		inc();
+	public long getLongValue() {
+		return (long) val;
 	}
 
 	@Override
-	public Cell<Boolean> copy(boolean resetToDefaults) {
-		return new BooleanCell((resetToDefaults) ? false : true);
+	public int getIntValue() {
+		return (int) val;
+	}
+
+	@Override
+	public Number getData() {
+		return val;
+	}
+
+	@Override
+	public void setData(Number dat) {
+		if (dat == null)
+			val = 0;
+		val = dat.byteValue();
+	}
+
+	@Override
+	public void inc(Counter counter) {
+		val += counter.getByteValue();
+	}
+
+	@Override
+	public Cell<Number> copy(boolean resetToDefaults) {
+		return new ByteCell((resetToDefaults) ? 0 : val);
 	}
 
 	public String toString() {
@@ -114,33 +105,31 @@ public final class BooleanCell implements Cell<Boolean> {
 
 	@Override
 	public Object getMax() {
-		return true;
+		return Byte.MAX_VALUE;
 	}
 
 	@Override
 	public Object getMin() {
-		return false;
+		return Byte.MIN_VALUE;
 	}
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.writeBoolean(val);
+		out.write(val);
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException {
-		val = in.readBoolean();
+		val = (byte) in.read();
 	}
 
 	@Override
-	public int compareTo(Cell<Boolean> cell) {
-		return (val == cell.getData()) ? 0 : -1;
-	}
-
-	@Override
-	public void setData(Boolean dat) {
-		if (dat == null)
-			val = false;
+	public int compareTo(Cell<Number> cell) {
+		float d = cell.getShortValue();
+		if (val < d)
+			return -1;
+		else if (val > d)
+			return 1;
 		else
-			val = dat;
+			return 0;
 	}
 
 	@Override
@@ -161,30 +150,23 @@ public final class BooleanCell implements Cell<Boolean> {
 
 	@Override
 	public int read(byte[] arr, int from) {
-		val = Bytes.readBoolean(arr, from);
+		val = arr[from];
 		return 1;
 	}
 
 	@Override
 	public org.simplesql.data.Cell.SCHEMA getSchema() {
-		return SCHEMA.BOOLEAN;
+		return SCHEMA.BYTE;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (val ? 1231 : 1237);
+		long temp;
+		temp = val;
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
-	}
-
-	public void readFields(DataInput in) throws IOException {
-
-		val = (in.readByte() == 1);
-	}
-
-	public void write(DataOutput out) throws IOException {
-		out.write((val) ? 1 : 0);
 	}
 
 	@Override
@@ -195,7 +177,7 @@ public final class BooleanCell implements Cell<Boolean> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BooleanCell other = (BooleanCell) obj;
+		ByteCell other = (ByteCell) obj;
 		if (val != other.val)
 			return false;
 		return true;
@@ -210,13 +192,33 @@ public final class BooleanCell implements Cell<Boolean> {
 	}
 
 	@Override
+	public void inc(double val) {
+		this.val += val;
+	}
+
+	@Override
+	public void inc(short val) {
+		this.val += val;
+	}
+
+	@Override
 	public void inc(byte val) {
-		inc();
+		this.val += val;
 	}
 
 	@Override
 	public byte getByteValue() {
-		return (byte) ((val) ? 1 : 0);
+		return val;
+	}
+
+	@Override
+	public double getDoubleValue() {
+		return val;
+	}
+
+	@Override
+	public short getShortValue() {
+		return val;
 	}
 
 }

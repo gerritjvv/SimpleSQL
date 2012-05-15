@@ -31,7 +31,6 @@ public final class DoubleCell implements Cell<Number> {
 		this.val = val;
 		this.name = name;
 	}
-	
 
 	public void readFields(DataInput in) throws IOException {
 		val = in.readDouble();
@@ -40,7 +39,6 @@ public final class DoubleCell implements Cell<Number> {
 	public void write(DataOutput out) throws IOException {
 		out.writeDouble(val);
 	}
-	
 
 	@Override
 	public void inc() {
@@ -58,7 +56,12 @@ public final class DoubleCell implements Cell<Number> {
 	}
 
 	@Override
-	public void inc(double val) {
+	public void inc(short val) {
+		this.val += val;
+	}
+
+	@Override
+	public void inc(float val) {
 		this.val += val;
 	}
 
@@ -189,6 +192,31 @@ public final class DoubleCell implements Cell<Number> {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public void inc(double val) {
+		this.val += val;
+	}
+
+	@Override
+	public float getFloatValue() {
+		return (float) val;
+	}
+
+	@Override
+	public short getShortValue() {
+		return (short) val;
+	}
+
+	@Override
+	public void inc(byte val) {
+		this.val += val;
+	}
+
+	@Override
+	public byte getByteValue() {
+		return (byte)val;
 	}
 
 }

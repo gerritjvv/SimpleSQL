@@ -24,7 +24,7 @@ public final class DynamicCell implements Cell<String> {
 
 	enum TYPE {
 		INT((byte) 0), LONG((byte) 1), DOUBLE((byte) 2), BOOLEAN((byte) 3), STRING(
-				(byte) 4);
+				(byte) 4), FLOAT((byte) 5), SHORT((byte) 6), BYTE((byte) 7);
 
 		byte id;
 
@@ -71,8 +71,16 @@ public final class DynamicCell implements Cell<String> {
 	public void inc(int val) {
 		if (Double.class.isAssignableFrom(this.val.getClass()))
 			this.val = ((Double) this.val) + val;
+		else if (Integer.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Integer) this.val) + val;
 		else if (Long.class.isAssignableFrom(this.val.getClass()))
 			this.val = ((Long) this.val) + val;
+		else if (Float.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Long) this.val) + val;
+		else if (Short.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Short) this.val) + val;
+		else if (Byte.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Byte) this.val) + val;
 		else
 			this.val = ((Integer) this.val) + val;
 
@@ -82,11 +90,18 @@ public final class DynamicCell implements Cell<String> {
 	public void inc(long val) {
 		if (Double.class.isAssignableFrom(this.val.getClass()))
 			this.val = ((Double) this.val) + val;
+		else if (Integer.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Integer) this.val) + val;
 		else if (Long.class.isAssignableFrom(this.val.getClass()))
 			this.val = ((Long) this.val) + val;
+		else if (Float.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Long) this.val) + val;
+		else if (Short.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Short) this.val) + val;
+		else if (Byte.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Byte) this.val) + val;
 		else
 			this.val = new Long(((Integer) this.val) + val); // here we need to
-																// change the
 																// type to Long
 	}
 
@@ -94,14 +109,93 @@ public final class DynamicCell implements Cell<String> {
 	public void inc(double val) {
 		if (Double.class.isAssignableFrom(this.val.getClass()))
 			this.val = ((Double) this.val) + val;
+		else if (Integer.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Integer) this.val) + val;
 		else if (Long.class.isAssignableFrom(this.val.getClass()))
 			this.val = new Double(((Long) this.val) + val); // change type to
-															// Double
+		else if (Float.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Long) this.val) + val;
+		else if (Short.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Short) this.val) + val;
+		else if (Byte.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Byte) this.val) + val;
 		else
 			this.val = new Double(((Integer) this.val) + val); // here we need
 																// to change the
 																// type to
 																// Double
+	}
+	
+	@Override
+	public void inc(float val) {
+		if (Double.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Double) this.val) + val;
+		else if (Long.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double(((Long) this.val) + val); // change type to
+		else if (Integer.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Integer) this.val) + val;								// Double
+		else if (Float.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Long) this.val) + val;
+		else if (Short.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Short) this.val) + val;
+		else if (Byte.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Byte) this.val) + val;
+		else
+			this.val = new Double(((Integer) this.val) + val); // here we need
+	}
+
+	@Override
+	public void inc(short val) {
+		if (Double.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Double) this.val) + val;
+		else if (Long.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double(((Long) this.val) + val); // change type to
+		else if (Integer.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Integer) this.val) + val;								// Double
+		else if (Float.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Long) this.val) + val;
+		else if (Short.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Short) this.val) + val;
+		else if (Byte.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Byte) this.val) + val;
+		else
+			this.val = new Double(((Integer) this.val) + val); // here we need
+	}
+
+	@Override
+	public void inc(byte val) {
+		if (Double.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Double) this.val) + val;
+		else if (Long.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double(((Long) this.val) + val); // change type to
+		else if (Integer.class.isAssignableFrom(this.val.getClass()))
+			this.val = ((Integer) this.val) + val;								// Double
+		else if (Float.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Long) this.val) + val;
+		else if (Short.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Short) this.val) + val;
+		else if (Byte.class.isAssignableFrom(this.val.getClass()))
+			this.val = new Double((Byte) this.val) + val;
+		else
+			this.val = new Double(((Integer) this.val) + val); // here we need
+	}
+
+	@Override
+	public byte getByteValue() {
+		return (byte)((Number.class.isAssignableFrom(val.getClass())) ? ((Number) val)
+				.intValue() : 0);
+	}
+
+	@Override
+	public float getFloatValue() {
+		return (Number.class.isAssignableFrom(val.getClass())) ? ((Number) val)
+				.floatValue() : 0F;
+	}
+
+	@Override
+	public short getShortValue() {
+		return (Number.class.isAssignableFrom(val.getClass())) ? ((Number) val)
+				.shortValue() : (short)0;
 	}
 
 	@Override
@@ -144,6 +238,12 @@ public final class DynamicCell implements Cell<String> {
 			inc(counter.getLongValue());
 		} else if (Integer.class.isAssignableFrom(val.getClass())) {
 			inc(counter.getIntValue());
+		} else if (Float.class.isAssignableFrom(val.getClass())) {
+			inc(counter.getFloatValue());
+		} else if (Short.class.isAssignableFrom(val.getClass())) {
+			inc(counter.getShortValue());
+		} else if (Byte.class.isAssignableFrom(val.getClass())) {
+			inc(counter.getByteValue());
 		}
 	}
 
@@ -162,6 +262,16 @@ public final class DynamicCell implements Cell<String> {
 		} else if (Boolean.class.isAssignableFrom(val.getClass())) {
 			Object copy = ((Boolean) val).booleanValue();
 			return new DynamicCell((resetToDefaults) ? false : copy);
+		} else if (Float.class.isAssignableFrom(val.getClass())) {
+			Object copy = ((Float) val).floatValue();
+			return new DynamicCell((resetToDefaults) ? false : copy);
+		} else if (Short.class.isAssignableFrom(val.getClass())) {
+			Object copy = ((Short) val).shortValue();
+			return new DynamicCell((resetToDefaults) ? false : copy);
+		} else if (Byte.class.isAssignableFrom(val.getClass())) {
+			Object copy = ((Byte) val).byteValue();
+			return new DynamicCell((resetToDefaults) ? false : copy);
+
 		} else {
 			Object copy = val;
 			return new DynamicCell((resetToDefaults) ? "" : copy);
@@ -185,6 +295,12 @@ public final class DynamicCell implements Cell<String> {
 			max = Integer.MAX_VALUE;
 		else if (Boolean.class.isAssignableFrom(this.val.getClass()))
 			max = Integer.MAX_VALUE;
+		else if (Float.class.isAssignableFrom(this.val.getClass()))
+			max = Float.MAX_VALUE;
+		else if (Short.class.isAssignableFrom(this.val.getClass()))
+			max = Short.MAX_VALUE;
+		else if (Byte.class.isAssignableFrom(this.val.getClass()))
+			max = Byte.MAX_VALUE;
 		else {
 			max = (char) 128;
 		}
@@ -203,6 +319,12 @@ public final class DynamicCell implements Cell<String> {
 			min = Integer.MIN_VALUE;
 		else if (Boolean.class.isAssignableFrom(this.val.getClass()))
 			min = Integer.MIN_VALUE;
+		else if (Float.class.isAssignableFrom(this.val.getClass()))
+			min = Float.MIN_VALUE;
+		else if (Short.class.isAssignableFrom(this.val.getClass()))
+			min = Short.MIN_VALUE;
+		else if (Byte.class.isAssignableFrom(this.val.getClass()))
+			min = Byte.MIN_VALUE;
 		else {
 			min = (char) 0;
 		}
@@ -249,6 +371,12 @@ public final class DynamicCell implements Cell<String> {
 			return 5;
 		} else if (Boolean.class.isAssignableFrom(val.getClass())) {
 			return 2;
+		} else if (Float.class.isAssignableFrom(val.getClass())) {
+			return 5;
+		} else if (Short.class.isAssignableFrom(val.getClass())) {
+			return 5;
+		} else if (Byte.class.isAssignableFrom(val.getClass())) {
+			return 2;
 		} else {
 			try {
 				return getData().getBytes("UTF-8").length + 5;
@@ -278,6 +406,19 @@ public final class DynamicCell implements Cell<String> {
 			arr[from] = TYPE.BOOLEAN.id;
 			Bytes.writeBytes(getBooleanValue(), arr, from + 1);
 			return 2;
+		} else if (Float.class.isAssignableFrom(val.getClass())) {
+			arr[from] = TYPE.FLOAT.id;
+			Bytes.writeBytes(Float.floatToIntBits(getFloatValue()), arr, from + 1);
+			return 5;
+		} else if (Short.class.isAssignableFrom(val.getClass())) {
+			arr[from] = TYPE.SHORT.id;
+			Bytes.writeBytes((int)getShortValue(), arr, from + 1);
+			return 5;
+		} else if (Byte.class.isAssignableFrom(val.getClass())) {
+			arr[from] = TYPE.BYTE.id;
+			Bytes.writeBytes(getByteValue(), arr, from + 1);
+			return 2;
+		
 		} else {
 			try {
 				byte[] strbytes = getData().getBytes("UTF-8");
@@ -309,6 +450,16 @@ public final class DynamicCell implements Cell<String> {
 		} else if (type == TYPE.BOOLEAN.id) {
 			val = Bytes.readBoolean(arr, from + 1);
 			return 2;
+		} else if (type == TYPE.FLOAT.id) {
+			val = Float.intBitsToFloat(Bytes.readInt(arr, from + 1));
+			return 2;
+		} else if (type == TYPE.SHORT.id) {
+			val = (short)Bytes.readInt(arr, from + 1);
+			return 2;
+		} else if (type == TYPE.BYTE.id) {
+			val = arr[from];
+			return 2;
+		
 		} else if (type == TYPE.STRING.id) {
 			try {
 				int len = Bytes.readInt(arr, from + 1);
@@ -363,5 +514,6 @@ public final class DynamicCell implements Cell<String> {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 
 }

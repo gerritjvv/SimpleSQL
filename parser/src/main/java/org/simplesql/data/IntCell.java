@@ -183,4 +183,34 @@ public final class IntCell implements Cell<Number> {
 		this.name = name;
 	}
 
+	@Override
+	public void inc(float val) {
+		this.val += val;
+	}
+
+	@Override
+	public void inc(short val) {
+		this.val += val;
+	}
+
+	@Override
+	public void inc(byte val) {
+		this.val += val;
+	}
+
+	@Override
+	public byte getByteValue() {
+		return (byte) val;
+	}
+
+	@Override
+	public float getFloatValue() {
+		return val;
+	}
+
+	@Override
+	public short getShortValue() {
+		return (short) val;
+	}
+
 }

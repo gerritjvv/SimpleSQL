@@ -37,7 +37,7 @@ message Column{
    optional string defaultValue = 3;
    optional string type = 4;
    optional int32 width = 5; 
-    
+   optional bool key = 6;
 }
 
 message Clients{

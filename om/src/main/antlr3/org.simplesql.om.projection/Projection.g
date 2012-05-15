@@ -40,9 +40,13 @@ column returns [org.simplesql.om.ClientInfoTemplate.Column.Builder col = org.sim
         (t=type  {$col.setType($t.text);} 
           | 
          t=type width=INTEGER {$col.setType($t.text); $col.setWidth(Integer.parseInt($width.text));}
+          | 
+         t=type {$col.setType($t.text);} 'KEY' {$col.setKey(true);}
+         |
+         t=type width=INTEGER {$col.setType($t.text); $col.setWidth(Integer.parseInt($width.text));} 'KEY' {$col.setKey(true);}
         );
 
-type : ('INT'|'STRING'|'DOUBLE'|'LONG'|'BOOLEAN'|'FLOAT'|'SHORT');  
+type : ('INT'|'STRING'|'DOUBLE'|'LONG'|'BOOLEAN'|'FLOAT'|'SHORT'|'BYTE');  
 
 DOUBLE : INTEGER '.' INTEGER;
 INTEGER : '0'..'9'+;

@@ -8,11 +8,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.simplesql.data.BooleanCell;
+import org.simplesql.data.ByteCell;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DoubleCell;
+import org.simplesql.data.FloatCell;
 import org.simplesql.data.IntCell;
 import org.simplesql.data.LongCell;
 import org.simplesql.data.RangeGroups;
+import org.simplesql.data.ShortCell;
 import org.simplesql.data.StringCell;
 import org.simplesql.data.VariableRange;
 import org.simplesql.data.VariableRanges;
@@ -173,6 +176,7 @@ public class ProjectionKeyUtil {
 	public static final ColumnDef getColumnDef(Column column) {
 		Cell cell;
 		Class javaCls;
+		boolean isKey = column.getKey();
 
 		String strType = column.getType().toUpperCase();
 
@@ -223,11 +227,59 @@ public class ProjectionKeyUtil {
 			}
 
 			javaCls = boolean.class;
+		} else if (strType.equals("BOOLEAN")) {
+
+			String defVal = column.getDefaultValue().trim();
+
+			try {
+				cell = new BooleanCell((defVal.length() < 1) ? false
+						: Boolean.parseBoolean(defVal));
+			} catch (Exception nbe) {
+				cell = new BooleanCell(false);
+			}
+
+			javaCls = boolean.class;
+		} else if (strType.equals("FLOAT")) {
+
+			String defVal = column.getDefaultValue().trim();
+
+			try {
+				cell = new FloatCell((defVal.length() < 1) ? 0F
+						: Float.parseFloat(defVal));
+			} catch (Exception nbe) {
+				cell = new BooleanCell(false);
+			}
+
+			javaCls = boolean.class;
+		} else if (strType.equals("SHORT")) {
+
+			String defVal = column.getDefaultValue().trim();
+
+			try {
+				cell = new ShortCell((defVal.length() < 1) ? 0
+						: Short.parseShort(defVal));
+			} catch (Exception nbe) {
+				cell = new BooleanCell(false);
+			}
+
+			javaCls = boolean.class;
+		} else if (strType.equals("BYTE")) {
+
+			String defVal = column.getDefaultValue().trim();
+
+			try {
+				cell = new ByteCell((defVal.length() < 1) ? (byte) 0
+						: Byte.parseByte(defVal));
+			} catch (Exception nbe) {
+				cell = new BooleanCell(false);
+			}
+
+			javaCls = boolean.class;
 		} else {
 			throw new RuntimeException("Type: " + strType + " is not supported");
 		}
 
-		return new SimpleColumnDef(javaCls, column.getName(), cell);
+		return new SimpleColumnDef(javaCls, column.getName(), cell, isKey);
 	}
 
 	/**

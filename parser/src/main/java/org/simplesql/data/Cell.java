@@ -14,7 +14,8 @@ public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 	enum SCHEMA {
 		INT(IntCell.class), DOUBLE(DoubleCell.class), LONG(LongCell.class), BOOLEAN(
 				BooleanCell.class), DYNAMIC(DynamicCell.class), STRING(
-				StringCell.class);
+				StringCell.class), FLOAT(FloatCell.class), SHORT(
+				ShortCell.class), BYTE(ByteCell.class);
 
 		@SuppressWarnings("rawtypes")
 		Class cellCls;
@@ -75,9 +76,8 @@ public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 	 */
 	int read(byte[] arr, int from);
 
-
 	public void readFields(DataInput in) throws IOException;
 
 	public void write(DataOutput out) throws IOException;
-	
+
 }

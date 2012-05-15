@@ -15,15 +15,26 @@ public class SimpleColumnDef implements ColumnDef {
 	final String name;
 	final Cell<?> cell;
 	final boolean isNumber;
+	final boolean isKey;
 
-	public SimpleColumnDef(Class<?> javaType, String name, Cell<?> cell) {
+
+	public SimpleColumnDef(Class<?> javaType, String name, Cell<?> cell, boolean isKey) {
 		super();
 		this.javaType = javaType;
 		this.name = name;
 		this.cell = cell;
-
+		this.isKey = isKey;
 		isNumber = NumberUtil.isNumber(javaType);
 
+	}
+
+	
+	public SimpleColumnDef(Class<?> javaType, String name, Cell<?> cell) {
+		this(javaType, name, cell, false);
+	}
+
+	public boolean isKey() {
+		return isKey;
 	}
 
 	public final Class<?> getJavaType() {

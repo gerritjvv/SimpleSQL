@@ -26,6 +26,7 @@ tokens {
   int orderCounter = 0;
 } 
 
+
 projection returns [org.simplesql.om.ClientInfoTemplate.Projection.Builder builder = org.simplesql.om.ClientInfoTemplate.Projection.newBuilder()]
 : 'PROJECTION'|'TABLE' IDENT {$builder.setName($IDENT.text);} 
           '(' c=column {$builder.addColumn(c.col.build());}
@@ -37,14 +38,14 @@ projection returns [org.simplesql.om.ClientInfoTemplate.Projection.Builder build
           
 column returns [org.simplesql.om.ClientInfoTemplate.Column.Builder col = org.simplesql.om.ClientInfoTemplate.Column.newBuilder()] 
  : IDENT {$col.setName($IDENT.text); $col.setOrder(orderCounter++);} 
-        (t=type  {$col.setType($t.text);} 
-          | 
-         t=type width=INTEGER {$col.setType($t.text); $col.setWidth(Integer.parseInt($width.text));}
-          | 
-         t=type {$col.setType($t.text);} 'KEY' {$col.setKey(true);}
-         |
-         t=type width=INTEGER {$col.setType($t.text); $col.setWidth(Integer.parseInt($width.text));} 'KEY' {$col.setKey(true);}
+        (
+          t=type width=INTEGER {$col.setType($t.text); $col.setWidth(Integer.parseInt($width.text));} ('KEY=true' {$col.setKey(true);} | 'KEY=false') 
+          |
+          t=type  {$col.setType($t.text);} 'KEY' {$col.setKey(true);} 
+          |
+          t=type  {$col.setType($t.text);}
         );
+
 
 type : ('INT'|'STRING'|'DOUBLE'|'LONG'|'BOOLEAN'|'FLOAT'|'SHORT'|'BYTE');  
 

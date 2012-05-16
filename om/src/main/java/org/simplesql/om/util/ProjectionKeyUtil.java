@@ -227,19 +227,7 @@ public class ProjectionKeyUtil {
 			}
 
 			javaCls = boolean.class;
-		} else if (strType.equals("BOOLEAN")) {
-
-			String defVal = column.getDefaultValue().trim();
-
-			try {
-				cell = new BooleanCell((defVal.length() < 1) ? false
-						: Boolean.parseBoolean(defVal));
-			} catch (Exception nbe) {
-				cell = new BooleanCell(false);
-			}
-
-			javaCls = boolean.class;
-		} else if (strType.equals("FLOAT")) {
+		}  else if (strType.equals("FLOAT")) {
 
 			String defVal = column.getDefaultValue().trim();
 

@@ -177,11 +177,11 @@ public class ProjectionKeyUtil {
 		Cell cell;
 		Class javaCls;
 		boolean isKey = column.getKey();
-
+		
 		String strType = column.getType().toUpperCase();
 
 		if (strType.equals("STRING")) {
-			cell = new StringCell(column.getDefaultValue());
+			cell = new StringCell(column.getDefaultValue(), null, column.getWidth());
 			javaCls = String.class;
 		} else if (strType.equals("INT")) {
 			String defVal = column.getDefaultValue().trim();

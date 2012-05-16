@@ -37,7 +37,7 @@ projection returns [org.simplesql.om.ClientInfoTemplate.Projection.Builder build
             )* ')';
           
 column returns [org.simplesql.om.ClientInfoTemplate.Column.Builder col = org.simplesql.om.ClientInfoTemplate.Column.newBuilder()] 
- : IDENT {$col.setName($IDENT.text); $col.setOrder(orderCounter++);} 
+ : (f=(IDENT|INTEGER) {$col.setFamily($f.text);} (c=IDENT|c=INTEGER) {$col.setName($c.text); $col.setOrder(orderCounter++);} | (c=IDENT|c=INTEGER) {$col.setName($c.text); $col.setOrder(orderCounter++);})   
         (
           t=type width=INTEGER {$col.setType($t.text); $col.setWidth(Integer.parseInt($width.text));} ('KEY=true' {$col.setKey(true);} | 'KEY=false') 
           |
@@ -55,6 +55,7 @@ INTEGER : '0'..'9'+;
 STRING_LITERAL :
   '"' (~('"'|'\n'|'\r'))* '"' | '\'' (~('\''|'\n'|'\r'))* '\'';
   
-IDENT : ('a'..'z' | 'A'..'Z')('a'..'z' | 'A'..'Z' | INTEGER)*;
+IDENT : ('a'..'z' | 'A'..'Z' | INTEGER)('a'..'z' | 'A'..'Z' | INTEGER)*;
+
 
 WS : (' ' | '\t' | '\n' | '\r' | '\f')+ {$channel = HIDDEN;};

@@ -515,5 +515,10 @@ public final class DynamicCell implements Cell<String> {
 		this.name = name;
 	}
 
+	@Override
+	public int getDefinedWidth() {
+		return 0;
+	}
+
 
 }

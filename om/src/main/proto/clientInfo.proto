@@ -38,6 +38,7 @@ message Column{
    optional string type = 4;
    optional int32 width = 5; 
    optional bool key = 6;
+   optional string family = 7;
 }
 
 message Clients{

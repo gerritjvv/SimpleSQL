@@ -19,7 +19,8 @@ public final class StringCell implements Cell<String> {
 
 	String val;
 	String name;
-
+	int width;
+	
 	public StringCell() {
 
 	}
@@ -33,6 +34,13 @@ public final class StringCell implements Cell<String> {
 		super();
 		this.val = val;
 		this.name = name;
+	}
+	
+	public StringCell(String val, String name, int width) {
+		super();
+		this.val = val;
+		this.name = name;
+		this.width = width;
 	}
 
 	@Override
@@ -253,6 +261,11 @@ public final class StringCell implements Cell<String> {
 	@Override
 	public short getShortValue() {
 		return 0;
+	}
+
+	@Override
+	public int getDefinedWidth() {
+		return width;
 	}
 
 }

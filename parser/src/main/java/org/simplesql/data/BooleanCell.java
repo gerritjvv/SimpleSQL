@@ -19,7 +19,7 @@ public final class BooleanCell implements Cell<Boolean> {
 	boolean val = false;
 
 	String name;
-
+	
 	public BooleanCell() {
 	}
 
@@ -217,6 +217,11 @@ public final class BooleanCell implements Cell<Boolean> {
 	@Override
 	public byte getByteValue() {
 		return (byte) ((val) ? 1 : 0);
+	}
+
+	@Override
+	public int getDefinedWidth() {
+		return 1;
 	}
 
 }

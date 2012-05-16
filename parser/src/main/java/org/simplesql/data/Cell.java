@@ -7,8 +7,6 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import com.google.common.hash.Hasher;
-
 public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 
 	enum SCHEMA {
@@ -41,6 +39,8 @@ public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 		}
 
 	}
+	
+	int getDefinedWidth();
 
 	String getName();
 

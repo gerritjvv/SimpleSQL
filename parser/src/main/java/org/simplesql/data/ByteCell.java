@@ -221,4 +221,9 @@ public final class ByteCell implements Cell<Number> {
 		return val;
 	}
 
+	@Override
+	public int getDefinedWidth() {
+		return 1;
+	}
+
 }

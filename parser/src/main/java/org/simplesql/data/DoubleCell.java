@@ -219,4 +219,9 @@ public final class DoubleCell implements Cell<Number> {
 		return (byte)val;
 	}
 
+	@Override
+	public int getDefinedWidth() {
+		return 8;
+	}
+
 }

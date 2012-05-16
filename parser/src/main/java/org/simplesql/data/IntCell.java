@@ -213,4 +213,9 @@ public final class IntCell implements Cell<Number> {
 		return (short) val;
 	}
 
+	@Override
+	public int getDefinedWidth() {
+		return 4;
+	}
+
 }

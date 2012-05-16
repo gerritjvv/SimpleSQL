@@ -44,7 +44,66 @@ public class TestProjectionParser {
 		}
 
 	}
+	
+	@Test
+	public void testCreateMultipleColumnsFamily1() throws Throwable {
+		String str = "TABLE mytable (1 col INT, fam mycol STRING 200)";
+		ProjectionLexer lexer = new ProjectionLexer(new ANTLRStringStream(str));
+		ProjectionParser parser = new ProjectionParser(new CommonTokenStream(
+				lexer));
+		projection_return preturn = parser.projection();
+		Projection projection = preturn.builder.build();
 
+		assertEquals("mytable", projection.getName());
+		assertEquals(2, projection.getColumnCount());
+
+		for (Column column : projection.getColumnList()) {
+			if (column.getName().equals("col")) {
+				assertEquals("1", column.getFamily());
+				assertEquals("INT", column.getType());
+				assertEquals(0, column.getOrder());
+			} else if (column.getName().equals("mycol")) {
+				assertEquals("fam", column.getFamily());
+				assertEquals("STRING", column.getType());
+				assertEquals(200, column.getWidth());
+				assertEquals(1, column.getOrder());
+			} else {
+				assertTrue(false);
+			}
+		}
+
+	}
+
+	@Test
+	public void testCreateMultipleColumnsFamily2() throws Throwable {
+		String str = "TABLE mytable (1234 col INT, 123 mycol STRING 200)";
+		ProjectionLexer lexer = new ProjectionLexer(new ANTLRStringStream(str));
+		ProjectionParser parser = new ProjectionParser(new CommonTokenStream(
+				lexer));
+		projection_return preturn = parser.projection();
+		Projection projection = preturn.builder.build();
+
+		assertEquals("mytable", projection.getName());
+		assertEquals(2, projection.getColumnCount());
+
+		for (Column column : projection.getColumnList()) {
+			if (column.getName().equals("col")) {
+				assertEquals("1234", column.getFamily());
+				assertEquals("INT", column.getType());
+				assertEquals(0, column.getOrder());
+			} else if (column.getName().equals("mycol")) {
+				assertEquals("123", column.getFamily());
+				assertEquals("STRING", column.getType());
+				assertEquals(200, column.getWidth());
+				assertEquals(1, column.getOrder());
+			} else {
+				assertTrue(false);
+			}
+		}
+
+	}
+
+	
 	@Test
 	public void testCreate() throws Throwable {
 		String str = "TABLE mytable (col LONG KEY)";

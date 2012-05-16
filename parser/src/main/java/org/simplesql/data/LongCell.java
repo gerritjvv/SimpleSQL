@@ -216,4 +216,9 @@ public final class LongCell implements Cell<Number> {
 		return (short)val;
 	}
 
+	@Override
+	public int getDefinedWidth() {
+		return 8;
+	}
+
 }

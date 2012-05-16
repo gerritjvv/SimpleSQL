@@ -17,7 +17,7 @@ public class SimpleColumnDef implements ColumnDef {
 	final boolean isNumber;
 	final boolean isKey;
 
-
+	
 	public SimpleColumnDef(Class<?> javaType, String name, Cell<?> cell, boolean isKey) {
 		super();
 		this.javaType = javaType;

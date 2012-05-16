@@ -221,4 +221,9 @@ public final class FloatCell implements Cell<Number> {
 		return (short)val;
 	}
 
+	@Override
+	public int getDefinedWidth() {
+		return 4;
+	}
+
 }

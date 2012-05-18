@@ -43,10 +43,13 @@ tokens {
   public SELECT select;
   public static final java.util.Set<String> variables = new java.util.HashSet<String>();
   public SimpleTableDef tableDef;
-  
+  public INSERT insert;
 }
 
-
+insert returns [INSERT insert = new INSERT()] 
+  : 'INSERT' 'INTO' n=IDENT {insert=$insert; $insert.setTable($n.text);} '(' c=IDENT {$insert.addColumn($c.text);} (',' c=IDENT {$insert.addColumn($c.text);})* ')'
+           (i=IDENT {$insert.setInput($i.text);})* ;
+           
 create returns [ SimpleTableDef table = new SimpleTableDef() ]
         : 'CREATE' 'TABLE' n=IDENT {tableDef=$table; $table.setName($n.text);} '(' c=column {$table.addColumn(c.col);} (',' c=column {$table.addColumn(c.col);})+ ')' 
            'ENGINE' (e=IDENT {$table.setEngine($e.text);})* ;

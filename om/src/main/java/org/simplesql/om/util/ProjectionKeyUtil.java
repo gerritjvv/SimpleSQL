@@ -177,11 +177,12 @@ public class ProjectionKeyUtil {
 		Cell cell;
 		Class javaCls;
 		boolean isKey = column.getKey();
-		
+
 		String strType = column.getType().toUpperCase();
 
 		if (strType.equals("STRING")) {
-			cell = new StringCell(column.getDefaultValue(), null, column.getWidth());
+			cell = new StringCell(column.getDefaultValue(), null,
+					column.getWidth());
 			javaCls = String.class;
 		} else if (strType.equals("INT")) {
 			String defVal = column.getDefaultValue().trim();
@@ -227,7 +228,7 @@ public class ProjectionKeyUtil {
 			}
 
 			javaCls = boolean.class;
-		}  else if (strType.equals("FLOAT")) {
+		} else if (strType.equals("FLOAT")) {
 
 			String defVal = column.getDefaultValue().trim();
 
@@ -267,7 +268,8 @@ public class ProjectionKeyUtil {
 			throw new RuntimeException("Type: " + strType + " is not supported");
 		}
 
-		return new SimpleColumnDef(javaCls, column.getName(), cell, isKey);
+		return new SimpleColumnDef(javaCls, column.getName(), cell, isKey,
+				column.getFamily());
 	}
 
 	/**

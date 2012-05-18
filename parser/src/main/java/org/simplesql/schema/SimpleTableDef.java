@@ -1,6 +1,8 @@
 package org.simplesql.schema;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,16 +12,39 @@ import java.util.Map;
  */
 public class SimpleTableDef implements TableDef {
 
-	final ColumnDef[] columnDefs;
-	final String name;
-	final Map<String, ColumnDef> columnMap = new HashMap<String, ColumnDef>();
-	
+	List<ColumnDef> columnDefs = new ArrayList<ColumnDef>(10);
+	String name;
+	Map<String, ColumnDef> columnMap = new HashMap<String, ColumnDef>();
+	String engine = "";
+
+	public SimpleTableDef() {
+
+	}
+
 	public SimpleTableDef(String name, ColumnDef... columnDefs) {
 		this.name = name;
-		this.columnDefs = columnDefs;
 
-		for (ColumnDef def : columnDefs)
+		for (ColumnDef def : columnDefs) {
+			this.columnDefs.add(def);
 			columnMap.put(def.getName(), def);
+		}
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEngine() {
+		return engine;
+	}
+
+	public void setEngine(String engine) {
+		this.engine = engine;
+	}
+
+	public void addColumn(ColumnDef def) {
+		columnDefs.add(def);
+		columnMap.put(def.getName(), def);
 	}
 
 	public ColumnDef getColumnDef(String name) {
@@ -27,7 +52,7 @@ public class SimpleTableDef implements TableDef {
 	}
 
 	public ColumnDef[] getColumnDefs() {
-		return columnDefs;
+		return columnDefs.toArray(new ColumnDef[0]);
 	}
 
 	public String getName() {
@@ -36,7 +61,7 @@ public class SimpleTableDef implements TableDef {
 
 	@Override
 	public int getColumnCount() {
-		return (columnDefs == null) ? 0 : columnDefs.length;
+		return (columnDefs == null) ? 0 : columnDefs.size();
 	}
 
 }

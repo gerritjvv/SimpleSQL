@@ -52,7 +52,11 @@ public final class StringCell implements Cell<String> {
 	public void write(DataOutput out) throws IOException {
 		out.writeUTF((val == null) ? "" : val);
 	}
-
+	
+	public void setWidth(int width){
+		this.width = width;
+	}
+	
 	@Override
 	public void inc() {
 	}

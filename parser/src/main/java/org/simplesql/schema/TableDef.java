@@ -9,6 +9,7 @@ package org.simplesql.schema;
  */
 public interface TableDef {
 
+	String getEngine();
 	String getName();
 	ColumnDef[] getColumnDefs();
 	ColumnDef getColumnDef(String colName);

@@ -30,14 +30,26 @@
 
 	<packaging>jar</packaging>
 	<url>https://github.com/gerritjvv/SimpleSQL</url>
-
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<protobuf-java.version>2.4.1</protobuf-java.version>
+		<commons-codec.version>1.5</commons-codec.version>
+		<java.version>1.6</java.version>
+		<log4j.version>1.2.16</log4j.version>
+	</properties>
 	<dependencies>
 
 		<!-- We need to have the ANTLR runtime jar when running and compiling. -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>${protobuf-java.version}</version>
+			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>
@@ -130,9 +142,42 @@
 					<sourceDirectory>src</sourceDirectory>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>com.google.protobuf.tools</groupId>
+				<artifactId>maven-protoc-plugin</artifactId>
+				<configuration>
+					<protocExecutable>/usr/local/bin/protoc</protocExecutable>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>dtrott</id>
+			<url>http://maven.davidtrott.com/repository</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>klej-snapshots</id>
+			<url>https://klej.googlecode.com/svn/mvnrepo/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+
+	</pluginRepositories>
 
 	<repositories>
 		<repository>

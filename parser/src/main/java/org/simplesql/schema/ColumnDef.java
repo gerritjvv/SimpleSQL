@@ -15,6 +15,8 @@ public interface ColumnDef {
 
 	boolean isNumber();
 
+	String getFamily();
+
 	String getName();
 
 	Object getMax();
@@ -24,7 +26,9 @@ public interface ColumnDef {
 	byte getByteMin();
 
 	byte getByteMax();
-	
+
 	boolean isKey();
+	
+	boolean isCounter();
 	
 }

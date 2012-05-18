@@ -27,22 +27,29 @@ tokens {
   package org.simplesql.parser;
   
   import org.simplesql.parser.tree.*;
-  
+  import  org.simplesql.schema.*;
+   
 }
 
 @lexer::header {
   package org.simplesql.parser;
   
   import org.simplesql.parser.tree.*;
-  
+  import  org.simplesql.schema.*;
 }
 
 @members {
-  
+  private int orderCounter = 0;
   public SELECT select;
   public static final java.util.Set<String> variables = new java.util.HashSet<String>();
+  public SimpleTableDef tableDef;
   
 }
+
+
+create returns [ SimpleTableDef table = new SimpleTableDef() ]
+        : 'CREATE' 'TABLE' n=IDENT {tableDef=$table; $table.setName($n.text);} '(' c=column {$table.addColumn(c.col);} (',' c=column {$table.addColumn(c.col);})+ ')' 
+           'ENGINE' (e=IDENT {$table.setEngine($e.text);})* ;
 
 statement returns [SELECT ret = new SELECT(variables);]
            : SELECT (se1=expression { select = $ret;  $ret.select($se1.expr);}) 
@@ -132,6 +139,18 @@ term returns [TERM term]:
       )
       | v=STRING_LITERAL -> ^(STRING $v) {$term = new STRING($v.text)};
 
+column returns [SimpleColumnDef col = new SimpleColumnDef()] 
+ : (f=(IDENT|INTEGER) {$col.setFamily($f.text);} (c=IDENT|c=INTEGER) {$col.setName($c.text); $col.setOrder(orderCounter++);} 
+        | (c=IDENT|c=INTEGER) {$col.setName($c.text); $col.setOrder(orderCounter++);})   
+        (
+          t=type width=INTEGER {$col.setType($t.text); $col.setWidth(Integer.parseInt($width.text));} ('KEY=true' {$col.setKey(true);} | 'KEY=false') 
+          |
+          t=type  {$col.setType($t.text);} 'KEY' {$col.setKey(true);}  
+          |
+          t=type  {$col.setType($t.text);} ('COUNTER' { $col.setCounter(true); } )? //can only have counters on none key values and that are of a primitive type i.e. have a fixed length
+        );
+        
+type : ('INT'|'STRING'|'DOUBLE'|'LONG'|'BOOLEAN'|'FLOAT'|'SHORT'|'BYTE');  
 
 RELATION : ('<' | '>' | '<=' | '>=' | '!=' | '=');
 LOGICAL : ('&&' | '||' | ('A'|'a')('N'|'n')('D'|'d')) | ('O'|'o')('R'|'r');
@@ -144,6 +163,7 @@ GROUP : 'GROUP';
 BY : 'BY';
 LIMIT : 'LIMIT';
 
+
 DOUBLE : INTEGER '.' INTEGER;
 INTEGER : '0'..'9'+;
 BOOL : ('true') | ('TRUE')  | ('false') | ('FALSE') | '0' | '1';
@@ -151,6 +171,6 @@ BOOL : ('true') | ('TRUE')  | ('false') | ('FALSE') | '0' | '1';
 STRING_LITERAL :
   '"' (~('"'|'\n'|'\r'))* '"' | '\'' (~('\''|'\n'|'\r'))* '\'';
   
-IDENT : ('a'..'z' | 'A'..'Z')('a'..'z' | 'A'..'Z' | '_' | '-' | '$' | INTEGER)*;
+IDENT : ('A'..'Z'| 'a'..'z'  | INTEGER )('a'..'z' | 'A'..'Z' | '_' | '-' | '$' | INTEGER)*;
 
 WS : (' ' | '\t' | '\n' | '\r' | '\f')+ {$channel = HIDDEN;};

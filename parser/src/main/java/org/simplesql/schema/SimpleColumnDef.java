@@ -43,6 +43,7 @@ public class SimpleColumnDef implements ColumnDef {
 		this(javaType, name, cell, false, "", false);
 	}
 
+	
 	public void setType(String type) {
 		cell = Cell.SCHEMA.valueOf(type).newCell();
 	}

@@ -1,0 +1,25 @@
+package org.simplesql.schema;
+
+option java_outer_classname = "TableTemplate";
+option java_package = "org.simplesql.schema";
+option optimize_for = SPEED;
+
+
+message Table{
+
+	  optional string name = 1;
+	  optional string engine = 2;
+	  repeated Column column = 3;
+}
+
+message Column{
+
+	optional string type = 1;
+	optional string family = 2;
+	optional string name = 3;
+	optional bool iskey = 4;
+	optional bool isCounter = 5;
+	optional int32 width = 7;
+	optional string javaType = 8;	
+}
+

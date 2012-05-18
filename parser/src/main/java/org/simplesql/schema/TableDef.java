@@ -15,4 +15,7 @@ public interface TableDef {
 	ColumnDef getColumnDef(String colName);
 	int getColumnCount();
 	
+	byte[] serialize();
+	void merge(byte[] arr);
+	
 }

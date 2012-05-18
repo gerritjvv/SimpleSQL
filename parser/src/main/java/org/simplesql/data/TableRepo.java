@@ -6,14 +6,14 @@ import org.simplesql.schema.TableDef;
 
 /**
  * 
- * Store table definitions and retreive them.
+ * Store table definitions and retrieve them.
  *
  */
 public interface TableRepo {
 
 	
 	TableDef getTable(String name);
-	void setTable(String name, TableDef def);
+	void setTable(TableDef def);
 	void removeTable(String name);
 	
 	Iterator<String> getTables();

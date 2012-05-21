@@ -226,4 +226,9 @@ public final class ShortCell implements Cell<Number> {
 		return 2;
 	}
 
+	@Override
+	public Class<?> getJavaType() {
+		return short.class;
+	}
+
 }

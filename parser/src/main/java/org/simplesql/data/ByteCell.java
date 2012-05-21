@@ -226,4 +226,9 @@ public final class ByteCell implements Cell<Number> {
 		return 1;
 	}
 
+	@Override
+	public Class<?> getJavaType() {
+		return byte.class;
+	}
+
 }

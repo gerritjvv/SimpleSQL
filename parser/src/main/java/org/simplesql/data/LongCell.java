@@ -221,4 +221,9 @@ public final class LongCell implements Cell<Number> {
 		return 8;
 	}
 
+	@Override
+	public Class<?> getJavaType() {
+		return long.class;
+	}
+
 }

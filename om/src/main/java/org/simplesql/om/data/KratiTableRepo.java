@@ -1,15 +1,18 @@
 package org.simplesql.om.data;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 
 import krati.core.segment.MappedSegmentFactory;
 import krati.store.DynamicDataStore;
 import krati.util.IndexedIterator;
 
-import org.simplesql.data.TableRepo;
+import org.apache.commons.configuration.Configuration;
+import org.mortbay.log.Log;
 import org.simplesql.schema.SimpleTableDef;
 import org.simplesql.schema.TableDef;
+import org.simplesql.table.TableRepo;
 import org.simplesql.util.Bytes;
 
 /**
@@ -19,23 +22,18 @@ import org.simplesql.util.Bytes;
  */
 public class KratiTableRepo implements TableRepo {
 
-	final DynamicDataStore store;
+	static final String REPO_DIR = "repo.dir";
 
-	public KratiTableRepo(File storeDir) throws Exception {
-		int capacity = (int) (1 * 1.5);
-		store = new DynamicDataStore(storeDir, capacity, /* capacity */
-		100, /* update batch size */
-		5, /* number of update batches required to sync indexes.dat */
-		10, /* segment file size in MB */
-		new MappedSegmentFactory());
+	DynamicDataStore store;
+
+	public KratiTableRepo() throws Exception {
+
 	}
 
 	@Override
 	public TableDef getTable(String name) {
 		byte[] defData = store.get(Bytes.toBytes(name));
-		SimpleTableDef tbl = new SimpleTableDef();
-		tbl.merge(defData);
-		return tbl;
+		return (defData == null) ? null : new SimpleTableDef().merge(defData);
 	}
 
 	@Override
@@ -85,6 +83,54 @@ public class KratiTableRepo implements TableRepo {
 				return it.hasNext();
 			}
 		};
+	}
+
+	@Override
+	public void close() {
+
+		if (store != null) {
+			try {
+				store.close();
+			} catch (IOException e) {
+				rethrow(e);
+			}
+		}
+
+	}
+
+	@Override
+	public void init(Configuration conf) {
+		File storeDir = new File(conf.getString("store.dir",
+				"/tmp/kratitablerepo"));
+
+		if (!storeDir.exists()) {
+			storeDir.mkdirs();
+		}
+
+		if (!(storeDir.exists() || storeDir.canWrite())) {
+			throw new RuntimeException("Cannot write to " + storeDir
+					+ " or it does not exist");
+		}
+
+		int capacity = (int) (1 * 1.5);
+		try {
+			store = new DynamicDataStore(storeDir, capacity, /* capacity */
+			100, /* update batch size */
+			5, /* number of update batches required to sync indexes.dat */
+			10, /* segment file size in MB */
+			new MappedSegmentFactory());
+
+			Log.info("Using " + storeDir.getAbsolutePath() + " for storage");
+
+		} catch (Exception e) {
+			rethrow(e);
+		}
+
+	}
+
+	@Override
+	public Iterator<String> iterator() {
+		return getTables();
 	}
 
 }

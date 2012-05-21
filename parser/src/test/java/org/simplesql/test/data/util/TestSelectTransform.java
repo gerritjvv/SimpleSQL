@@ -1,11 +1,14 @@
 package org.simplesql.test.data.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
 import org.junit.Test;
+import org.simplesql.data.BooleanCell;
+import org.simplesql.data.DoubleCell;
+import org.simplesql.data.IntCell;
 import org.simplesql.data.StringCell;
 import org.simplesql.data.util.SelectTransform;
 import org.simplesql.schema.ColumnDef;
@@ -40,9 +43,9 @@ public class TestSelectTransform {
 		ColumnDef[] defs = new ColumnDef[4];
 
 		defs[0] = new SimpleColumnDef(String.class, "a", new StringCell());
-		defs[1] = new SimpleColumnDef(Boolean.class, "b", new StringCell());
-		defs[2] = new SimpleColumnDef(Integer.class, "c", new StringCell());
-		defs[3] = new SimpleColumnDef(Double.class, "d", new StringCell());
+		defs[1] = new SimpleColumnDef(Boolean.class, "b", new BooleanCell());
+		defs[2] = new SimpleColumnDef(Integer.class, "c", new IntCell());
+		defs[3] = new SimpleColumnDef(Double.class, "d", new DoubleCell());
 
 		SelectTransform transform = new SelectTransform(defs,
 				new HashSet<String>(Arrays.asList("a", "c")));
@@ -66,9 +69,9 @@ public class TestSelectTransform {
 		ColumnDef[] defs = new ColumnDef[4];
 
 		defs[0] = new SimpleColumnDef(String.class, "a", new StringCell());
-		defs[1] = new SimpleColumnDef(Boolean.class, "b", new StringCell());
-		defs[2] = new SimpleColumnDef(Integer.class, "c", new StringCell());
-		defs[3] = new SimpleColumnDef(Double.class, "d", new StringCell());
+		defs[1] = new SimpleColumnDef(Boolean.class, "b", new BooleanCell());
+		defs[2] = new SimpleColumnDef(Integer.class, "c", new IntCell());
+		defs[3] = new SimpleColumnDef(Double.class, "d", new DoubleCell());
 
 		SelectTransform transform = new SelectTransform(defs,
 				new HashSet<String>(Arrays.asList("a", "b", "c", "d")));

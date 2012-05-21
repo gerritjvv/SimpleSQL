@@ -16,6 +16,6 @@ public interface TableDef {
 	int getColumnCount();
 	
 	byte[] serialize();
-	void merge(byte[] arr);
+	TableDef merge(byte[] arr);
 	
 }

@@ -80,4 +80,6 @@ public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 
 	public void write(DataOutput out) throws IOException;
 
+	public Class<?> getJavaType();
+	
 }

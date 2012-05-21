@@ -232,17 +232,17 @@ public final class DynamicCell implements Cell<String> {
 
 	@Override
 	public void inc(Counter counter) {
-		if (Double.class.isAssignableFrom(val.getClass())) {
+		if (Double.class.isAssignableFrom(val.getClass()) || double.class.isAssignableFrom(val.getClass())) {
 			inc(counter.getDoubleValue());
-		} else if (Long.class.isAssignableFrom(val.getClass())) {
+		} else if (Long.class.isAssignableFrom(val.getClass()) || long.class.isAssignableFrom(val.getClass())) {
 			inc(counter.getLongValue());
-		} else if (Integer.class.isAssignableFrom(val.getClass())) {
+		} else if (Integer.class.isAssignableFrom(val.getClass()) || int.class.isAssignableFrom(val.getClass())) {
 			inc(counter.getIntValue());
-		} else if (Float.class.isAssignableFrom(val.getClass())) {
+		} else if (Float.class.isAssignableFrom(val.getClass()) || float.class.isAssignableFrom(val.getClass())) {
 			inc(counter.getFloatValue());
-		} else if (Short.class.isAssignableFrom(val.getClass())) {
+		} else if (Short.class.isAssignableFrom(val.getClass()) || short.class.isAssignableFrom(val.getClass())) {
 			inc(counter.getShortValue());
-		} else if (Byte.class.isAssignableFrom(val.getClass())) {
+		} else if (Byte.class.isAssignableFrom(val.getClass()) || byte.class.isAssignableFrom(val.getClass())) {
 			inc(counter.getByteValue());
 		}
 	}
@@ -250,25 +250,25 @@ public final class DynamicCell implements Cell<String> {
 	@Override
 	public Cell<String> copy(boolean resetToDefaults) {
 
-		if (Double.class.isAssignableFrom(val.getClass())) {
+		if (Double.class.isAssignableFrom(val.getClass()) || double.class.isAssignableFrom(val.getClass())) {
 			Object copy = ((Double) val).doubleValue();
 			return new DynamicCell((resetToDefaults) ? 0D : copy);
-		} else if (Long.class.isAssignableFrom(val.getClass())) {
+		} else if (Long.class.isAssignableFrom(val.getClass()) || long.class.isAssignableFrom(val.getClass())) {
 			Object copy = ((Long) val).longValue();
 			return new DynamicCell((resetToDefaults) ? 0L : copy);
-		} else if (Integer.class.isAssignableFrom(val.getClass())) {
+		} else if (Integer.class.isAssignableFrom(val.getClass()) || int.class.isAssignableFrom(val.getClass())) {
 			Object copy = ((Integer) val).intValue();
 			return new DynamicCell((resetToDefaults) ? 0 : copy);
-		} else if (Boolean.class.isAssignableFrom(val.getClass())) {
+		} else if (Boolean.class.isAssignableFrom(val.getClass()) || boolean.class.isAssignableFrom(val.getClass())) {
 			Object copy = ((Boolean) val).booleanValue();
 			return new DynamicCell((resetToDefaults) ? false : copy);
-		} else if (Float.class.isAssignableFrom(val.getClass())) {
+		} else if (Float.class.isAssignableFrom(val.getClass()) || float.class.isAssignableFrom(val.getClass())) {
 			Object copy = ((Float) val).floatValue();
 			return new DynamicCell((resetToDefaults) ? false : copy);
-		} else if (Short.class.isAssignableFrom(val.getClass())) {
+		} else if (Short.class.isAssignableFrom(val.getClass()) || short.class.isAssignableFrom(val.getClass())) {
 			Object copy = ((Short) val).shortValue();
 			return new DynamicCell((resetToDefaults) ? false : copy);
-		} else if (Byte.class.isAssignableFrom(val.getClass())) {
+		} else if (Byte.class.isAssignableFrom(val.getClass()) || byte.class.isAssignableFrom(val.getClass())) {
 			Object copy = ((Byte) val).byteValue();
 			return new DynamicCell((resetToDefaults) ? false : copy);
 
@@ -287,19 +287,19 @@ public final class DynamicCell implements Cell<String> {
 	public Object getMax() {
 
 		Object max = null;
-		if (Double.class.isAssignableFrom(this.val.getClass()))
+		if (Double.class.isAssignableFrom(this.val.getClass()) || double.class.isAssignableFrom(val.getClass()))
 			max = Double.MAX_VALUE;
-		else if (Long.class.isAssignableFrom(this.val.getClass()))
+		else if (Long.class.isAssignableFrom(this.val.getClass()) || long.class.isAssignableFrom(val.getClass()))
 			max = Long.MAX_VALUE;
-		else if (Integer.class.isAssignableFrom(this.val.getClass()))
+		else if (Integer.class.isAssignableFrom(this.val.getClass()) || int.class.isAssignableFrom(val.getClass()))
 			max = Integer.MAX_VALUE;
-		else if (Boolean.class.isAssignableFrom(this.val.getClass()))
+		else if (Boolean.class.isAssignableFrom(this.val.getClass()) || boolean.class.isAssignableFrom(val.getClass()))
 			max = Integer.MAX_VALUE;
-		else if (Float.class.isAssignableFrom(this.val.getClass()))
+		else if (Float.class.isAssignableFrom(this.val.getClass()) || float.class.isAssignableFrom(val.getClass()))
 			max = Float.MAX_VALUE;
-		else if (Short.class.isAssignableFrom(this.val.getClass()))
+		else if (Short.class.isAssignableFrom(this.val.getClass()) || short.class.isAssignableFrom(val.getClass()))
 			max = Short.MAX_VALUE;
-		else if (Byte.class.isAssignableFrom(this.val.getClass()))
+		else if (Byte.class.isAssignableFrom(this.val.getClass()) || byte.class.isAssignableFrom(val.getClass()))
 			max = Byte.MAX_VALUE;
 		else {
 			max = (char) 128;
@@ -311,19 +311,19 @@ public final class DynamicCell implements Cell<String> {
 	@Override
 	public Object getMin() {
 		Object min = null;
-		if (Double.class.isAssignableFrom(this.val.getClass()))
+		if (Double.class.isAssignableFrom(this.val.getClass()) || double.class.isAssignableFrom(val.getClass()))
 			min = Double.MIN_VALUE;
-		else if (Long.class.isAssignableFrom(this.val.getClass()))
+		else if (Long.class.isAssignableFrom(this.val.getClass()) || long.class.isAssignableFrom(val.getClass()))
 			min = Long.MIN_VALUE;
-		else if (Integer.class.isAssignableFrom(this.val.getClass()))
+		else if (Integer.class.isAssignableFrom(this.val.getClass()) || int.class.isAssignableFrom(val.getClass()))
 			min = Integer.MIN_VALUE;
-		else if (Boolean.class.isAssignableFrom(this.val.getClass()))
+		else if (Boolean.class.isAssignableFrom(this.val.getClass()) || boolean.class.isAssignableFrom(val.getClass()))
 			min = Integer.MIN_VALUE;
-		else if (Float.class.isAssignableFrom(this.val.getClass()))
+		else if (Float.class.isAssignableFrom(this.val.getClass()) || float.class.isAssignableFrom(val.getClass()))
 			min = Float.MIN_VALUE;
-		else if (Short.class.isAssignableFrom(this.val.getClass()))
+		else if (Short.class.isAssignableFrom(this.val.getClass()) || short.class.isAssignableFrom(val.getClass()))
 			min = Short.MIN_VALUE;
-		else if (Byte.class.isAssignableFrom(this.val.getClass()))
+		else if (Byte.class.isAssignableFrom(this.val.getClass()) || byte.class.isAssignableFrom(val.getClass()))
 			min = Byte.MIN_VALUE;
 		else {
 			min = (char) 0;
@@ -363,19 +363,19 @@ public final class DynamicCell implements Cell<String> {
 
 	@Override
 	public int byteLength() {
-		if (Double.class.isAssignableFrom(val.getClass())) {
+		if (Double.class.isAssignableFrom(val.getClass()) || double.class.isAssignableFrom(val.getClass())) {
 			return 9;
-		} else if (Long.class.isAssignableFrom(val.getClass())) {
+		} else if (Long.class.isAssignableFrom(val.getClass()) || long.class.isAssignableFrom(val.getClass())) {
 			return 9;
-		} else if (Integer.class.isAssignableFrom(val.getClass())) {
+		} else if (Integer.class.isAssignableFrom(val.getClass()) || int.class.isAssignableFrom(val.getClass())) {
 			return 5;
-		} else if (Boolean.class.isAssignableFrom(val.getClass())) {
+		} else if (Boolean.class.isAssignableFrom(val.getClass()) || boolean.class.isAssignableFrom(val.getClass())) {
 			return 2;
-		} else if (Float.class.isAssignableFrom(val.getClass())) {
+		} else if (Float.class.isAssignableFrom(val.getClass()) || float.class.isAssignableFrom(val.getClass())) {
 			return 5;
-		} else if (Short.class.isAssignableFrom(val.getClass())) {
+		} else if (Short.class.isAssignableFrom(val.getClass()) || short.class.isAssignableFrom(val.getClass())) {
 			return 5;
-		} else if (Byte.class.isAssignableFrom(val.getClass())) {
+		} else if (Byte.class.isAssignableFrom(val.getClass()) || byte.class.isAssignableFrom(val.getClass())) {
 			return 2;
 		} else {
 			try {
@@ -518,6 +518,11 @@ public final class DynamicCell implements Cell<String> {
 	@Override
 	public int getDefinedWidth() {
 		return 0;
+	}
+
+	@Override
+	public Class<?> getJavaType() {
+		return val.getClass();
 	}
 
 

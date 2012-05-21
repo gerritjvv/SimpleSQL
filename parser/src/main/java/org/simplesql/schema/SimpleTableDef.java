@@ -20,19 +20,19 @@ import com.google.protobuf.InvalidProtocolBufferException;
  */
 public class SimpleTableDef implements TableDef {
 
-	List<ColumnDef> columnDefs = new ArrayList<ColumnDef>(10);
+	final List<ColumnDef> columnDefs = new ArrayList<ColumnDef>(10);
 	String name;
-	Map<String, ColumnDef> columnMap = new HashMap<String, ColumnDef>();
+	final Map<String, ColumnDef> columnMap = new HashMap<String, ColumnDef>();
 	String engine = "";
 
 	public SimpleTableDef() {
 
 	}
 
-	public SimpleTableDef(String name, ColumnDef... columnDefs) {
+	public SimpleTableDef(final String name, final ColumnDef... columnDefs) {
 		this.name = name;
 
-		for (ColumnDef def : columnDefs) {
+		for (final ColumnDef def : columnDefs) {
 			this.columnDefs.add(def);
 			columnMap.put(def.getName(), def);
 		}
@@ -72,25 +72,26 @@ public class SimpleTableDef implements TableDef {
 		return (columnDefs == null) ? 0 : columnDefs.size();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public byte[] serialize() {
-		Builder builder = TableTemplate.Table.newBuilder();
+		final Builder builder = TableTemplate.Table.newBuilder();
 		builder.setName(name);
 		builder.setEngine(engine);
 
 		for (ColumnDef col : columnDefs) {
-			org.simplesql.schema.TableTemplate.Column.Builder colBuilder = TableTemplate.Column
+			final org.simplesql.schema.TableTemplate.Column.Builder colBuilder = TableTemplate.Column
 					.newBuilder();
 			colBuilder.setName(col.getName());
-			colBuilder.setFamily(col.getFamily());
+			if (col.getFamily() != null)
+				colBuilder.setFamily(col.getFamily());
 			colBuilder.setIsCounter(col.isCounter());
 			colBuilder.setIskey(col.isKey());
 
-			Cell cell = col.getCell();
-			colBuilder.setType(cell.getSchema().name());
-			colBuilder.setWidth(cell.getDefinedWidth());
-			colBuilder.setJavaType(col.getJavaType().getName());
+			colBuilder.setType(col.getCell().getSchema().name());
 
+			final Cell cell = col.getCell();
+			colBuilder.setWidth(cell.getDefinedWidth());
 			builder.addColumn(colBuilder.build());
 
 		}
@@ -99,10 +100,11 @@ public class SimpleTableDef implements TableDef {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void merge(byte[] arr) {
+	public TableDef merge(final byte[] arr) {
 		try {
-			Table table = TableTemplate.Table.newBuilder().mergeFrom(arr)
+			final Table table = TableTemplate.Table.newBuilder().mergeFrom(arr)
 					.build();
 
 			name = table.getName();
@@ -111,21 +113,19 @@ public class SimpleTableDef implements TableDef {
 			columnDefs.clear();
 			columnMap.clear();
 
-			for (Column col : table.getColumnList()) {
-				SimpleColumnDef colDef = new SimpleColumnDef();
+			for (final Column col : table.getColumnList()) {
+				final SimpleColumnDef colDef = new SimpleColumnDef();
 				colDef.setName(col.getName());
 				colDef.setFamily(col.getFamily());
 				colDef.setCounter(col.getIsCounter());
 				colDef.setKey(col.getIskey());
 
-				Cell cell = Cell.SCHEMA.valueOf(col.getType()).newCell();
+				final Cell cell = Cell.SCHEMA.valueOf(col.getType()).newCell();
 				if (cell instanceof StringCell) {
-					((StringCell) cell).setWidth(colDef.getWidth());
+					((StringCell) cell).setWidth(col.getWidth());
 				}
 
 				colDef.setCell(cell);
-				colDef.setJavaType(Thread.currentThread()
-						.getContextClassLoader().loadClass(col.getJavaType()));
 
 				addColumn(colDef);
 			}
@@ -134,11 +134,9 @@ public class SimpleTableDef implements TableDef {
 			RuntimeException rte = new RuntimeException(e.toString(), e);
 			rte.setStackTrace(e.getStackTrace());
 			throw rte;
-		} catch (ClassNotFoundException e) {
-			RuntimeException rte = new RuntimeException(e.toString(), e);
-			rte.setStackTrace(e.getStackTrace());
-			throw rte;
 		}
 
+		return this;
 	}
+	
 }

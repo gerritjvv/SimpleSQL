@@ -272,4 +272,9 @@ public final class StringCell implements Cell<String> {
 		return width;
 	}
 
+	@Override
+	public Class<?> getJavaType() {
+		return String.class;
+	}
+
 }

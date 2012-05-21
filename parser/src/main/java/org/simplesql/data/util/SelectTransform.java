@@ -37,7 +37,7 @@ public class SelectTransform {
 				if (a++ != 0)
 					buff.append(",");
 
-				if (def.isNumber() || Boolean.class.isAssignableFrom(cls))
+				if (def.isNumber() || boolean.class.isAssignableFrom(cls) || Boolean.class.isAssignableFrom(cls))
 					buff.append("new ")
 							.append(NumberUtil.getWrapperClass(cls).getName())
 							.append("(").append("input[").append(i)

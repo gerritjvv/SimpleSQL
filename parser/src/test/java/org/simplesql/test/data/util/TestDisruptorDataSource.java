@@ -41,7 +41,7 @@ public class TestDisruptorDataSource {
 				new SimpleColumnDef(String.class, "a", new StringCell()),
 				new SimpleColumnDef(int.class, "b", new IntCell()),
 				new SimpleColumnDef(int.class, "c", new IntCell()),
-				new SimpleColumnDef(Double.class, "d", new IntCell()),
+				new SimpleColumnDef(Double.class, "d", new DoubleCell()),
 				new SimpleColumnDef(Double.class, "e", new DoubleCell()),
 				new SimpleColumnDef(Double.class, "f", new DoubleCell()) };
 

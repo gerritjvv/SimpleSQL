@@ -224,4 +224,9 @@ public final class BooleanCell implements Cell<Boolean> {
 		return 1;
 	}
 
+	@Override
+	public Class<?> getJavaType() {
+		return boolean.class;
+	}
+
 }

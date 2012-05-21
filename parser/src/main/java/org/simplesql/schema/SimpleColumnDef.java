@@ -43,7 +43,6 @@ public class SimpleColumnDef implements ColumnDef {
 		this(javaType, name, cell, false, "", false);
 	}
 
-	
 	public void setType(String type) {
 		cell = Cell.SCHEMA.valueOf(type).newCell();
 	}
@@ -67,7 +66,6 @@ public class SimpleColumnDef implements ColumnDef {
 	}
 
 	public void setJavaType(Class<?> javaType) {
-		this.javaType = javaType;
 	}
 
 	public void setName(String name) {
@@ -76,6 +74,7 @@ public class SimpleColumnDef implements ColumnDef {
 
 	public void setCell(Cell<?> cell) {
 		this.cell = cell;
+
 	}
 
 	public void setNumber(boolean isNumber) {
@@ -107,7 +106,7 @@ public class SimpleColumnDef implements ColumnDef {
 	}
 
 	public final Class<?> getJavaType() {
-		return javaType;
+		return cell.getJavaType();
 	}
 
 	public final String getName() {

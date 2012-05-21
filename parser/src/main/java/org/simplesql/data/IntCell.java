@@ -218,4 +218,9 @@ public final class IntCell implements Cell<Number> {
 		return 4;
 	}
 
+	@Override
+	public Class<?> getJavaType() {
+		return int.class;
+	}
+
 }

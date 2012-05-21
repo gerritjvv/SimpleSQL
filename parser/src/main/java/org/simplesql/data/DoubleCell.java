@@ -224,4 +224,9 @@ public final class DoubleCell implements Cell<Number> {
 		return 8;
 	}
 
+	@Override
+	public Class<?> getJavaType() {
+		return double.class;
+	}
+
 }

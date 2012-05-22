@@ -91,7 +91,7 @@ public class HBaseTableEngine implements TableEngine {
 	public void select(SQLCompiler compiler, SELECT select, SELECT_OUTPUT output) {
 		// create an
 
-		TableDef table = repo.getTable(select.getTable());
+		final TableDef table = repo.getTable(select.getTable());
 		if (table == null)
 			throw new RuntimeException("No table found for "
 					+ select.getTable());
@@ -106,11 +106,11 @@ public class HBaseTableEngine implements TableEngine {
 					storeDir, createSCHEMA(table), exec.getTransforms()
 							.toArray(new TransformFunction[0]));
 
-			HTableInterface htable = pool.getTable(Bytes.toBytes(table
+			final HTableInterface htable = pool.getTable(Bytes.toBytes(table
 					.getName()));
 
 			// create start key and end key writers.
-			Scan scan = new Scan();
+			final Scan scan = new Scan();
 			scan.setMaxVersions(1);
 
 			// set only the families required in the query
@@ -165,7 +165,7 @@ public class HBaseTableEngine implements TableEngine {
 
 	}
 
-	private void fillStartEndKeys(TableDef table, SQLExecutor exec,
+	private static final void fillStartEndKeys(TableDef table, SQLExecutor exec,
 			byte[] startKey, byte[] endKey) {
 		if (exec.getRangeGroups() != null) {
 
@@ -174,7 +174,7 @@ public class HBaseTableEngine implements TableEngine {
 			final ColumnDef[] colDefs = table.getColumnDefs();
 			int i = 0;
 			int pos = 0;
-			Set<String> unsetCols = new TreeSet<String>();
+			final Set<String> unsetCols = new TreeSet<String>();
 
 			for (VariableRanges ranges : rangeGroups.getRanges()) {
 
@@ -194,14 +194,14 @@ public class HBaseTableEngine implements TableEngine {
 						unsetCols.add(colName);
 					}
 
-					VariableRange range = ranges.getRange(colName);
+					final VariableRange range = ranges.getRange(colName);
 					if (range != null) {
 						// if range found remove the colName from unsetCols
 						unsetCols.remove(colName);
 						lower = range.getLower();
 						upper = range.getUpper();
 
-						Cell cell = def.getCell();
+						final Cell cell = def.getCell();
 						cell.setData(lower);
 						cell.write(subStartKey, pos);
 
@@ -274,15 +274,15 @@ public class HBaseTableEngine implements TableEngine {
 	 * @param set
 	 * @param table
 	 */
-	private void addFamilies(Scan scan, Set<String> set, TableDef table) {
+	private static final void addFamilies(Scan scan, Set<String> set, TableDef table) {
 		for (String col : set) {
-			ColumnDef colDef = table.getColumnDef(col);
+			final ColumnDef colDef = table.getColumnDef(col);
 			scan.addFamily(Bytes.toBytes(colDef.getFamily()));
 		}
 	}
 
-	private int columnKeyWidth(TableDef def) {
-		ColumnDef[] cols = def.getColumnDefs();
+	private static final int columnKeyWidth(TableDef def) {
+		final ColumnDef[] cols = def.getColumnDefs();
 		int width = 0;
 		for (int i = 0; i < cols.length; i++) {
 			if (cols[i].isKey())

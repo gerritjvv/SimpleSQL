@@ -1,12 +1,12 @@
 package org.simplesql.hbase;
 
-import org.apache.hadoop.hbase.client.Result;
+import java.util.Collection;
+
 import org.apache.hadoop.hbase.util.Bytes;
 import org.codehaus.janino.CompileException;
-import org.codehaus.janino.ExpressionEvaluator;
 import org.codehaus.janino.Parser.ParseException;
 import org.codehaus.janino.Scanner.ScanException;
-import org.codehaus.janino.ScriptEvaluator;
+import org.codehaus.janino.SimpleCompiler;
 import org.simplesql.data.Cell;
 import org.simplesql.schema.ColumnDef;
 import org.simplesql.schema.TableDef;
@@ -15,44 +15,62 @@ public class HDataSyntax {
 
 	static final String importStr = "import java.lang.*; import java.util.*; import org.apache.hadoop.hbase.util.*; import org.apache.hadoop.hbase.client.*; import org.apache.hadoop.hbase.filter.*;\n";
 
-	public static ScriptEvaluator createExpr(TableDef schema)
-			throws CompileException, ParseException, ScanException {
-		final String java = createJavaSyntax(schema);
-		// ExpressionEvaluator.createFastScriptEvaluator(importStr + java,
-		// Object.class, new String[] { "key", "res" });
-		System.out.println(importStr + java +";");
-		return new ScriptEvaluator(importStr + java , Object[].class,
-				new String[] { "key", "res" }, new Class[] { byte[].class,
-						Result.class });
-		// return new ExpressionEvaluator(importStr + java,
-		// Object.class, new String[] { "key", "res" }, new Class[] {
-		// byte[].class, Result.class });
+	public static HDataParser createReadParser(TableDef schema,
+			Collection<String> selectCols) throws CompileException, ParseException,
+			ScanException {
+		final String clsName = schema.getName() + "_"
+				+ System.nanoTime();
+		final String java = createJavaSyntax(clsName, schema, selectCols);
+		System.out.println(java);
+		final SimpleCompiler eval = new SimpleCompiler();
+		eval.setParentClassLoader("".getClass().getClassLoader());
+		eval.cook(java);
+
+		try {
+			return (HDataParser) eval.getClassLoader().loadClass(clsName)
+					.newInstance();
+		} catch (Throwable t) {
+			RuntimeException excp = new RuntimeException(t.toString(), t);
+			excp.setStackTrace(t.getStackTrace());
+			throw excp;
+		}
 	}
 
 	/**
 	 * Assumes that two external variables res:Result and key:byte[] will be
 	 * made available to the script.
 	 * 
+	 * Column data is returned in the order in which it is found in the
+	 * selectCols list.
+	 * 
 	 * @param schema
 	 * @return
 	 */
-	public static final String createJavaSyntax(TableDef schema) {
+	public static final String createJavaSyntax(String clsName,
+			TableDef schema, Collection<String> selectCols) {
+
+		final StringBuilder cls = new StringBuilder(100);
+
+		cls.append(
+				"package table; public class " + clsName
+						+ " implements org.simplesql.hbase.HDataParser")
+				.append("{\n 	public java.lang.Object[] parse(org.apache.hadoop.hbase.client.Result res, byte[] key){\n");
 
 		final StringBuilder buff = new StringBuilder(100);
 		final StringBuilder header = new StringBuilder(100);
 
 		int keyFrom = 0;
-		final ColumnDef[] cols = schema.getColumnDefs();
-		for (int i = 0; i < cols.length; i++) {
-			final ColumnDef col = cols[i];
+		int i = 0;
+		for (String colName : selectCols) {
+			final ColumnDef col = schema.getColumnDef(colName);
 
-			if (i != 0)
+			if (i++ != 0)
 				buff.append("\n,");
 
 			final Cell cell = col.getCell();
 
 			if (col.isKey()) {
-
+				buff.append('\n');
 				buff.append(getKeyRead("key", cell, keyFrom));
 				keyFrom += cell.getDefinedWidth();
 
@@ -65,9 +83,11 @@ public class HDataSyntax {
 				}
 
 				final byte[] familyName = Bytes.toBytes(strFam);
+
 				final byte[] name = Bytes.toBytes(col.getName());
 
-				header.append("\nfinal KeyValue col").append(col.getName())
+				header.append("\nfinal org.apache.hadoop.hbase.KeyValue col")
+						.append(col.getName())
 						.append(" = res.getColumnLatest(")
 						.append(arrayToString(familyName)).append(", ")
 						.append(arrayToString(name)).append(");");
@@ -75,17 +95,19 @@ public class HDataSyntax {
 				header.append("\nfinal byte[] arr").append(col.getName())
 						.append(" = col").append(col.getName())
 						.append(".getBuffer();");
-
+				buff.append('\n');
 				buff.append(getValueRead(col.getName(), cell));
 
 			}
 		}
 
-		header.append("\nnew Object[]{");
+		header.append("\n return new Object[]{");
 		header.append(buff.toString());
-		header.append("}");
+		header.append("};\n}");
 
-		return header.toString();
+		cls.append(header.toString());
+		cls.append("\n }");
+		return cls.toString();
 	}
 
 	private static final String arrayToString(byte[] bytes) {
@@ -139,11 +161,11 @@ public class HDataSyntax {
 					+ " , col" + colName + ".getValueOffset())";
 		else if (schema.equals(Cell.SCHEMA.SHORT))
 			return "(short)((arr" + colName + "[col" + colName
-					+ ".getValueOffset()] << 8) & 0xff) | (arr" + colName
+					+ ".getValueOffset()] << 8 & 0xff) | (arr" + colName
 					+ "[col" + colName + ".getValueOffset() + 1]  & 0xff))";
 		else if (schema.equals(Cell.SCHEMA.STRING)) {
 			int strlen = cell.getDefinedWidth();
-			return "org.simplesql.util.Bytes.readString(arrName" + colName
+			return "org.simplesql.util.Bytes.readString(arr" + colName
 					+ ", col" + colName + ".getValueOffset(), Math.min("
 					+ strlen + ", col" + colName + ".getValueLength()))";
 		} else {
@@ -176,7 +198,7 @@ public class HDataSyntax {
 			return "Float.intBitsToFloat(org.simplesql.util.Bytes.readInt("
 					+ arrName + ", " + from + "))";
 		else if (schema.equals(Cell.SCHEMA.SHORT))
-			return "(short)((" + arrName + "[" + from + "] << 8) & 0xff) | ("
+			return "(short)((" + arrName + "[" + from + "] << 8 & 0xff) | ("
 					+ arrName + "[" + from + 1 + "]  & 0xff))";
 		else if (schema.equals(Cell.SCHEMA.STRING)) {
 			final int strlen = cell.getDefinedWidth();

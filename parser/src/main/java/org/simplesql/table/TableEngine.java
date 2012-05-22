@@ -3,6 +3,7 @@ package org.simplesql.table;
 import java.util.Iterator;
 
 import org.apache.commons.configuration.Configuration;
+import org.simplesql.parser.SQLCompiler;
 import org.simplesql.parser.tree.INSERT;
 import org.simplesql.parser.tree.SELECT;
 import org.simplesql.schema.SimpleTableDef;
@@ -16,13 +17,7 @@ public interface TableEngine {
 	void init(Configuration conf, TableRepo repo);
 	void close();
 	
-	void select(SELECT select, SELECT_OUTPUT output);
-
-	void createTable(SimpleTableDef table);
-
-	void deleteTable(String tableName);
-
-	Iterator<String> listTables();
+	void select(SQLCompiler compiler, SELECT select, SELECT_OUTPUT output);
 
 	void insert(INSERT insert);
 

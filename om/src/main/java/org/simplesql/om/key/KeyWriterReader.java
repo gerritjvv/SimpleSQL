@@ -16,6 +16,7 @@ import org.simplesql.util.Bytes;
  * The key is made-up of :<br/>
  * [tableName][val][val]....
  */
+@Deprecated
 public class KeyWriterReader implements Comparable<KeyWriterReader> {
 
 	private static final Set<String> EMPTY_SET = new TreeSet<String>();

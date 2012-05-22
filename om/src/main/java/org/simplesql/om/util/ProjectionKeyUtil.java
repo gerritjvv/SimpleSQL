@@ -66,6 +66,7 @@ public class ProjectionKeyUtil {
 	 * @param projection
 	 * @return Map of KeyColumnValues key = column name
 	 */
+	@Deprecated
 	public static final Map<String, KeyColumnValue> getKeyColumnValueMap(
 			final int offset, byte[] key, int bufferFrom, int bufferLen,
 			Projection projection) {
@@ -269,7 +270,7 @@ public class ProjectionKeyUtil {
 		}
 
 		return new SimpleColumnDef(javaCls, column.getName(), cell, isKey,
-				column.getFamily());
+				column.getFamily(), false);
 	}
 
 	/**
@@ -430,4 +431,93 @@ public class ProjectionKeyUtil {
 
 	}
 
+	/**
+	 * Set the start key end key values based on the Ranges detected by the
+	 * SQLExecutor and the min max values for each column type.
+	 * 
+	 * @param tableDef
+	 * @param sqlExec
+	 * @param startKey
+	 * @param endKey
+	 * @param projection
+	 */
+	public static final void setKeyRanges(TableDef tableDef,
+			SQLExecutor sqlExec, byte[] startkey, byte[] endkey, TableDef tbl) {
+		if (sqlExec.getRangeGroups() != null) {
+
+			RangeGroups rangeGroups = sqlExec.getRangeGroups();
+
+			final ColumnDef[] colDefs = tableDef.getColumnDefs();
+			int i = 0;
+			Set<String> unsetCols = new TreeSet<String>();
+
+			for (VariableRanges ranges : rangeGroups.getRanges()) {
+
+//				KeyWriterReader subStartKey = new KeyWriterReader(projection);
+//				KeyWriterReader subEndKey = new KeyWriterReader(projection);
+
+				for (ColumnDef def : colDefs) {
+
+					final String colName = def.getName();
+					Object lower, upper = null;
+
+					if (i == 0) {
+						// only add the col names once
+						unsetCols.add(colName);
+					}
+
+					VariableRange range = ranges.getRange(colName);
+					if (range != null) {
+						// if range found remove the colName from unsetCols
+						unsetCols.remove(colName);
+						lower = range.getLower();
+						upper = range.getUpper();
+
+//						subStartKey.write(colName, lower);
+//						subEndKey.write(colName, upper);
+					}
+
+				}
+
+				// only if we find more than one VariableRanges
+				// else we set the start key and end key directly
+				if (i++ != 0) {
+					// set start key if sub key is smaller than current
+//					if (subStartKey.compareTo(startKey) < 0)
+//						startKey.setKey(subStartKey);
+
+					// set end key if sub key is greater than current
+//					if (subEndKey.compareTo(endKey) > 0)
+//						endKey.setKey(subEndKey);
+
+				} else {
+
+//					startKey.setKey(subStartKey);
+//					endKey.setKey(subEndKey);
+				}
+
+			}
+
+			// set maximum values for unspecified endKey;
+//			for (String colName : unsetCols) {
+//				ColumnDef colDef = tableDef.getColumnDef(colName);
+//				endKey.fill(colName, colDef.getByteMax());
+//				// startKey.fill(colName, colDef.getByteMin());
+//			}
+
+		} else {
+
+			// else leave the key empty
+
+			// // create default keys with min max for each column
+			for (ColumnDef def : tableDef.getColumnDefs()) {
+				final String colName = def.getName();
+//				startKey.fill(colName, def.getByteMin());
+//				endKey.fill(colName, def.getByteMax());
+			}
+
+		}
+
+
+	}
 }

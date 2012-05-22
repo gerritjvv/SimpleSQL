@@ -12,21 +12,24 @@ public class Bytes {
 	}
 
 	public static boolean readBoolean(byte[] bytes, int from) {
-		return bytes[from] == BYTE_ONE;
+		return (bytes == null) ? false : bytes[from] == BYTE_ONE;
 	}
 
 	public static long readLong(byte[] bytes, int from) {
-		return (((long) (bytes[from] & 0xff) << 56)
-				| ((long) (bytes[from + 1] & 0xff) << 48)
-				| ((long) (bytes[from + 2] & 0xff) << 40)
-				| ((long) (bytes[from + 3] & 0xff) << 32)
-				| ((long) (bytes[from + 4] & 0xff) << 24)
-				| ((long) (bytes[from + 5] & 0xff) << 16)
-				| ((long) (bytes[from + 6] & 0xff) << 8) | ((long) (bytes[from + 7] & 0xff)));
+
+		return (bytes == null) ? 0
+				: (((long) (bytes[from] & 0xff) << 56)
+						| ((long) (bytes[from + 1] & 0xff) << 48)
+						| ((long) (bytes[from + 2] & 0xff) << 40)
+						| ((long) (bytes[from + 3] & 0xff) << 32)
+						| ((long) (bytes[from + 4] & 0xff) << 24)
+						| ((long) (bytes[from + 5] & 0xff) << 16)
+						| ((long) (bytes[from + 6] & 0xff) << 8) | ((long) (bytes[from + 7] & 0xff)));
 	}
 
 	public static final int readInt(byte[] bytes, int from) {
-		return (((bytes[from] & 0xff) << 24) | ((bytes[from + 1] & 0xff) << 16)
+		return (bytes == null) ? 0 : (((bytes[from] & 0xff) << 24)
+				| ((bytes[from + 1] & 0xff) << 16)
 				| ((bytes[from + 2] & 0xff) << 8) | (bytes[from + 3] & 0xff));
 	}
 
@@ -39,6 +42,8 @@ public class Bytes {
 	 * @return
 	 */
 	public static String readString(byte[] bytes, int from, int len) {
+		if (bytes == null)
+			return "";
 
 		int slen = 0;
 		final int total = from + len;

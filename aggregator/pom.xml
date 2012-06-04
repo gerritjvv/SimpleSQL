@@ -43,7 +43,11 @@
 			<artifactId>hbase</artifactId>
 			<version>0.92.1</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.myrest</groupId>
+			<artifactId>myrest</artifactId>
+			<version>0.2.0</version>
+		</dependency>
 
 	</dependencies>
 	<build>
@@ -147,6 +151,10 @@
 		<repository>
 			<id>releases</id>
 			<url>https://github.com/gerritjvv/SimpleSQL/raw/master/releases</url>
+		</repository>
+		<repository>
+			<id>repo-myrest</id>
+			<url>https://github.com/gerritjvv/MyRest/raw/master/releases</url>
 		</repository>
 	</repositories>
 

@@ -22,7 +22,7 @@ import org.simplesql.util.Bytes;
  */
 public class KratiTableRepo implements TableRepo {
 
-	static final String REPO_DIR = "repo.dir";
+	public static final String REPO_DIR = "repo.dir";
 
 	DynamicDataStore store;
 

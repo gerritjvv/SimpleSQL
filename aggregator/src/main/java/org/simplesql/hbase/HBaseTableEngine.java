@@ -2,8 +2,10 @@ package org.simplesql.hbase;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.hadoop.hbase.client.HTable;
@@ -12,6 +14,7 @@ import org.apache.hadoop.hbase.client.HTableInterfaceFactory;
 import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.regionserver.HRegion;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
@@ -37,6 +40,9 @@ import org.simplesql.table.TableRepo;
  */
 public class HBaseTableEngine implements TableEngine {
 
+	public static final String SQL_STORAGE_DIR = "sql.storage.dir";
+	public static final String TABLE_POOL_SIZE = "table.pool.size";
+
 	TableRepo repo;
 	File workingDir;
 	Configuration conf;
@@ -47,11 +53,21 @@ public class HBaseTableEngine implements TableEngine {
 		this.conf = conf;
 		this.repo = repo;
 
-		workingDir = new File(conf.getString("sql.storage.dir",
-				"/tmp/sqlstorage"));
+		workingDir = new File(
+				conf.getString(SQL_STORAGE_DIR, "/tmp/sqlstorage"));
 		workingDir.mkdirs();
 
-		pool = new HTablePool(new org.apache.hadoop.conf.Configuration(), 100,
+		final org.apache.hadoop.conf.Configuration hbaseConf = new org.apache.hadoop.conf.Configuration();
+
+		final Iterator<String> keyIt = conf.getKeys();
+		while (keyIt.hasNext()) {
+			String key = keyIt.next();
+			hbaseConf.set(key, conf.getString(key));
+		}
+
+		final int poolsize = conf.getInt(TABLE_POOL_SIZE, 100);
+
+		pool = new HTablePool(hbaseConf, poolsize,
 				new HTableInterfaceFactory() {
 
 					@Override
@@ -65,7 +81,7 @@ public class HBaseTableEngine implements TableEngine {
 							org.apache.hadoop.conf.Configuration config,
 							byte[] tableName) {
 						try {
-							return new HTable(tableName);
+							return new HTable(config, tableName);
 						} catch (IOException t) {
 							RuntimeException rte = new RuntimeException(
 									t.toString(), t);
@@ -88,7 +104,8 @@ public class HBaseTableEngine implements TableEngine {
 	}
 
 	@Override
-	public void select(SQLCompiler compiler, SELECT select, SELECT_OUTPUT output) {
+	public void select(SQLCompiler compiler, SELECT select,
+			final SELECT_OUTPUT output) {
 		// create an
 
 		final TableDef table = repo.getTable(select.getTable());
@@ -108,6 +125,9 @@ public class HBaseTableEngine implements TableEngine {
 
 			final HTableInterface htable = pool.getTable(Bytes.toBytes(table
 					.getName()));
+
+			final int limit = (select.getLimit() < 0) ? Integer.MAX_VALUE
+					: select.getLimit();
 
 			// create start key and end key writers.
 			final Scan scan = new Scan();
@@ -131,24 +151,17 @@ public class HBaseTableEngine implements TableEngine {
 			ResultScanner scanner = htable.getScanner(scan);
 			try {
 				HBaseDataSource dataSource = new HBaseDataSource(scanner,
-						table, exec.getColumnsUsed());
+						table, select, exec);
 				exec.pump(dataSource, store, null);
+
+				final AtomicInteger count = new AtomicInteger(0);
 
 				store.write(new DataSink() {
 
 					@Override
 					public boolean fill(Key key, Cell<?>[] data) {
-						StringBuilder build = new StringBuilder();
-						int i = 0;
-						for (Cell cell : data) {
-							if (i++ != 0)
-								build.append(',');
-
-							build.append(cell.getData());
-						}
-
-						System.out.println(build.toString());
-						return true;
+						output.write(data);
+						return count.getAndIncrement() < limit;
 					}
 				});
 
@@ -165,9 +178,10 @@ public class HBaseTableEngine implements TableEngine {
 
 	}
 
-	private static final void fillStartEndKeys(TableDef table, SQLExecutor exec,
-			byte[] startKey, byte[] endKey) {
-		if (exec.getRangeGroups() != null) {
+	private static final void fillStartEndKeys(TableDef table,
+			SQLExecutor exec, final byte[] startKey, final byte[] endKey) {
+		if (exec.getRangeGroups() != null
+				&& exec.getRangeGroups().getRanges().size() > 0) {
 
 			RangeGroups rangeGroups = exec.getRangeGroups();
 
@@ -175,6 +189,8 @@ public class HBaseTableEngine implements TableEngine {
 			int i = 0;
 			int pos = 0;
 			final Set<String> unsetCols = new TreeSet<String>();
+			byte[] rangeStartKey = startKey;
+			byte[] rangeEndKey = endKey;
 
 			for (VariableRanges ranges : rangeGroups.getRanges()) {
 
@@ -195,13 +211,13 @@ public class HBaseTableEngine implements TableEngine {
 					}
 
 					final VariableRange range = ranges.getRange(colName);
+					final Cell cell = def.getCell();
 					if (range != null) {
 						// if range found remove the colName from unsetCols
 						unsetCols.remove(colName);
 						lower = range.getLower();
 						upper = range.getUpper();
 
-						final Cell cell = def.getCell();
 						cell.setData(lower);
 						cell.write(subStartKey, pos);
 
@@ -219,15 +235,15 @@ public class HBaseTableEngine implements TableEngine {
 				if (i++ != 0) {
 					// set start key if sub key is smaller than current
 					if (Bytes.compareTo(subStartKey, startKey) < 0)
-						startKey = subStartKey;
+						rangeStartKey = subStartKey;
 
 					// set end key if sub key is greater than current
 					if (Bytes.compareTo(subEndKey, endKey) > 0)
-						endKey = subEndKey;
+						rangeEndKey = subEndKey;
 
 				} else {
-					startKey = subStartKey;
-					endKey = subEndKey;
+					rangeStartKey = subStartKey;
+					rangeEndKey = subEndKey;
 				}
 
 			}
@@ -238,11 +254,15 @@ public class HBaseTableEngine implements TableEngine {
 				Cell cell = colDef.getCell();
 				if (unsetCols.contains(colDef.getName())) {
 					cell.setData(cell.getMax());
-					cell.write(endKey, pos);
+					cell.write(rangeEndKey, pos);
 				}
 
 				pos += cell.getDefinedWidth();
 			}
+
+			System.arraycopy(rangeStartKey, 0, startKey, 0,
+					rangeStartKey.length);
+			System.arraycopy(rangeEndKey, 0, endKey, 0, rangeEndKey.length);
 
 		} else {
 
@@ -274,7 +294,8 @@ public class HBaseTableEngine implements TableEngine {
 	 * @param set
 	 * @param table
 	 */
-	private static final void addFamilies(Scan scan, Set<String> set, TableDef table) {
+	private static final void addFamilies(Scan scan, Set<String> set,
+			TableDef table) {
 		for (String col : set) {
 			final ColumnDef colDef = table.getColumnDef(col);
 			scan.addFamily(Bytes.toBytes(colDef.getFamily()));

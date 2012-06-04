@@ -3,7 +3,6 @@ package org.simplesql.om.data.stores;
 import java.io.File;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -105,8 +104,7 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 		updateBatches = conf.getInt(CONF.UPDATE_BATCHES.toString(), 1);
 		segmentSize = conf.getInt(CONF.SEGMENT_SIZE.toString(), 128);
 
-		cache = CacheBuilder.newBuilder()
-				.maximumSize(100000)
+		cache = CacheBuilder.newBuilder().maximumSize(100000)
 				.concurrencyLevel(4)
 				.removalListener(new RemovalListener<Key, DataEntry>() {
 
@@ -239,11 +237,12 @@ public class KratiAggregateStore<T> implements AggregateStore<T> {
 
 	@Override
 	public void write(DataSink sink) {
+		if (keyIndex != null) {
+			for (Key key : keyIndex.keySet()) {
 
-		for (Key key : keyIndex.keySet()) {
+				sink.fill(key, get(key).getCells());
 
-			sink.fill(key, get(key).getCells());
-
+			}
 		}
 
 	}

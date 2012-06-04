@@ -2,13 +2,9 @@ package org.simplesql.hbase;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
-import org.codehaus.janino.ClassBodyEvaluator;
-import org.codehaus.janino.SimpleCompiler;
 import org.junit.Test;
 import org.simplesql.parser.SQLLexer;
 import org.simplesql.parser.SQLParser;
@@ -20,7 +16,7 @@ import org.simplesql.schema.TableDef;
  * Test that the syntax is as expected from table to java conversion.
  * 
  */
-public class TestHDateSyntax {
+public class TestHDataSyntax {
 
 	@Test
 	public void test1() throws Throwable {
@@ -48,10 +44,16 @@ public class TestHDateSyntax {
 	@Test
 	public void test2() throws Throwable {
 
-		TableDef def = getTable("CREATE TABLE mytable (a LONG KEY, b LONG KEY, 1 f FLOAT, s m STRING 100, hello thisiscol SHORT,s s BYTE)");
+		// TableDef def =
+		// getTable("CREATE TABLE mytable (a LONG KEY, b LONG KEY, 1 f FLOAT, s m STRING 100, hello thisiscol SHORT,s s BYTE)");
+		//
+		//
+		// HDataParser parser = HDataSyntax.createReadParser(def,
+		// Arrays.asList("a", "b", "s"));
 
-		HDataParser parser = HDataSyntax.createReadParser(def, Arrays.asList("a", "b", "s"));
-		
+		TableDef def = getTable("CREATE TABLE testselect (fam1 k1 INT KEY, fam1 k2 STRING 2 KEY=true, fam1 count INT, fam1 temp FLOAT)");
+		HDataParser parser = HDataSyntax.createReadParser(def,
+				new String[]{"k1", "k2", "count", "temp"});
 		assertTrue(true);
 
 	}
@@ -65,5 +67,4 @@ public class TestHDateSyntax {
 		return parser.tableDef;
 	}
 
-	
 }

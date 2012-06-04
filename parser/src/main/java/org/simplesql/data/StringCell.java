@@ -20,7 +20,7 @@ public final class StringCell implements Cell<String> {
 	String val;
 	String name;
 	int width;
-	
+
 	public StringCell() {
 
 	}
@@ -35,7 +35,7 @@ public final class StringCell implements Cell<String> {
 		this.val = val;
 		this.name = name;
 	}
-	
+
 	public StringCell(String val, String name, int width) {
 		super();
 		this.val = val;
@@ -52,11 +52,11 @@ public final class StringCell implements Cell<String> {
 	public void write(DataOutput out) throws IOException {
 		out.writeUTF((val == null) ? "" : val);
 	}
-	
-	public void setWidth(int width){
+
+	public void setWidth(int width) {
 		this.width = width;
 	}
-	
+
 	@Override
 	public void inc() {
 	}
@@ -98,6 +98,10 @@ public final class StringCell implements Cell<String> {
 		this.val = dat;
 	}
 
+	public void setData(char ch) {
+		this.val = String.valueOf(ch);
+	}
+
 	@Override
 	public void inc(Counter counter) {
 
@@ -114,12 +118,12 @@ public final class StringCell implements Cell<String> {
 
 	@Override
 	public Object getMax() {
-		return (char) Integer.MAX_VALUE;
+		return String.valueOf((char) Integer.MAX_VALUE);
 	}
 
 	@Override
 	public Object getMin() {
-		return (char) 0;
+		return String.valueOf((char) 0);
 	}
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
@@ -170,20 +174,19 @@ public final class StringCell implements Cell<String> {
 
 	@Override
 	public int write(byte[] arr, int from) {
+
 		try {
 
 			final byte[] strbytes = val.getBytes("UTF-8");
-			int len = strbytes.length;
-			Bytes.writeBytes(len, arr, from);
-
-			System.arraycopy(strbytes, 0, arr, from + 4, len);
-			return len + 4;
+			System.arraycopy(strbytes, 0, arr, from, Math.min(arr.length-from, strbytes.length));
+			return strbytes.length;
 
 		} catch (UnsupportedEncodingException e) {
 			RuntimeException rte = new RuntimeException(e.toString(), e);
 			rte.setStackTrace(e.getStackTrace());
 			throw rte;
 		}
+
 	}
 
 	@Override

@@ -16,19 +16,20 @@ public class HDataSyntax {
 	static final String importStr = "import java.lang.*; import java.util.*; import org.apache.hadoop.hbase.util.*; import org.apache.hadoop.hbase.client.*; import org.apache.hadoop.hbase.filter.*;\n";
 
 	public static HDataParser createReadParser(TableDef schema,
-			Collection<String> selectCols) throws CompileException, ParseException,
-			ScanException {
-		final String clsName = schema.getName() + "_"
-				+ System.nanoTime();
+			String[] selectCols) throws CompileException,
+			ParseException, ScanException {
+		final String clsName = schema.getName() + "_" + System.nanoTime();
+
 		final String java = createJavaSyntax(clsName, schema, selectCols);
 		System.out.println(java);
 		final SimpleCompiler eval = new SimpleCompiler();
-		eval.setParentClassLoader("".getClass().getClassLoader());
+		eval.setParentClassLoader(Thread.currentThread()
+				.getContextClassLoader());
 		eval.cook(java);
 
 		try {
-			return (HDataParser) eval.getClassLoader().loadClass(clsName)
-					.newInstance();
+			return (HDataParser) eval.getClassLoader()
+					.loadClass("table." + clsName).newInstance();
 		} catch (Throwable t) {
 			RuntimeException excp = new RuntimeException(t.toString(), t);
 			excp.setStackTrace(t.getStackTrace());
@@ -47,12 +48,13 @@ public class HDataSyntax {
 	 * @return
 	 */
 	public static final String createJavaSyntax(String clsName,
-			TableDef schema, Collection<String> selectCols) {
+			TableDef schema, String[] selectCols) {
 
 		final StringBuilder cls = new StringBuilder(100);
 
-		cls.append(
-				"package table; public class " + clsName
+		cls.append("package table;\n")
+				.append(importStr)
+				.append("\npublic class " + clsName
 						+ " implements org.simplesql.hbase.HDataParser")
 				.append("{\n 	public java.lang.Object[] parse(org.apache.hadoop.hbase.client.Result res, byte[] key){\n");
 
@@ -175,6 +177,7 @@ public class HDataSyntax {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static final String getKeyRead(String arrName, Cell cell, int from) {
 		final Cell.SCHEMA schema = cell.getSchema();
 
@@ -190,7 +193,8 @@ public class HDataSyntax {
 			return "org.simplesql.util.Bytes.readLong(" + arrName + ", " + from
 					+ ")";
 		else if (schema.equals(Cell.SCHEMA.INT))
-			return "org.simplesql.util.BytesInt(" + arrName + ", " + from + ")";
+			return "org.simplesql.util.Bytes.readInt(" + arrName + ", " + from
+					+ ")";
 		else if (schema.equals(Cell.SCHEMA.BOOLEAN))
 			return "org.simplesql.util.Bytes.readBoolean(" + arrName + ", "
 					+ from + ")";

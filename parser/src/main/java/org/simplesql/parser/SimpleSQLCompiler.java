@@ -144,7 +144,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 	 * @param tableDef
 	 * @return
 	 */
-	private static final Object[][] columnNameTypes(Set<String> variablesUsed,
+	public static final Object[][] columnNameTypes(Set<String> variablesUsed,
 			TableDef tableDef) {
 
 		final ColumnDef[] defs = tableDef.getColumnDefs();

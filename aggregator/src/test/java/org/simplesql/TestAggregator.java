@@ -1,4 +1,4 @@
-package org.simplesql;
+ package org.simplesql;
 
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ public class TestAggregator {
 
 		
 		Aggregator
-				.main(new String[] { "TABLE mytable (name STRING, age DOUBLE)",
+				.main(new String[] { "", "TABLE mytable (name STRING, age DOUBLE)",
 						",", "src/test/resources/test1.sql",
 						"src/test/resources/data.txt" });
 

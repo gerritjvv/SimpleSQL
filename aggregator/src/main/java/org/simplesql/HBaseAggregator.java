@@ -81,7 +81,7 @@ public class HBaseAggregator {
 
 	static File workingDir;
 	static Configuration conf;
-
+	
 	public static void main(String[] args) throws Throwable {
 
 		CommandLine line = new GnuParser().parse(getOptions(), args);

@@ -11,24 +11,29 @@ public class SimpleConfig {
 	public SimpleConfig(Configuration conf) {
 		this.conf = conf;
 	}
-	
-	public int getInt(String name, int def){
+
+	public Configuration getConf() {
+		return conf;
+	}
+
+	public int getInt(String name, int def) {
 		return conf.getInt(name, def);
 	}
-	
-	public long getLong(String name, long def){
+
+	public long getLong(String name, long def) {
 		return conf.getLong(name, def);
 	}
-	
-	public String get(String name, String def){
+
+	public String get(String name, String def) {
 		return conf.getString(name, def);
 	}
-	
-	public int getPort(){
+
+	public int getPort() {
 		return conf.getInt("server.listener.port", 8383);
 	}
 
-	public static SimpleConfig getInstance(String path) throws ConfigurationException {
+	public static SimpleConfig getInstance(String path)
+			throws ConfigurationException {
 		return new SimpleConfig(new PropertiesConfiguration(path));
 	}
 }

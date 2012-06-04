@@ -1,12 +1,9 @@
 package org.simplesql.table;
 
-import java.util.Iterator;
-
 import org.apache.commons.configuration.Configuration;
 import org.simplesql.parser.SQLCompiler;
 import org.simplesql.parser.tree.INSERT;
 import org.simplesql.parser.tree.SELECT;
-import org.simplesql.schema.SimpleTableDef;
 
 /**
  * 

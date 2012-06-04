@@ -11,7 +11,6 @@ import org.myrest.util.ControllerFactory;
 import org.myrest.util.RestPathMappingContainer;
 import org.simplesql.server.conf.SimpleConfig;
 import org.simplesql.server.di.SimpleDI;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.context.ApplicationContext;

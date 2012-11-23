@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -132,17 +133,24 @@ public class Continuous {
 		if (chunkSize < 1)
 			chunkSize = 1000;
 
+		final AtomicLong eventCount = new AtomicLong();
+		
 		final Disruptor<WriteEvent> disruptor = createDisruptor(mainService,
 				new EventHandler<Continuous.WriteEvent>() {
 					@Override
 					public void onEvent(WriteEvent event, long index,
 							boolean buffer) throws Exception {
+						
 						try {
 							event.store.write(sink);
 							event.store.close();
 						} catch (Throwable t) {
 							LOG.error(t.toString(), t);
+						}finally{
+							eventCount.incrementAndGet();
 						}
+						
+						
 
 					}
 				});
@@ -174,14 +182,13 @@ public class Continuous {
 				// async operation please see above out of the while loop in
 				// which the anonymous class
 				// will write to th event.store.write(sink)
-				disruptor
-						.publishEvent(new EventTranslator<Continuous.WriteEvent>() {
-							public WriteEvent translateTo(WriteEvent event,
-									long index) {
-								event.store = storage;
-								return event;
-							}
-						});
+				disruptor.publishEvent(new EventTranslator<Continuous.WriteEvent>() {
+
+					@Override
+					public void translateTo(WriteEvent event, long sequence) {
+						event.store = storage;
+					}
+				});
 
 				// if (LOG.isDebugEnabled()) {
 //				long end = System.currentTimeMillis() - start;
@@ -189,17 +196,21 @@ public class Continuous {
 				// }
 
 				// check overflow
-				if (Long.MAX_VALUE - i <= 1)
-					i = 0L;
+//				if (Long.MAX_VALUE - i <= 1)
+//					i = 0L;
 				i++;
 
 			}
-
+			
+			disruptor.shutdown();
+			
 			execService.shutdown();
 			execService.awaitTermination(10, TimeUnit.SECONDS);
+
+			
 			disruptor.halt();
 			
-
+			System.out.println("Published: " + i + " events and processed: " + eventCount.get());
 		} finally {
 			waitForStop.countDown();
 		}
@@ -212,9 +223,7 @@ public class Continuous {
 			ExecutorService execService, EventHandler<WriteEvent> eventHandler) {
 
 		Disruptor<WriteEvent> disruptor = new Disruptor<WriteEvent>(
-				WriteEventFactory.DEFAULT, 4096, execService,
-				ClaimStrategy.Option.SINGLE_THREADED,
-				WaitStrategy.Option.YIELDING);
+				WriteEventFactory.DEFAULT, 4096, execService);
 
 		disruptor.handleEventsWith(eventHandler);
 

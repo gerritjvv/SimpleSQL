@@ -250,10 +250,13 @@ public class SimpleSQLExecutor implements SQLExecutor {
 		}
 
 		// wait for async processing
-		while (count.get() < recordsRead) {
-			Thread.yield();
-		}
+//		while (count.get() < recordsRead) {
+//			Thread.yield();
+//		}
 
+		disruptor.shutdown();
+		
+//		System.out.println("Count: " + count.get()  + " records.read: " + recordsRead);
 		disruptor.halt();
 
 	}

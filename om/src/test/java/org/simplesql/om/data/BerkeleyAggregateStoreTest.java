@@ -61,7 +61,7 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 		// get the top 10
 		map.setLimit(limit);
 
-		int rows = 100;
+		int rows = 10;
 		for (int i = 0; i < rows; i++) {
 			// add the same key twice
 			map.put(new SimpleCellKey(new IntCell(i), new DoubleCell(i + 2)),
@@ -113,7 +113,7 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 		// get the top 10
 		map.setLimit(10);
 
-		int rows = 100;
+		int rows = 10;
 		for (int i = 0; i < rows; i++) {
 			// add the same key twice
 			map.put(new SimpleCellKey(new IntCell(i), new DoubleCell(i + 2)),
@@ -158,7 +158,7 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 		// get the top 10
 		map.setLimit(10);
 
-		int rows = 100;
+		int rows = 10;
 		for (int i = 0; i < rows; i++) {
 			// add the same key twice
 			map.put(new SimpleCellKey(new IntCell(i), new DoubleCell(i + 2)),

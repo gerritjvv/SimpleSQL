@@ -1,5 +1,7 @@
 package org.simplesql.om.data;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,6 +16,8 @@ import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.DataSource;
 import org.simplesql.data.Key;
+import org.simplesql.data.LongCell;
+import org.simplesql.data.SimpleCellKey;
 import org.simplesql.om.aggregate.Continuous;
 
 public class TestContinuous {
@@ -29,7 +33,7 @@ public class TestContinuous {
 
 		MySink sink = new MySink();
 		long start = System.currentTimeMillis();
-		cn.runAsync(new MyDataSource(), sink, 1000);
+		cn.runAsync(new MyDataSource(), sink, 10000);
 
 		Thread.sleep(10000);
 
@@ -45,15 +49,43 @@ public class TestContinuous {
 					+ " : " + entry.getValue()[0] + ", " + entry.getValue()[1]);
 		}
 		
+		List<Long> vals = sink.vals;
+		long total = 0L;
+		for(Long v : vals)
+			total += v.longValue();
+		
+		long atotal = sink.map.get(new SimpleCellKey("a"))[1].getLongValue();
+		
+		//test that the total counted manually
+		//and the total in the map is the same
+		assertEquals(total, atotal);
+		
+		//test that the total is what was expected logically
+		assertEquals(1000*iterations, total);
+		
 	}
 
 	static class MySink implements DataSink {
 
 		Map<Key, Cell<?>[]> map = new HashMap<Key, Cell<?>[]>();
-
+		List<Long> vals = new ArrayList<Long>(1000);
+		
 		@Override
 		public boolean fill(Key key, Cell<?>[] data) {
-			map.put(key, data);
+			Cell<?>[] existingData = map.get(key);
+
+			vals.add(data[1].getLongValue());
+			
+			if(existingData == null){
+				map.put(key, data);
+			}else{
+				
+				LongCell lCell = (LongCell) existingData[1];
+				lCell.inc(data[1].getLongValue());
+				
+			}
+			
+			
 			return true;
 		}
 
@@ -61,7 +93,7 @@ public class TestContinuous {
 
 	static class MyDataSource implements DataSource {
 
-		List<Object[]> list = createArray(10000);
+		List<Object[]> list = createArray(1000);
 
 		@Override
 		public Iterator<Object[]> iterator() {

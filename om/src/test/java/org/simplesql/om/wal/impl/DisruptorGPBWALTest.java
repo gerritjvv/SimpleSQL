@@ -60,9 +60,7 @@ public class DisruptorGPBWALTest {
 
 		ExecutorService executor = Executors.newCachedThreadPool();
 		Disruptor<RequestEvent> disruptor = new Disruptor<RequestEvent>(
-				EVENT_FACTORY, ringSize, executor,
-				ClaimStrategy.Option.SINGLE_THREADED,
-				WaitStrategy.Option.BUSY_SPIN);
+				EVENT_FACTORY, ringSize, executor);
 
 		disruptor.handleEventsWith(wal);
 

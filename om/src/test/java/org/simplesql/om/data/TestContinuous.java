@@ -35,7 +35,7 @@ public class TestContinuous {
 		long start = System.currentTimeMillis();
 		cn.runAsync(new MyDataSource(), sink, 10000);
 
-		Thread.sleep(10000);
+		Thread.sleep(1000);
 
 		long iterations = cn.stopWait();
 

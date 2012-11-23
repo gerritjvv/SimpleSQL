@@ -12,12 +12,29 @@ import org.simplesql.data.LongCell;
 import org.simplesql.data.StringCell;
 import org.simplesql.parser.SQLLexer;
 import org.simplesql.parser.SQLParser;
+import org.simplesql.parser.tree.SELECT;
 import org.simplesql.parser.tree.SELECTTreeAdaptor;
 import org.simplesql.schema.ColumnDef;
 import org.simplesql.schema.SimpleTableDef;
 
 public class TestCreateTable {
 
+	@Test
+	public void testTableSelectTableName() throws RecognitionException{
+		
+		String sql = "SELECT myid FROM testtable";
+		
+		
+		
+		SQLLexer lexer = new SQLLexer(new ANTLRStringStream(sql));
+		SQLParser parser = new SQLParser(new CommonTokenStream(lexer));
+		parser.setTreeAdaptor(new SELECTTreeAdaptor());
+		SELECT select = parser.statement().ret;
+		
+		assertEquals("testtable", select.getTable());
+	}
+
+	
 	@Test
 	public void testTableCreate() throws RecognitionException{
 		

@@ -32,18 +32,18 @@ public class SELECT {
 	 */
 	final Set<String> selectOrderBy = new HashSet<String>();
 	final Set<String> groupOrderBy = new HashSet<String>();
-	
+
 	int[] selectOrderIndexes;
 	int selectOrderIndexesLen;
 	int[] groupOrderIndexes;
 	int groupOderderIndexesLen;
-	
+
 	public Set<String> variables = new HashSet<String>();
 	public final RangeGroups rangeGroups = new RangeGroups();
 
 	Map<String, EXPRESSION> selectExpressionsMap = new HashMap<String, EXPRESSION>();
 	Map<String, EXPRESSION> groupExpressionsMap = new HashMap<String, EXPRESSION>();
-	
+
 	/**
 	 * Used to keep track of the index of each select expression e.g. select a,b
 	 * will give a.index = 0, b.index = 1<br/>
@@ -66,10 +66,6 @@ public class SELECT {
 
 	public SELECT() {
 
-	}
-
-	public SELECT(Set<String> variables) {
-		this.variables = variables;
 	}
 
 	public String getTable() {
@@ -115,21 +111,20 @@ public class SELECT {
 	}
 
 	public void orderBy(String varName) {
-		
-		
+
 		EXPRESSION expr = null;
-		if (  (expr = groupExpressionsMap.get(varName)) != null) {
+		if ((expr = groupExpressionsMap.get(varName)) != null) {
 			groupOrderBy.add(varName);
-			if(groupOrderIndexes == null)
+			if (groupOrderIndexes == null)
 				groupOrderIndexes = new int[groupIndexCounter];
-			
+
 			groupOrderIndexes[groupOderderIndexesLen++] = expr.getIndex();
-		} else if ( (expr = selectExpressionsMap.get(varName)) != null) {
+		} else if ((expr = selectExpressionsMap.get(varName)) != null) {
 			selectOrderBy.add(varName);
-			
-			if(selectOrderIndexes == null)
+
+			if (selectOrderIndexes == null)
 				selectOrderIndexes = new int[selectIndexCounter];
-			
+
 			selectOrderIndexes[selectOrderIndexesLen++] = expr.getIndex();
 		} else {
 			throw new RuntimeException(
@@ -139,7 +134,6 @@ public class SELECT {
 		}
 	}
 
-	
 	public void limit(String limit) {
 		this.limit = Integer.parseInt(limit);
 	}
@@ -150,6 +144,10 @@ public class SELECT {
 
 	public void setLimit(int limit) {
 		this.limit = limit;
+	}
+
+	public void setVariables(Set<String> variables) {
+		this.variables = variables;
 	}
 
 	public Set<String> getVariables() {

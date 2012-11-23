@@ -1,6 +1,8 @@
 package org.simplesql;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -26,10 +28,15 @@ public class SimpleSQLServer {
 	 */
 	public static void main(String[] args) throws Throwable {
 
-		File configFile = new File(args[0]);
-		if (!configFile.exists())
-			throw new RuntimeException("Please type <config file>");
+		// if (args.length < 1) {
+		// throw new RuntimeException("Please type <config file>");
+		// }
+		//
+		// File configFile = new File(args[0]);
+		// if (!configFile.exists())
+		// throw new RuntimeException("Please type <config file>");
 
+		File configFile = new File("src/main/resources/conf/server.properties");
 		// CREATE DI Configuration Instance that will be called inside the
 		// spring DI
 		// spring will us the method getInstance of AdGetConfigImpl passing it
@@ -57,19 +64,26 @@ public class SimpleSQLServer {
 		RestFactory restFactory = new RestFactory(appContext);
 
 		final RestPathMappingContainer select = new RestPathMappingContainer(
-				"/query/select/${table} org.simplesql.server.controlers.QueryController.select");
-		final RestPathMappingContainer insert = new RestPathMappingContainer(
-				"/query/insert/${table} org.simplesql.server.controlers.QueryController.insert");
-		final RestPathMappingContainer delete = new RestPathMappingContainer(
-				"/query/delete/${table} org.simplesql.server.controlers.QueryController.delete");
+				"/query/select/${table} org.simplesql.server.controllers.QueryController.select",
+				restFactory);
+		// final RestPathMappingContainer insert = new RestPathMappingContainer(
+		// "/query/insert/${table} org.simplesql.server.controlers.QueryController.insert",
+		// restFactory);
+		// final RestPathMappingContainer delete = new RestPathMappingContainer(
+		// "/query/delete/${table} org.simplesql.server.controlers.QueryController.delete",
+		// restFactory);
 		final RestPathMappingContainer create = new RestPathMappingContainer(
-				"/table/create/${table} org.simplesql.server.controlers.TableController.create");
+				"/table/create/${table} org.simplesql.server.controllers.TableController.create",
+				restFactory);
 		final RestPathMappingContainer tblDelete = new RestPathMappingContainer(
-				"/table/delete/${table} org.simplesql.server.controlers.TableController.delete");
+				"/table/delete/${table} org.simplesql.server.controllers.TableController.delete",
+				restFactory);
 
 		// add more mapping containers here for controller to method mappings
 		final RestPathMappingContainer[] mappings = new RestPathMappingContainer[] {
-				select, insert, delete, create, tblDelete };
+				select,
+				// insert, delete,
+				create, tblDelete };
 
 		final ExecutorService service = Executors.newCachedThreadPool();
 
@@ -101,6 +115,7 @@ public class SimpleSQLServer {
 	static class RestFactory implements ControllerFactory {
 
 		final ApplicationContext ctx;
+		final Map<String, Class> clsCache = new HashMap<String, Class>();
 
 		public RestFactory(ApplicationContext ctx) {
 			super();
@@ -111,15 +126,21 @@ public class SimpleSQLServer {
 		public final Object newInstance(String controllerName) {
 			// controllerName is class name
 			try {
-				return ctx.getBean(Thread.currentThread()
-						.getContextClassLoader().loadClass(controllerName));
+				Class cls = clsCache.get(controllerName);
+				if (cls == null) {
+					cls = Thread.currentThread().getContextClassLoader()
+							.loadClass(controllerName);
+					clsCache.put(controllerName, cls);
+				}
+
+				return ctx.getBean(cls);
+
 			} catch (Throwable t) {
 				RuntimeException rte = new RuntimeException(t.toString(), t);
 				rte.setStackTrace(t.getStackTrace());
 				throw rte;
 			}
 		}
-
 	}
 
 }

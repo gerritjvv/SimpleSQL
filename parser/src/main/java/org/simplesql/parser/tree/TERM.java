@@ -1,21 +1,25 @@
 package org.simplesql.parser.tree;
 
 import org.simplesql.data.BooleanCell;
+import org.simplesql.data.ByteCell;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DoubleCell;
 import org.simplesql.data.DynamicCell;
+import org.simplesql.data.FloatCell;
 import org.simplesql.data.IntCell;
 import org.simplesql.data.LongCell;
+import org.simplesql.data.ShortCell;
 import org.simplesql.data.StringCell;
 
 public class TERM {
 
-	enum TYPE {
+	public enum TYPE {
 		INTEGER(1, IntCell.class), LONG(2, LongCell.class), BOOLEAN(1,
-				BooleanCell.class), DOUBLE(3, DoubleCell.class), STRING(4,
-				StringCell.class), UKNOWN(5, DynamicCell.class), AGGREGATE_TOP(
-				6, DynamicCell.class), AGGREGATE_COUNT(7, DynamicCell.class), AGGREGATE_SUM(
-				8, DynamicCell.class);
+				BooleanCell.class), DOUBLE(3, DoubleCell.class), FLOAT(4,
+				FloatCell.class), SHORT(5, ShortCell.class), BYTE(6,
+				ByteCell.class), STRING(7, StringCell.class), UKNOWN(8,
+				DynamicCell.class), AGGREGATE_TOP(9, DynamicCell.class), AGGREGATE_COUNT(
+				10, LongCell.class), AGGREGATE_SUM(11, DoubleCell.class);
 
 		int weight;
 		Class<? extends Cell> cellType;

@@ -15,7 +15,7 @@ import org.simplesql.schema.ColumnDef;
 import org.simplesql.schema.SimpleColumnDef;
 
 public class TestSelectTransform {
-
+	
 	@Test
 	public void testTransform() throws Throwable {
 

@@ -1,14 +1,10 @@
 package org.simplesql.util;
 
-import java.util.concurrent.Executors;
-
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
-import org.simplesql.parser.SQLCompiler;
 import org.simplesql.parser.SQLLexer;
 import org.simplesql.parser.SQLParser;
-import org.simplesql.parser.SimpleSQLCompiler;
 import org.simplesql.parser.tree.INSERT;
 import org.simplesql.parser.tree.SELECT;
 import org.simplesql.parser.tree.SELECTTreeAdaptor;

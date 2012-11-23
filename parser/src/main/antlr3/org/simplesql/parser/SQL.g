@@ -41,7 +41,7 @@ tokens {
 @members {
   private int orderCounter = 0;
   public SELECT select;
-  public static final java.util.Set<String> variables = new java.util.HashSet<String>();
+  public final java.util.Set<String> variables = new java.util.HashSet<String>();
   public SimpleTableDef tableDef;
   public INSERT insert;
 }
@@ -51,11 +51,11 @@ insert returns [INSERT insert = new INSERT()]
            (i=IDENT {$insert.setInput($i.text);})* ;
            
 create returns [ SimpleTableDef table = new SimpleTableDef() ]
-        : 'CREATE' 'TABLE' n=IDENT {tableDef=$table; $table.setName($n.text);} '(' c=column {$table.addColumn(c.col);} (',' c=column {$table.addColumn(c.col);})+ ')' 
-           'ENGINE' (e=IDENT {$table.setEngine($e.text);})* ;
+        : 'CREATE' 'TABLE' n=IDENT {tableDef=$table; $table.setName($n.text);} '(' c=column {$table.addColumn(c.col);} (',' c=column {$table.addColumn(c.col);})* ')' 
+           ('ENGINE' (e=IDENT {$table.setEngine($e.text);}))* ;
 
-statement returns [SELECT ret = new SELECT(variables);]
-           : SELECT (se1=expression { select = $ret;  $ret.select($se1.expr);}) 
+statement returns [SELECT ret = new SELECT();]
+           : SELECT (se1=expression { select = $ret;  $ret.select($se1.expr); $ret.setVariables(variables);}) 
                     (',' (se1=expression {$ret.select($se1.expr);}))* FROM tbl=IDENT {$ret.table($tbl.text);} 
             (
             (WHERE w1=logical {$ret.where($logical.ret);})

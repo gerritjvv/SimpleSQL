@@ -8,13 +8,13 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.HTableInterfaceFactory;
 import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.regionserver.HRegion;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
@@ -66,7 +66,6 @@ public class HBaseTableEngine implements TableEngine {
 		}
 
 		final int poolsize = conf.getInt(TABLE_POOL_SIZE, 100);
-
 		pool = new HTablePool(hbaseConf, poolsize,
 				new HTableInterfaceFactory() {
 
@@ -168,6 +167,7 @@ public class HBaseTableEngine implements TableEngine {
 			} finally {
 				scanner.close();
 				htable.close();
+				FileUtils.deleteDirectory(storeDir);
 			}
 
 		} catch (Throwable t) {
@@ -298,7 +298,8 @@ public class HBaseTableEngine implements TableEngine {
 			TableDef table) {
 		for (String col : set) {
 			final ColumnDef colDef = table.getColumnDef(col);
-			scan.addFamily(Bytes.toBytes(colDef.getFamily()));
+			if (!colDef.isKey())
+				scan.addFamily(Bytes.toBytes(colDef.getFamily()));
 		}
 	}
 

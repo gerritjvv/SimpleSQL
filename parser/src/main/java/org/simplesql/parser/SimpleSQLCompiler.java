@@ -103,7 +103,7 @@ public class SimpleSQLCompiler implements SQLCompiler {
 			String[] columnNames = (String[]) nameTypes[0];
 			Class<?>[] columnTypes = (Class<?>[]) nameTypes[1];
 
-			TreeJavaConvert converter = new TreeJavaConvert(select);
+			TreeJavaConvert converter = new TreeJavaConvert(select, tableDef);
 
 			ExpressionEvaluator eval = new ExpressionEvaluator(
 					"new org.simplesql.data.Cell[]{"
@@ -187,7 +187,9 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		if (usedI != usedLen) {
 			throw new RuntimeException(
 					"Some of the columns do not exist in table definition : found only "
-							+ Arrays.toString(names));
+							+ Arrays.toString(names) 
+							+ " variables used: " + Arrays.toString(variablesUsed.toArray())
+							+ " defs: " + Arrays.toString(defs));
 		}
 
 		return new Object[][] { names, types };

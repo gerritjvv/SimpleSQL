@@ -3,7 +3,6 @@ package org.simplesql.data.util;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -77,8 +76,7 @@ public class DisruptorDataSource implements DataSource {
 			super();
 
 			ringBuffer = new RingBuffer<StrEvent>(StrEventFactory.DEFAULT,
-					4096, ClaimStrategy.Option.SINGLE_THREADED,
-					WaitStrategy.Option.YIELDING);
+					4096);
 			sequenceBarrier = ringBuffer.newBarrier();
 			ringBuffer.setGatingSequences(sequence);
 
@@ -176,8 +174,7 @@ public class DisruptorDataSource implements DataSource {
 			processor = new Processor(execService);
 
 			disruptor = new Disruptor<Event>(EventFactory.DEFAULT, ringSize,
-					execService, ClaimStrategy.Option.SINGLE_THREADED,
-					WaitStrategy.Option.YIELDING);
+					execService);
 
 			/**
 			 * On each event in the event buffer, split into lines and push onto

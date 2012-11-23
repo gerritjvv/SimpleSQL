@@ -37,10 +37,9 @@ For examples see {{{KeyWriterReader}}} and {{{TestKeyWriterReader}}}
 The idea of an {{{AggregateStore}}} is to abstract how data is stored (simple), also it provides some basic aggregation and ordering\\
 functions that is required for most data manipulations.\\
 
-An implementation for Berkeley JE DB is provided using temporary tables, see {{{ BerkeleyAggregateStore }}}, and is aimed to store\\
+An implementation for Krati, and Berkeley is provided using temporary tables, see {{{ KratiAggregateStrore }}} {{{ BerkeleyAggregateStore }}}, and is aimed to store\\
 intermediate data.\\
 
-More implementations will be added for and LevelDB, Krati and Hbase.
 
 === WAL ===
 

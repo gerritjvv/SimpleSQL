@@ -6,21 +6,27 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.simplesql.parser.tree.TERM;
 
 public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 
 	enum SCHEMA {
-		INT(IntCell.class), DOUBLE(DoubleCell.class), LONG(LongCell.class), BOOLEAN(
-				BooleanCell.class), DYNAMIC(DynamicCell.class), STRING(
-				StringCell.class), FLOAT(FloatCell.class), SHORT(
-				ShortCell.class), BYTE(ByteCell.class);
+		INT(IntCell.class, TERM.TYPE.INTEGER), DOUBLE(DoubleCell.class,
+				TERM.TYPE.DOUBLE), LONG(LongCell.class, TERM.TYPE.LONG), BOOLEAN(
+				BooleanCell.class, TERM.TYPE.BOOLEAN), DYNAMIC(
+				DynamicCell.class, null), STRING(StringCell.class,
+				TERM.TYPE.STRING), FLOAT(FloatCell.class, TERM.TYPE.FLOAT), SHORT(
+				ShortCell.class, TERM.TYPE.SHORT), BYTE(ByteCell.class,
+				TERM.TYPE.BYTE);
 
 		@SuppressWarnings("rawtypes")
-		Class cellCls;
+		final Class cellCls;
+		final TERM.TYPE treeType;
 
 		@SuppressWarnings("rawtypes")
-		SCHEMA(Class cellCls) {
+		SCHEMA(Class cellCls, TERM.TYPE treeType) {
 			this.cellCls = cellCls;
+			this.treeType = treeType;
 		}
 
 		@SuppressWarnings("rawtypes")
@@ -38,8 +44,12 @@ public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 			}
 		}
 
+		public TERM.TYPE getTreeType() {
+			return treeType;
+		}
+
 	}
-	
+
 	int getDefinedWidth();
 
 	String getName();
@@ -81,5 +91,5 @@ public interface Cell<T> extends Counter, Serializable, Comparable<Cell<T>> {
 	public void write(DataOutput out) throws IOException;
 
 	public Class<?> getJavaType();
-	
+
 }

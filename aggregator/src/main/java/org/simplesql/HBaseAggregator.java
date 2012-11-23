@@ -81,7 +81,7 @@ public class HBaseAggregator {
 
 	static File workingDir;
 	static Configuration conf;
-	
+
 	public static void main(String[] args) throws Throwable {
 
 		CommandLine line = new GnuParser().parse(getOptions(), args);
@@ -103,7 +103,7 @@ public class HBaseAggregator {
 		final boolean isColumnCounter = (line.hasOption("colcounter")) ? Boolean
 				.parseBoolean(line.getOptionValue("colcounter").toLowerCase())
 				: false;
-			
+
 		conf = new PropertiesConfiguration(new File(confDir,
 				"aggregate.properties"));
 
@@ -138,7 +138,7 @@ public class HBaseAggregator {
 		final ExecutorService execService = Executors.newCachedThreadPool();
 		final SQLCompiler compiler = new SimpleSQLCompiler(execService);
 		final SELECT select = compiler.compileSelect(sql);
-		
+
 		final SQLExecutor exec = compiler.compile(tableDef, select);
 
 		final String tableName = select.getTable();
@@ -159,21 +159,20 @@ public class HBaseAggregator {
 
 			try {
 				// setup a result scanner parsing
-				final DataSource dataSource = new DataSource() {
-
-					@Override
-					public Iterator<Object[]> iterator() {
-						return isColumnCounter ? new ResultColumnCounterIterator(
-								parseExpr, scanner, caching)
-								: new ResultScannerIterator(parseExpr,
-										scanner, caching);
-					}
-
-					@Override
-					public long getEstimatedSize() {
-						return 0;
-					}
-				};
+//				final DataSource dataSource = new DataSource() {
+//
+//					@Override
+//					public Iterator<Object[]> iterator() {
+//						return isColumnCounter ? new ResultColumnCounterIterator(
+//								parseExpr, scanner, caching)
+//								: new ResultScannerIterator(parseExpr, scanner);
+//					}
+//
+//					@Override
+//					public long getEstimatedSize() {
+//						return 0;
+//					}
+//				};
 
 				final StorageManager manager = getStorageManager(schemas,
 						workingDir);
@@ -185,7 +184,7 @@ public class HBaseAggregator {
 					long startReading = System.currentTimeMillis();
 
 					System.out.println("Reading data");
-					exec.pump(dataSource, storage, null);
+//					exec.pump(dataSource, storage, null);
 					System.out.println("Read in: "
 							+ (System.currentTimeMillis() - startReading)
 							+ "ms");
@@ -340,7 +339,7 @@ public class HBaseAggregator {
 				} else {
 					result = scanner.next();
 					if (result != null) {
-						
+
 						keyvalues = result.raw();
 						index = 0;
 						len = keyvalues.length;
@@ -361,11 +360,11 @@ public class HBaseAggregator {
 			try {
 
 				counter++;
-				if (counter % 100== 0)
+				if (counter % 100 == 0)
 					System.out.println(counter + "; kv.len = " + len);
 
 				final KeyValue kv = keyvalues[index++];
-				
+
 				return (Object[]) eval.evaluate(new Object[] { result, kv });
 
 			} catch (InvocationTargetException e) {

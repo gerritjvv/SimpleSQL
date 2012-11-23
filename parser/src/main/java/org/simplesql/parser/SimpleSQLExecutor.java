@@ -154,9 +154,7 @@ public class SimpleSQLExecutor implements SQLExecutor {
 		 * thread exec.
 		 */
 		Disruptor<DataEvent> disruptor = new Disruptor<DataEvent>(
-				DataEventFactory.DEFAULT, ringSize, execService,
-				ClaimStrategy.Option.SINGLE_THREADED,
-				WaitStrategy.Option.YIELDING);
+				DataEventFactory.DEFAULT, ringSize, execService);
 
 		final ProgressContext progressContext = new ProgressContext();
 
@@ -235,16 +233,6 @@ public class SimpleSQLExecutor implements SQLExecutor {
 			ringBuffer.publish(seq);
 			recordsRead++;
 		}
-//		for (Object[] data : source) {
-//			if (hasError.get() || shouldStop.get())
-//				break;
-//
-//			long seq = ringBuffer.next();
-//			DataEvent evt = ringBuffer.get(seq);
-//			evt.dat = data;
-//			ringBuffer.publish(seq);
-//			recordsRead++;
-//		}
 
 		// throw any error if an error occurred during the async processing
 		if (hasError.get()) {

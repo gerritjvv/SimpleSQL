@@ -3,6 +3,9 @@ package org.simplesql.parser.tree;
 import org.simplesql.data.Cell;
 import org.simplesql.funct.SQLFunctions;
 import org.simplesql.parser.tree.RELATION.OP;
+import org.simplesql.parser.tree.TERM.TYPE;
+import org.simplesql.schema.ColumnDef;
+import org.simplesql.schema.TableDef;
 
 /**
  * 
@@ -15,6 +18,9 @@ public class TreeJavaConvert {
 	final String selectExpressions;
 	final String orderByExpressions;
 	final String groupByExpressions;
+	
+	final TableDef tableDef;
+	
 
 	/**
 	 * Visits the SELECT and all of its children.<br/>
@@ -23,8 +29,10 @@ public class TreeJavaConvert {
 	 * 
 	 * @param select
 	 */
-	public TreeJavaConvert(SELECT select) {
+	public TreeJavaConvert(SELECT select, final TableDef tableDef) {
 
+		this.tableDef = tableDef;
+		
 		final ExpressionPrinter selectExpressions = new ExpressionPrinter(
 				new StringBuilder());
 		final ExpressionPrinter groupByExpressions = new ExpressionPrinter(
@@ -51,8 +59,28 @@ public class TreeJavaConvert {
 					selectExpressions.addComma();
 
 				// we encapsulate each type with a new <Type>Cell
+				TYPE type = expr.getType();
+				
+				
+				//do some extra checking here for types.
+				if(type.equals(TYPE.UKNOWN) && expr.assignedName != null){
+					//find the type from the schema
+					ColumnDef colDef = tableDef.getColumnDef(expr.assignedName);
+					if(colDef != null){
+						
+						if(!expr.complex){
+							TYPE treeType = colDef.getCell().getSchema().getTreeType();
+							if(treeType != null)
+								expr.setType(treeType);
+						}
+						
+					}
+						
+				}
+				
 				Class<? extends Cell> cellType = expr.getCellType();
-
+				
+				
 				selectExpressions.addString("new "
 						+ cellType.getCanonicalName() + "(");
 				expr.visit(selectExpressions);

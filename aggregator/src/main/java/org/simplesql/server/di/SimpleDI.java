@@ -6,6 +6,8 @@ import javax.inject.Inject;
 
 import org.simplesql.om.data.KratiTableRepo;
 import org.simplesql.server.conf.SimpleConfig;
+import org.simplesql.server.controllers.QueryController;
+import org.simplesql.server.controllers.TableController;
 import org.simplesql.table.SimpleTableEngineManager;
 import org.simplesql.table.TableEngineManager;
 import org.simplesql.table.TableRepo;
@@ -24,6 +26,17 @@ public class SimpleDI {
 
 	@Inject
 	BeanFactory factory;
+
+	@Bean
+	public QueryController queryController() {
+		return new QueryController(factory.getBean(TableEngineManager.class),
+				factory.getBean(TableRepo.class));
+	}
+
+	@Bean
+	public TableController tableController() {
+		return new TableController(factory.getBean(TableRepo.class));
+	}
 
 	@Bean
 	public TableEngineManager tableEngineManager()

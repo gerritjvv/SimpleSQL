@@ -21,11 +21,9 @@ import org.simplesql.data.TransformFunction;
 import org.simplesql.parser.tree.SELECT;
 import org.simplesql.schema.TableDef;
 
-import com.lmax.disruptor.ClaimStrategy;
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 
 /**
@@ -217,21 +215,18 @@ public class SimpleSQLExecutor implements SQLExecutor {
 
 		});
 
-		RingBuffer<DataEvent> ringBuffer = disruptor.start();
-
-		int recordsRead = 0;
+		final RingBuffer<DataEvent> ringBuffer = disruptor.start();
 
 		// read data and add to the disruptor queue.
-		Iterator<Object[]> it = source.iterator();
-		while(it.hasNext()){
+		final Iterator<Object[]> it = source.iterator();
+		while (it.hasNext()) {
 			if (hasError.get() || shouldStop.get())
 				break;
 
 			long seq = ringBuffer.next();
-			DataEvent evt = ringBuffer.get(seq);
+			final DataEvent evt = ringBuffer.get(seq);
 			evt.dat = it.next();
 			ringBuffer.publish(seq);
-			recordsRead++;
 		}
 
 		// throw any error if an error occurred during the async processing
@@ -249,14 +244,7 @@ public class SimpleSQLExecutor implements SQLExecutor {
 			}
 		}
 
-		// wait for async processing
-//		while (count.get() < recordsRead) {
-//			Thread.yield();
-//		}
-
 		disruptor.shutdown();
-		
-//		System.out.println("Count: " + count.get()  + " records.read: " + recordsRead);
 		disruptor.halt();
 
 	}
@@ -289,9 +277,11 @@ public class SimpleSQLExecutor implements SQLExecutor {
 
 	private static class CellPut {
 
+		@SuppressWarnings("rawtypes")
 		Cell[] cells;
 		Object[] dat;
 
+		@SuppressWarnings("rawtypes")
 		public CellPut(Cell[] cells, Object[] dat) {
 			super();
 			this.cells = cells;

@@ -133,7 +133,8 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	public WhereFilter getWhereFilter() {
 		return whereFilter;
 	}
-
+	
+		
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void pump(DataSource source, final AggregateStore store,
@@ -244,6 +245,8 @@ public class SimpleSQLExecutor implements SQLExecutor {
 							try {
 								consumeIterator(it, shouldStop, hasError,
 										ringBuffer);
+							}catch(Throwable t){
+								LOG.error(t.toString(), t);
 							} finally {
 								latch.countDown();
 							}
@@ -254,19 +257,21 @@ public class SimpleSQLExecutor implements SQLExecutor {
 				}
 				latch.await();
 			}
-
-			Throwable t = errorReference.get();
-			if (t == null)
-				t = new RuntimeException("Uknown Error");
-
-			if (t instanceof RuntimeException)
-				throw (RuntimeException) t;
-			else {
-				RuntimeException excp = new RuntimeException(t.toString(), t);
-				excp.setStackTrace(t.getStackTrace());
-				throw excp;
+			
+			if(hasError.get()){
+				Throwable t = errorReference.get();
+				if (t == null)
+					t = new RuntimeException("Uknown Error");
+	
+				if (t instanceof RuntimeException)
+					throw (RuntimeException) t;
+				else {
+					RuntimeException excp = new RuntimeException(t.toString(), t);
+					excp.setStackTrace(t.getStackTrace());
+					throw excp;
+				}
 			}
-
+			
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return;

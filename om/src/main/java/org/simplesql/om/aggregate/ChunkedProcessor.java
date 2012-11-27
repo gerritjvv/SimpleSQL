@@ -1,7 +1,9 @@
 package org.simplesql.om.aggregate;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -22,6 +24,7 @@ import org.simplesql.data.Cell;
 import org.simplesql.data.ChunkedIterator;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.DataSource;
+import org.simplesql.data.MultiThreadedDataSource;
 import org.simplesql.data.TransformFunction;
 import org.simplesql.om.data.StorageManager;
 import org.simplesql.om.data.stores.HashMapAggregateStore;
@@ -125,12 +128,9 @@ public class ChunkedProcessor {
 
 	}
 
-	@SuppressWarnings("rawtypes")
-	public long run(DataSource dataSource, final DataSink sink, int chunkSize)
-			throws Throwable {
-
-		if (chunkSize < 1)
-			chunkSize = 1000;
+	@SuppressWarnings("unchecked")
+	public long run(final DataSource dataSource, final DataSink sink,
+			final int chunkSize) throws Throwable {
 
 		final AtomicLong eventCount = new AtomicLong();
 
@@ -152,47 +152,40 @@ public class ChunkedProcessor {
 					}
 				});
 
-		long i = 0;
+		final AtomicLong counter = new AtomicLong();
 		disruptor.start();
+
 		try {
 
-			final Iterator<Object[]> iterator = dataSource.iterator();
-
+			final List<Iterator<Object[]>> iterators = (dataSource instanceof MultiThreadedDataSource) ? ((MultiThreadedDataSource) dataSource)
+					.iterators() : Arrays.asList(dataSource.iterator());
+			final int size = iterators.size();
+			final CountDownLatch latch = new CountDownLatch(size);
 			
-			
-			while (!Thread.interrupted() && iterator.hasNext()) {
-				
-				final AggregateStore storage = new HashMapAggregateStore(exec
-						.getTransforms().toArray(new TransformFunction[0]));
+			int i = 0;
+			for (final Iterator<Object[]> it : iterators) {
+				final int threadCount = i++;
+				mainService.submit(new Runnable() {
 
-				//this data source will iterator over a chunk of iterator:Iterator
-				final DataSource source = new DataSourceWrapper(
-						new ChunkedIterator<Object[]>(iterator, chunkSize));
+					public void run() {
+						LOG.info("Consume from thread " + threadCount + " of " + size);
+						try {
+							counter.addAndGet(consumeIterator(disruptor, it,
+									chunkSize));
+						}catch(Throwable t){
+							LOG.error(t.toString(), t);
+						} finally {
+							LOG.info("End consumption from thread " + threadCount + " of " + size);
+							latch.countDown();
+						}
 
-				exec.pump(source, storage, null);
+					}
+				});
 
-				// async operation please see above out of the while loop in
-				// which the anonymous class
-				// will write to th event.store.write(sink)
-				disruptor
-						.publishEvent(new EventTranslator<ChunkedProcessor.WriteEvent>() {
-
-							@Override
-							public void translateTo(WriteEvent event,
-									long sequence) {
-								event.store = storage;
-							}
-						});
-
-				// if (LOG.isDebugEnabled()) {
-				// long end = System.currentTimeMillis() - start;
-				// System.out.println("Aggregation " + i + " took " + end +
-				// "ms");
-				// }
-
-				i++;
-				
 			}
+
+			if(size > 0)
+				latch.await();
 
 			disruptor.shutdown();
 
@@ -201,13 +194,52 @@ public class ChunkedProcessor {
 
 			disruptor.halt();
 
-			System.out.println("Published: " + i + " events and processed: "
-					+ eventCount.get());
+			System.out.println("Published: " + counter.get()
+					+ " events and processed: " + eventCount.get());
 		} finally {
 			waitForStop.countDown();
 		}
 
+		return counter.get();
+	}
+
+	private final int consumeIterator(Disruptor<WriteEvent> disruptor,
+			Iterator<Object[]> iterator, int chunkSize) {
+		int i = 0;
+		while (!Thread.interrupted() && iterator.hasNext()) {
+			final AggregateStore storage = new HashMapAggregateStore(exec
+					.getTransforms().toArray(new TransformFunction[0]));
+
+			// this data source will iterator over a chunk of iterator:Iterator
+			final DataSource source = new DataSourceWrapper(
+					new ChunkedIterator<Object[]>(iterator, chunkSize));
+
+			exec.pump(source, storage, null);
+
+			// async operation please see above out of the while loop in
+			// which the anonymous class
+			// will write to th event.store.write(sink)
+			disruptor
+					.publishEvent(new EventTranslator<ChunkedProcessor.WriteEvent>() {
+
+						@Override
+						public void translateTo(WriteEvent event, long sequence) {
+							event.store = storage;
+						}
+					});
+
+			// if (LOG.isDebugEnabled()) {
+			// long end = System.currentTimeMillis() - start;
+			// System.out.println("Aggregation " + i + " took " + end +
+			// "ms");
+			// }
+
+			i++;
+
+		}
+
 		return i;
+
 	}
 
 	@SuppressWarnings("unchecked")

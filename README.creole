@@ -62,8 +62,8 @@ Data is received, processed with the SQL Parser (Stored into an AggregateStore) 
 The aim for Aggregator is to provide the following three modes:
 
  * Once-off Data Aggregation. Data In, Aggregate, Data Out. (Can be used to query other data stores to analyse data).\\
-   ** See [[FullExample|https://github.com/gerritjvv/SimpleSQL/wiki/FullExample]]
+   ** See [[https://github.com/gerritjvv/SimpleSQL/wiki/FullExample|FullExample]]
  * Continuous Data Aggregation with snaphot output. Data In, Aggregate, Every N seconds Output Snapsthot and reset.  (For realtime updates).\\
-   ** See [[ContinuousAggregation|https://github.com/gerritjvv/SimpleSQL/wiki/ContinuousAggregates]]
+   ** See [[https://github.com/gerritjvv/SimpleSQL/wiki/ContinuousAggregates|ContinuousAggregates]]
  * Continuous Data Aggregation to a long term data store. Data In, Aggregate. (Almost like a DB but using Key Value Stores).\\
 

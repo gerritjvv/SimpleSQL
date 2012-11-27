@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,6 +17,7 @@ import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSource;
 import org.simplesql.data.KeyParser;
+import org.simplesql.data.MultiThreadedDataSource;
 import org.simplesql.data.RangeGroups;
 import org.simplesql.data.TransformFunction;
 import org.simplesql.parser.tree.SELECT;
@@ -218,19 +220,41 @@ public class SimpleSQLExecutor implements SQLExecutor {
 		final RingBuffer<DataEvent> ringBuffer = disruptor.start();
 
 		// read data and add to the disruptor queue.
-		final Iterator<Object[]> it = source.iterator();
-		while (it.hasNext()) {
-			if (hasError.get() || shouldStop.get())
-				break;
 
-			long seq = ringBuffer.next();
-			final DataEvent evt = ringBuffer.get(seq);
-			evt.dat = it.next();
-			ringBuffer.publish(seq);
-		}
+		final List<Iterator<Object[]>> iterators = (source instanceof MultiThreadedDataSource) ? ((MultiThreadedDataSource) source)
+				.iterators() : Arrays.asList(source.iterator());
+		final int size = iterators.size();
+		final CountDownLatch latch = new CountDownLatch(size);
 
-		// throw any error if an error occurred during the async processing
-		if (hasError.get()) {
+		try {
+			if (size == 1) {
+				// consume the single iterator
+				consumeIterator(iterators.get(0), shouldStop, hasError,
+						ringBuffer);
+			} else {
+				// here we launch a thread per iterator that will read from each
+				// and send to the ring buffer
+				// at the end of the for loop we wait indefinitely for the
+				// iterators to complete
+				for (final Iterator<Object[]> it : iterators) {
+					execService.submit(new Runnable() {
+
+						public void run() {
+
+							try {
+								consumeIterator(it, shouldStop, hasError,
+										ringBuffer);
+							} finally {
+								latch.countDown();
+							}
+
+						}
+					});
+
+				}
+				latch.await();
+			}
+
 			Throwable t = errorReference.get();
 			if (t == null)
 				t = new RuntimeException("Uknown Error");
@@ -242,11 +266,14 @@ public class SimpleSQLExecutor implements SQLExecutor {
 				excp.setStackTrace(t.getStackTrace());
 				throw excp;
 			}
+
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return;
+		} finally {
+			disruptor.shutdown();
+			disruptor.halt();
 		}
-
-		disruptor.shutdown();
-		disruptor.halt();
-
 	}
 
 	public static class DataEventFactory implements EventFactory<DataEvent> {
@@ -255,6 +282,20 @@ public class SimpleSQLExecutor implements SQLExecutor {
 		@Override
 		public DataEvent newInstance() {
 			return new DataEvent();
+		}
+
+	}
+
+	private final void consumeIterator(Iterator<Object[]> it,
+			AtomicBoolean shouldStop, AtomicBoolean hasError,
+			RingBuffer<DataEvent> ringBuffer) {
+
+		while (!(Thread.interrupted() || hasError.get() || shouldStop.get())
+				&& it.hasNext()) {
+			long seq = ringBuffer.next();
+			final DataEvent evt = ringBuffer.get(seq);
+			evt.dat = it.next();
+			ringBuffer.publish(seq);
 		}
 
 	}

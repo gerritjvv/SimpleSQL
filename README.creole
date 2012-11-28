@@ -1,9 +1,8 @@
-
 == Simple SQL ==
 
 === Overview ===
 
-Simple SQL is a collection of projects that work arround using SQL to manipulate data. \\
+Simple SQL is a collection of projects that work around using SQL to manipulate data. \\
 The data focused on here is not data in a DB but rather data that would be stored in a Key Value Store e.g. HBase, Berkeley DB, LevelDB ...\\
 
 In SimpleSQL data is devided into five categories:
@@ -15,7 +14,7 @@ In SimpleSQL data is devided into five categories:
  *Intermediate-Inmemory-Data, data that is stored in memory for low latencies and to avoid IO.\\
 
 
-The focus of Simple SQL is not only on how to manipulate the data based on a SQL epression but also \\
+The focus of Simple SQL is not only on how to manipulate the data based on a SQL expression but also \\
 how to deal with the storage requirements for the various categories of data. \\
 
 

@@ -128,10 +128,22 @@ public class ChunkedProcessor {
 
 	}
 
+	/**
+	 * Calls the DataSink open method on start.<br/>
+	 * DataSink.flush after each partial aggregate.<br/>
+	 * DataSink.flush and close after the method completes.<br/>
+	 * @param dataSource
+	 * @param sink
+	 * @param chunkSize
+	 * @return
+	 * @throws Throwable
+	 */
 	@SuppressWarnings("unchecked")
 	public long run(final DataSource dataSource, final DataSink sink,
 			final int chunkSize) throws Throwable {
-
+		
+		sink.open();
+		
 		final AtomicLong eventCount = new AtomicLong();
 
 		final Disruptor<WriteEvent> disruptor = createDisruptor(mainService,
@@ -143,6 +155,7 @@ public class ChunkedProcessor {
 						try {
 							event.store.write(sink);
 							event.store.close();
+							sink.flush();
 						} catch (Throwable t) {
 							LOG.error(t.toString(), t);
 						} finally {
@@ -199,7 +212,10 @@ public class ChunkedProcessor {
 		} finally {
 			waitForStop.countDown();
 		}
-
+		
+		sink.flush();
+		sink.close();
+		
 		return counter.get();
 	}
 

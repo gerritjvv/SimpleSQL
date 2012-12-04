@@ -21,4 +21,8 @@ public interface DataSink {
 	void flush();
 	void close();
 	
+	
+	public static interface DataSinkFactory<T extends DataSink>{
+			T create();
+	}
 }

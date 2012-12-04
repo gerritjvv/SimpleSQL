@@ -23,6 +23,7 @@ import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
 import org.simplesql.data.ChunkedIterator;
 import org.simplesql.data.DataSink;
+import org.simplesql.data.DataSink.DataSinkFactory;
 import org.simplesql.data.DataSource;
 import org.simplesql.data.MultiThreadedDataSource;
 import org.simplesql.data.TransformFunction;
@@ -107,15 +108,16 @@ public class ChunkedProcessor {
 
 	}
 
-	public void runAsync(final DataSource dataSource, final DataSink sink,
-			final int chunkSize) throws Throwable {
+	public <T extends DataSink> void runAsync(final DataSource dataSource,
+			final DataSinkFactory<T> sinkFactory, final int chunkSize)
+			throws Throwable {
 
 		future = mainService.submit(new Callable<Long>() {
 
 			@Override
 			public Long call() throws Exception {
 				try {
-					return run(dataSource, sink, chunkSize);
+					return run(dataSource, sinkFactory, chunkSize);
 				} catch (Throwable e) {
 					RuntimeException excp = new RuntimeException(e.toString(),
 							e);
@@ -130,20 +132,19 @@ public class ChunkedProcessor {
 
 	/**
 	 * Calls the DataSink open method on start.<br/>
-	 * DataSink.flush after each partial aggregate.<br/>
-	 * DataSink.flush and close after the method completes.<br/>
+	 * DataSink.flush and close after each partial aggregate.<br/>
+	 * 
 	 * @param dataSource
-	 * @param sink
+	 * @param sinkFactory
 	 * @param chunkSize
 	 * @return
 	 * @throws Throwable
 	 */
 	@SuppressWarnings("unchecked")
-	public long run(final DataSource dataSource, final DataSink sink,
-			final int chunkSize) throws Throwable {
-		
-		sink.open();
-		
+	public <T extends DataSink> long run(final DataSource dataSource,
+			final DataSinkFactory<T> sinkFactory, final int chunkSize)
+			throws Throwable {
+
 		final AtomicLong eventCount = new AtomicLong();
 
 		final Disruptor<WriteEvent> disruptor = createDisruptor(mainService,
@@ -153,9 +154,14 @@ public class ChunkedProcessor {
 							boolean buffer) throws Exception {
 
 						try {
-							event.store.write(sink);
-							event.store.close();
-							sink.flush();
+							final T sink = sinkFactory.create();
+							try {
+								event.store.write(sink);
+								event.store.close();
+								sink.flush();
+							} finally {
+								sink.close();
+							}
 						} catch (Throwable t) {
 							LOG.error(t.toString(), t);
 						} finally {
@@ -174,21 +180,23 @@ public class ChunkedProcessor {
 					.iterators() : Arrays.asList(dataSource.iterator());
 			final int size = iterators.size();
 			final CountDownLatch latch = new CountDownLatch(size);
-			
+
 			int i = 0;
 			for (final Iterator<Object[]> it : iterators) {
 				final int threadCount = i++;
 				mainService.submit(new Runnable() {
 
 					public void run() {
-						LOG.info("Consume from thread " + threadCount + " of " + size);
+						LOG.info("Consume from thread " + threadCount + " of "
+								+ size);
 						try {
 							counter.addAndGet(consumeIterator(disruptor, it,
 									chunkSize));
-						}catch(Throwable t){
+						} catch (Throwable t) {
 							LOG.error(t.toString(), t);
 						} finally {
-							LOG.info("End consumption from thread " + threadCount + " of " + size);
+							LOG.info("End consumption from thread "
+									+ threadCount + " of " + size);
 							latch.countDown();
 						}
 
@@ -197,7 +205,7 @@ public class ChunkedProcessor {
 
 			}
 
-			if(size > 0)
+			if (size > 0)
 				latch.await();
 
 			disruptor.shutdown();
@@ -212,10 +220,7 @@ public class ChunkedProcessor {
 		} finally {
 			waitForStop.countDown();
 		}
-		
-		sink.flush();
-		sink.close();
-		
+
 		return counter.get();
 	}
 

@@ -66,7 +66,6 @@ public class ProjectionKeyUtil {
 	 * @param projection
 	 * @return Map of KeyColumnValues key = column name
 	 */
-	@Deprecated
 	public static final Map<String, KeyColumnValue> getKeyColumnValueMap(
 			final int offset, byte[] key, int bufferFrom, int bufferLen,
 			Projection projection) {

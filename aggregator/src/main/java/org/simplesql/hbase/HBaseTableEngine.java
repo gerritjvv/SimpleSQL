@@ -17,7 +17,7 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.simplesql.data.Cell;
-import org.simplesql.data.DataSink;
+import org.simplesql.data.DefaultDataSink;
 import org.simplesql.data.Key;
 import org.simplesql.data.RangeGroups;
 import org.simplesql.data.TransformFunction;
@@ -155,7 +155,7 @@ public class HBaseTableEngine implements TableEngine {
 
 				final AtomicInteger count = new AtomicInteger(0);
 
-				store.write(new DataSink() {
+				store.write(new DefaultDataSink() {
 
 					@Override
 					public boolean fill(Key key, Cell<?>[] data) {

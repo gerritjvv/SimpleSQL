@@ -9,6 +9,8 @@ package org.simplesql.data;
  */
 public interface DataSink {
 
+	void open();
+	
 	/**
 	 * @param key Key
 	 * @param data
@@ -16,4 +18,7 @@ public interface DataSink {
 	 */
 	boolean fill(Key key, Cell<?>[] data);
 
+	void flush();
+	void close();
+	
 }

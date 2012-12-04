@@ -3,6 +3,7 @@ package org.simplesql.funct;
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
+import org.simplesql.data.DefaultDataSink;
 import org.simplesql.data.Key;
 
 /**
@@ -18,7 +19,7 @@ import org.simplesql.data.Key;
  * 
  * @param <T>
  */
-public class GroupBy implements DataSink {
+public class GroupBy extends DefaultDataSink {
 
 	final AggregateStore store;
 

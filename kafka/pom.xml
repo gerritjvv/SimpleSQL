@@ -16,10 +16,10 @@
 
   <dependencies>
   <dependency>
-      <groupId>org.simplesql</groupId>
-      <artifactId>om</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+	<groupId>org.simplesql</groupId>
+	<artifactId>om</artifactId>
+	<version>${project.version}</version>
+</dependency>
   <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka-core</artifactId>

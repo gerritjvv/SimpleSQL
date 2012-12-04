@@ -15,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
+import org.simplesql.data.DefaultDataSink;
 import org.simplesql.data.DoubleCell;
 import org.simplesql.data.IntCell;
 import org.simplesql.data.Key;
@@ -74,7 +75,7 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 		final AtomicInteger counter = new AtomicInteger(0);
 		final AtomicDouble keyCounter = new AtomicDouble(198);
 		// we expect the keys with values at index 0: values 100-95
-		map.write(new DataSink() {
+		map.write(new DefaultDataSink() {
 
 			@Override
 			public boolean fill(Key key, Cell<?>[] data) {
@@ -126,7 +127,7 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 		final AtomicInteger counter = new AtomicInteger(0);
 
 		// we expect the keys with values at index 0: values 100-95
-		map.write(new DataSink() {
+		map.write(new DefaultDataSink() {
 
 			@Override
 			public boolean fill(Key key, Cell<?>[] data) {
@@ -171,7 +172,7 @@ public class BerkeleyAggregateStoreTest extends TestCase {
 		final AtomicInteger counter = new AtomicInteger(rows - 1);
 
 		// we expect the keys with values at index 0: values 100-95
-		map.write(new DataSink() {
+		map.write(new DefaultDataSink() {
 
 			@Override
 			public boolean fill(Key key, Cell<?>[] data) {

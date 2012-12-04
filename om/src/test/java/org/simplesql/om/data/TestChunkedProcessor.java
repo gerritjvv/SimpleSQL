@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.simplesql.data.Cell;
 import org.simplesql.data.DataSink;
 import org.simplesql.data.DataSource;
+import org.simplesql.data.DefaultDataSink;
 import org.simplesql.data.Key;
 import org.simplesql.data.LongCell;
 import org.simplesql.data.MultiThreadedDataSource;
@@ -113,7 +114,7 @@ public class TestChunkedProcessor {
 		
 	}
 
-	static class MySink implements DataSink {
+	static class MySink  extends DefaultDataSink{
 
 		Map<Key, Cell<?>[]> map = new HashMap<Key, Cell<?>[]>();
 		List<Long> vals = new ArrayList<Long>(1000);

@@ -16,10 +16,9 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
-import org.simplesql.data.DataSink;
 import org.simplesql.data.DataSource;
+import org.simplesql.data.DefaultDataSink;
 import org.simplesql.data.Key;
-import org.simplesql.data.util.DisruptorDataSource;
 import org.simplesql.data.util.FileDataSource;
 import org.simplesql.data.util.STDINDataSource;
 import org.simplesql.data.util.SelectTransform;
@@ -111,7 +110,7 @@ public class Aggregator {
 						new OutputStreamWriter(System.out));
 
 				try {
-					storage.write(new DataSink() {
+					storage.write(new DefaultDataSink() {
 
 						public boolean fill(Key key, Cell<?>[] data) {
 							try {

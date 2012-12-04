@@ -30,10 +30,8 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.codehaus.janino.ExpressionEvaluator;
 import org.simplesql.data.AggregateStore;
 import org.simplesql.data.Cell;
-import org.simplesql.data.DataSink;
-import org.simplesql.data.DataSource;
+import org.simplesql.data.DefaultDataSink;
 import org.simplesql.data.Key;
-import org.simplesql.hbase.ResultScannerIterator;
 import org.simplesql.om.ClientInfoTemplate.Projection;
 import org.simplesql.om.data.StorageManager;
 import org.simplesql.om.data.stores.KratiStoreManager;
@@ -193,7 +191,7 @@ public class HBaseAggregator {
 							new OutputStreamWriter(System.out));
 
 					try {
-						storage.write(new DataSink() {
+						storage.write(new DefaultDataSink() {
 
 							public boolean fill(Key key, Cell<?>[] data) {
 								try {

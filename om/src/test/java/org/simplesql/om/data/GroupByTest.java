@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 import org.simplesql.data.Cell;
-import org.simplesql.data.DataSink;
+import org.simplesql.data.DefaultDataSink;
 import org.simplesql.data.DoubleCell;
 import org.simplesql.data.IntCell;
 import org.simplesql.data.Key;
@@ -51,7 +51,7 @@ public class GroupByTest extends TestCase{
 			}
 		}
 	   
-	   	groupBy.write(new DataSink() {
+	   	groupBy.write(new DefaultDataSink() {
 			
 			@Override
 			public boolean fill(Key key, Cell[] data) {

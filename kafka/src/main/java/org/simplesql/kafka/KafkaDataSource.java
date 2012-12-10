@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import kafka.consumer.KafkaStream;
+import kafka.message.MessageAndMetadata;
 
 import org.simplesql.data.MultiThreadedDataSource;
 import org.simplesql.data.util.Transform;
@@ -22,7 +23,7 @@ public class KafkaDataSource<T> implements MultiThreadedDataSource {
 
 	@SuppressWarnings("unchecked")
 	public Iterator<Object[]> iterator() {
-		return new TransformedIterator<T>(((Iterator<T>) streams.get(0)
+		return new TransformedIterator<T>(((Iterator<MessageAndMetadata<T>>) streams.get(0)
 				.iterator()), transform);
 	}
 
@@ -35,7 +36,7 @@ public class KafkaDataSource<T> implements MultiThreadedDataSource {
 		List<Iterator<Object[]>> its = new ArrayList<Iterator<Object[]>>();
 		for (KafkaStream<T> stream : streams) {
 			its.add(new TransformedIterator<T>(
-					((Iterator<T>) stream.iterator()), transform));
+			((Iterator<MessageAndMetadata<T>>) stream.iterator()), transform));
 		}
 
 		return its;
@@ -43,10 +44,10 @@ public class KafkaDataSource<T> implements MultiThreadedDataSource {
 
 	static class TransformedIterator<T> implements Iterator<Object[]> {
 
-		final Iterator<T> it;
+		final Iterator<MessageAndMetadata<T>> it;
 		final Transform<T> transform;
 
-		public TransformedIterator(Iterator<T> it, Transform<T> transform) {
+		public TransformedIterator(Iterator<MessageAndMetadata<T>> it, Transform<T> transform) {
 			super();
 			this.it = it;
 			this.transform = transform;
@@ -57,7 +58,8 @@ public class KafkaDataSource<T> implements MultiThreadedDataSource {
 		}
 
 		public Object[] next() {
-			return transform.apply(it.next());
+			MessageAndMetadata<T> obj = it.next();
+			return transform.apply(obj.message());
 		}
 
 		public void remove() {

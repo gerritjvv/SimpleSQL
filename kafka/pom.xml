@@ -21,8 +21,8 @@
 	<version>${project.version}</version>
 </dependency>
   <dependency>
-      <groupId>org.apache.kafka</groupId>
-      <artifactId>kafka-core</artifactId>
+      <groupId>kafka</groupId>
+      <artifactId>kafka</artifactId>
       <version>0.7.2</version>
       <scope>provided</scope>
     </dependency>

@@ -99,7 +99,7 @@ public abstract class HBaseDataSink extends DefaultDataSink{
 	}
 	
 		
-	abstract Row createRow(KeyWriterReader kwr, Key key, Cell<?>[] data);
+	public abstract Row createRow(KeyWriterReader kwr, Key key, Cell<?>[] data);
 
 	/**
 	 * Utility method to return a TableFactory that will set auto flush to false for each table

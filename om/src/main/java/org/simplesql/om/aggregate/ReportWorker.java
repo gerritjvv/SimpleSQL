@@ -28,13 +28,13 @@ public abstract class ReportWorker {
 		this.chunkSize = chunkSize;
 	}
 
-	abstract <T extends DataSink> DataSinkFactory<T> getDataSinkFactory();
+	public abstract <T extends DataSink> DataSinkFactory<T> getDataSinkFactory();
 
-	abstract DataSource getDataSource();
+	public abstract DataSource getDataSource();
 
-	abstract String getSchema();
+	public abstract String getSchema();
 
-	abstract String getSelect();
+	public abstract String getSelect();
 
 	public long stop() {
 		return (cn == null) ? 0L : cn.stopWait();

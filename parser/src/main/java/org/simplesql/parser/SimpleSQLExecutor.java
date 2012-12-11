@@ -138,10 +138,17 @@ public class SimpleSQLExecutor implements SQLExecutor {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void pump(DataSource source, final AggregateStore store,
+			final Progress progressListener){
+		pump2(source, store, progressListener);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public long pump2(DataSource source, final AggregateStore store,
 			final Progress progressListener) {
 
 		int ringSize = 4096;
-
+		long increments = 0L;
 		/**
 		 * Control parameters
 		 */

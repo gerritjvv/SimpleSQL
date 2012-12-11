@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.simplesql</groupId>
-	<artifactId>kafka</artifactId>
+	<artifactId>hbase</artifactId>
 	<version>0.2.0</version>
 	<packaging>jar</packaging>
 
-	<name>kafka</name>
+	<name>hbase</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -16,34 +16,21 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.simplesql</groupId>
-			<artifactId>om</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-core</artifactId>
-			<version>0.7.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.netflix.curator</groupId>
-			<artifactId>curator-test</artifactId>
-			<version>1.2.5</version>
-			<scope>test</scope>
-		</dependency>
 
 		<dependency>
-			<groupId>org.apache.zookeeper</groupId>
-			<artifactId>zookeeper</artifactId>
-			<version>3.4.3</version>
-			<scope>test</scope>
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase</artifactId>
+			<version>0.94.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.simplesql</groupId>
+			<artifactId>om</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

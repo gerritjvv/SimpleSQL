@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
+import org.apache.log4j.Logger;
 import org.codehaus.janino.CompileException;
 import org.codehaus.janino.ExpressionEvaluator;
 import org.codehaus.janino.Parser.ParseException;
@@ -33,6 +34,8 @@ import org.simplesql.schema.TableDef;
  * 
  */
 public class SimpleSQLCompiler implements SQLCompiler {
+
+	private final static Logger LOG = Logger.getLogger(SimpleSQLCompiler.class);
 
 	final ExecutorService execService;
 
@@ -104,10 +107,10 @@ public class SimpleSQLCompiler implements SQLCompiler {
 			Class<?>[] columnTypes = (Class<?>[]) nameTypes[1];
 
 			TreeJavaConvert converter = new TreeJavaConvert(select, tableDef);
+			final String selectStr = "new org.simplesql.data.Cell[]{"
+					+ converter.getSelectExpressions() + "}";
 
-			ExpressionEvaluator eval = new ExpressionEvaluator(
-					"new org.simplesql.data.Cell[]{"
-							+ converter.getSelectExpressions() + "}",
+			ExpressionEvaluator eval = new ExpressionEvaluator(selectStr,
 					Object[].class, columnNames, columnTypes);
 
 			// Create key based on group by.
@@ -123,6 +126,18 @@ public class SimpleSQLCompiler implements SQLCompiler {
 					.trim().isEmpty()) ? new AlwaysTrueWhereFilter()
 					: new SimpleWhereFilter(converter, columnNames, columnTypes);
 
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("SELECT " + selectStr + " columnNames: "
+						+ Arrays.toString(columnNames) + " columnTypes: "
+						+ Arrays.toString(columnTypes));
+				
+				LOG.debug("GROUP BY new "
+						+ SimpleCellKey.class.getName() + "( new Object[]{"
+						+ converter.getGroupByExpressions() + "})");
+				
+				LOG.debug("WHERE " + whereExpressions);
+			}
+			
 			return new SimpleSQLExecutor(execService, tableDef, eval,
 					keyParser, whereFilter, select.getTransforms(), select);
 
@@ -187,8 +202,8 @@ public class SimpleSQLCompiler implements SQLCompiler {
 		if (usedI != usedLen) {
 			throw new RuntimeException(
 					"Some of the columns do not exist in table definition : found only "
-							+ Arrays.toString(names) 
-							+ " variables used: " + Arrays.toString(variablesUsed.toArray())
+							+ Arrays.toString(names) + " variables used: "
+							+ Arrays.toString(variablesUsed.toArray())
 							+ " defs: " + Arrays.toString(defs));
 		}
 

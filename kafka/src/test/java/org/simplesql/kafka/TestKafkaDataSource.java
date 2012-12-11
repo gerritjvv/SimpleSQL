@@ -90,7 +90,7 @@ public class TestKafkaDataSource extends ZookeeperTestSuite{
 
 		public boolean fill(Key key, Cell<?>[] data) {
 			Cell<?>[] existingData = map.get(key);
-
+			
 			vals.add(data[1].getLongValue());
 
 			if (existingData == null) {

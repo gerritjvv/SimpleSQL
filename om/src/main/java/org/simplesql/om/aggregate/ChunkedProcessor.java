@@ -91,9 +91,10 @@ public class ChunkedProcessor {
 
 		shouldStop.set(true);
 		try {
-			waitForStop.await();
-
 			mainService.shutdown();
+			waitForStop.await(5L, TimeUnit.SECONDS);
+			//if no shutdown in 5 seconds we forcefully shutdown
+			mainService.shutdownNow();
 			mainService.awaitTermination(10, TimeUnit.SECONDS);
 
 			return future.get();
@@ -112,7 +113,7 @@ public class ChunkedProcessor {
 			final DataSinkFactory<T> sinkFactory, final int chunkSize)
 			throws Throwable {
 
-		future = mainService.submit(new Callable<Long>() {
+		future = Executors.newSingleThreadExecutor().submit(new Callable<Long>() {
 
 			@Override
 			public Long call() throws Exception {
@@ -231,7 +232,7 @@ public class ChunkedProcessor {
 	private final long consumeIterator(Disruptor<WriteEvent> disruptor,
 			Iterator<Object[]> iterator, int chunkSize) {
 		long i = 0;
-		while (!Thread.interrupted()) {
+		while (! (Thread.interrupted() || shouldStop.get() ) ) {
 			final AggregateStore storage = new HashMapAggregateStore(exec
 					.getTransforms().toArray(new TransformFunction[0]));
 
@@ -240,7 +241,6 @@ public class ChunkedProcessor {
 					new ChunkedIterator<Object[]>(iterator, chunkSize));
 
 			final long v = exec.pump2(source, storage, null);
-			
 			if (v <= 0) {
 				break;
 			}

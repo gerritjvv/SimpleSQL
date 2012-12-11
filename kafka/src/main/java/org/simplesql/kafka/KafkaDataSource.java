@@ -21,22 +21,22 @@ public class KafkaDataSource<T> implements MultiThreadedDataSource {
 		this.transform = transform;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Iterator<Object[]> iterator() {
-		return new TransformedIterator<T>(((Iterator<MessageAndMetadata<T>>) streams.get(0)
-				.iterator()), transform);
+		return new TransformedIterator<T>(
+				((Iterator<MessageAndMetadata<T>>) streams.get(0).iterator()),
+				transform);
 	}
 
 	public long getEstimatedSize() {
 		return 0;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Iterator<Object[]>> iterators() {
 		List<Iterator<Object[]>> its = new ArrayList<Iterator<Object[]>>();
 		for (KafkaStream<T> stream : streams) {
 			its.add(new TransformedIterator<T>(
-			((Iterator<MessageAndMetadata<T>>) stream.iterator()), transform));
+					((Iterator<MessageAndMetadata<T>>) stream.iterator()),
+					transform));
 		}
 
 		return its;
@@ -47,7 +47,8 @@ public class KafkaDataSource<T> implements MultiThreadedDataSource {
 		final Iterator<MessageAndMetadata<T>> it;
 		final Transform<T> transform;
 
-		public TransformedIterator(Iterator<MessageAndMetadata<T>> it, Transform<T> transform) {
+		public TransformedIterator(Iterator<MessageAndMetadata<T>> it,
+				Transform<T> transform) {
 			super();
 			this.it = it;
 			this.transform = transform;

@@ -91,6 +91,7 @@ public class SimpleSQLExecutor implements SQLExecutor {
 			selectOrderIndexes = Arrays.copyOf(tmpDataOrderIndexes,
 					select.getSelectOrderIndexesLen());
 		}
+		
 
 	}
 
@@ -252,7 +253,7 @@ public class SimpleSQLExecutor implements SQLExecutor {
 					execService.submit(new Callable<Long>() {
 
 						public Long call() throws Exception{
-
+							System.out.println("Call Iterator");
 							try {
 								return consumeIterator(it, shouldStop, hasError,
 										ringBuffer);
@@ -260,6 +261,7 @@ public class SimpleSQLExecutor implements SQLExecutor {
 								LOG.error(t.toString(), t);
 								return -1L;
 							} finally {
+								System.out.println("Consumed Iterator");
 								latch.countDown();
 							}
 
@@ -292,6 +294,7 @@ public class SimpleSQLExecutor implements SQLExecutor {
 			
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
+			return -1L;
 		} finally {
 			disruptor.shutdown();
 			disruptor.halt();

@@ -95,7 +95,7 @@ public class ChunkedProcessor {
 
 			mainService.shutdown();
 			mainService.awaitTermination(10, TimeUnit.SECONDS);
-			
+
 			return future.get();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -154,12 +154,12 @@ public class ChunkedProcessor {
 							boolean buffer) throws Exception {
 
 						try {
-						
+
 							final T sink = sinkFactory.create();
 							try {
-								if(LOG.isDebugEnabled())
+								if (LOG.isDebugEnabled())
 									LOG.debug("Send data to sink: " + sink);
-								
+
 								event.store.write(sink);
 								event.store.close();
 								sink.flush();
@@ -217,7 +217,6 @@ public class ChunkedProcessor {
 			execService.shutdown();
 			execService.awaitTermination(10, TimeUnit.SECONDS);
 
-			
 			disruptor.halt();
 
 			System.out.println("Published: " + counter.get()
@@ -229,10 +228,10 @@ public class ChunkedProcessor {
 		return counter.get();
 	}
 
-	private final int consumeIterator(Disruptor<WriteEvent> disruptor,
+	private final long consumeIterator(Disruptor<WriteEvent> disruptor,
 			Iterator<Object[]> iterator, int chunkSize) {
-		int i = 0;
-		while (!Thread.interrupted() && iterator.hasNext()) {
+		long i = 0;
+		while (!Thread.interrupted()) {
 			final AggregateStore storage = new HashMapAggregateStore(exec
 					.getTransforms().toArray(new TransformFunction[0]));
 
@@ -240,14 +239,19 @@ public class ChunkedProcessor {
 			final DataSource source = new DataSourceWrapper(
 					new ChunkedIterator<Object[]>(iterator, chunkSize));
 
-			exec.pump(source, storage, null);
+			final long v = exec.pump2(source, storage, null);
+			
+			if (v <= 0) {
+				break;
+			}
+
 
 			// async operation please see above out of the while loop in
 			// which the anonymous class
 			// will write to th event.store.write(sink)
-			if(LOG.isDebugEnabled())
+			if (LOG.isDebugEnabled())
 				LOG.debug("publish data to sink consumption");
-			
+
 			disruptor
 					.publishEvent(new EventTranslator<ChunkedProcessor.WriteEvent>() {
 
@@ -263,7 +267,7 @@ public class ChunkedProcessor {
 			// "ms");
 			// }
 
-			i++;
+			i+=v;
 
 		}
 

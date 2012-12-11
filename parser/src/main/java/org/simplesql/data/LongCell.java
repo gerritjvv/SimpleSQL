@@ -81,9 +81,7 @@ public final class LongCell implements Cell<Number> {
 
 	@Override
 	public void setData(Number dat) {
-		if (dat == null)
-			val = 0L;
-		val = dat.longValue();
+		val = (dat == null) ? 0L : dat.longValue();
 	}
 
 	@Override
@@ -198,22 +196,22 @@ public final class LongCell implements Cell<Number> {
 
 	@Override
 	public void inc(byte val) {
-		this.val += val;		
+		this.val += val;
 	}
 
 	@Override
 	public byte getByteValue() {
-		return (byte)val;
+		return (byte) val;
 	}
 
 	@Override
 	public float getFloatValue() {
-		return (float)val;
+		return (float) val;
 	}
 
 	@Override
 	public short getShortValue() {
-		return (short)val;
+		return (short) val;
 	}
 
 	@Override

@@ -9,8 +9,6 @@ import java.io.ObjectOutputStream;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
 
-import com.google.common.hash.Hasher;
-
 public final class ByteCell implements Cell<Number> {
 
 	byte val = 0;
@@ -31,7 +29,6 @@ public final class ByteCell implements Cell<Number> {
 		this.val = val;
 		this.name = name;
 	}
-	
 
 	public void readFields(DataInput in) throws IOException {
 		val = in.readByte();
@@ -40,7 +37,6 @@ public final class ByteCell implements Cell<Number> {
 	public void write(DataOutput out) throws IOException {
 		out.write(val);
 	}
-	
 
 	@Override
 	public void inc() {
@@ -84,9 +80,7 @@ public final class ByteCell implements Cell<Number> {
 
 	@Override
 	public void setData(Number dat) {
-		if (dat == null)
-			val = 0;
-		val = dat.byteValue();
+		val = (dat == null) ? 0 : dat.byteValue();
 	}
 
 	@Override

@@ -21,10 +21,10 @@ public final class SimpleCellKey implements Key {
 	private static final long serialVersionUID = 1L;
 
 	String str;
-	Cell[] cells;
+	private Cell[] cells;
 	int hashCode = -1;
 
-	SCHEMA[] schemas;
+	private SCHEMA[] schemas;
 
 	/**
 	 * To be used only for serialization
@@ -118,7 +118,7 @@ public final class SimpleCellKey implements Key {
 
 	@Override
 	public boolean equals(Object key) {
-		return (compareTo((Key) key) == 0);
+		return (key instanceof Key) ? (compareTo((Key) key) == 0) : false;
 	}
 
 	@Override

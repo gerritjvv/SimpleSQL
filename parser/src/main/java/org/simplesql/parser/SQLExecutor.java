@@ -27,11 +27,23 @@ public interface SQLExecutor {
 	@SuppressWarnings("rawtypes")
 	void pump(DataSource source, AggregateStore store, Progress progressListener);
 
+	/**
+	 * 
+	 * @param source
+	 * @param storage
+	 * @param progressListener
+	 * @return long the number of items read from the DataSource's iterator(s)
+	 */
+	@SuppressWarnings("rawtypes")
+	long pump2(DataSource source, AggregateStore storage,
+			Progress progressListener);
+
 	int getLimit();
 
 	int[] getGroupOrderIndexes();
 
 	int[] getSelectOrderIndexes();
+
 	/**
 	 * Get the order direction that was specified by the select order by
 	 * statement
@@ -39,7 +51,7 @@ public interface SQLExecutor {
 	 * @return
 	 */
 	AggregateStore.ORDER getOrder();
-	
+
 	/**
 	 * Returns all of the columns used from the table
 	 * 
@@ -52,6 +64,7 @@ public interface SQLExecutor {
 	RangeGroups getRangeGroups();
 
 	Set<String> getSelectOrderByColumns();
+
 	Set<String> getGroupOrderByColumns();
 
 	/**
@@ -90,6 +103,5 @@ public interface SQLExecutor {
 		void update(ProgressContext ctx);
 
 	}
-	
 
 }

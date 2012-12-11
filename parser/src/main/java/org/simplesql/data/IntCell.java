@@ -80,9 +80,7 @@ public final class IntCell implements Cell<Number> {
 
 	@Override
 	public void setData(Number dat) {
-		if (dat == null)
-			val = 0;
-		val = dat.intValue();
+		val = (dat == null) ? 0 : dat.intValue();
 	}
 
 	@Override

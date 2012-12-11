@@ -9,10 +9,10 @@ package org.simplesql.data;
  */
 public class DataEntry {
 
-	final Cell[] cells;
-	final TransformFunction[] functions;
-	final int len;
-	final Key key;
+	final private Cell[] cells;
+	final private TransformFunction[] functions;
+	final private int len;
+	final private Key key;
 
 	public DataEntry(Key key, Cell[] cells, TransformFunction[] functions) {
 		this.key = key;

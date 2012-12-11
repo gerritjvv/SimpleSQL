@@ -16,7 +16,7 @@ public class CellTuple implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	Cell[] cells;
+	private Cell[] cells;
 
 	/**
 	 * To be used only for serialization
@@ -46,12 +46,11 @@ public class CellTuple implements Serializable {
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException {
-		int len = in.readInt();
+		final int len = in.readInt();
 		cells = new Cell[len];
-		StringBuilder buff = new StringBuilder();
 		try {
 			for (int i = 0; i < len; i++) {
-				Cell cell = (Cell) in.readObject();
+				final Cell cell = (Cell) in.readObject();
 				cells[i] = cell;
 			}
 		} catch (ClassNotFoundException e) {

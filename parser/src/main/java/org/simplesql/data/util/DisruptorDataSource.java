@@ -146,7 +146,7 @@ public class DisruptorDataSource implements DataSource {
 
 	private static class DisruptorIt implements Iterator<Object[]> {
 
-		final int ringSize = 4096;
+		final private int ringSize = 4096;
 		final AtomicBoolean shouldStop = new AtomicBoolean(false);
 		final AtomicBoolean hasError = new AtomicBoolean(false);
 		final AtomicReference<Throwable> errorReference = new AtomicReference<Throwable>();

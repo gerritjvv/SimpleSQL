@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -237,32 +239,41 @@ public class SimpleSQLExecutor implements SQLExecutor {
 		try {
 			if (size == 1) {
 				// consume the single iterator
-				consumeIterator(iterators.get(0), shouldStop, hasError,
+				increments = consumeIterator(iterators.get(0), shouldStop, hasError,
 						ringBuffer);
 			} else {
 				// here we launch a thread per iterator that will read from each
 				// and send to the ring buffer
 				// at the end of the for loop we wait indefinitely for the
 				// iterators to complete
+				final List<Future<Long>> futures = new ArrayList<Future<Long>>(iterators.size());
+				
 				for (final Iterator<Object[]> it : iterators) {
-					execService.submit(new Runnable() {
+					execService.submit(new Callable<Long>() {
 
-						public void run() {
+						public Long call() throws Exception{
 
 							try {
-								consumeIterator(it, shouldStop, hasError,
+								return consumeIterator(it, shouldStop, hasError,
 										ringBuffer);
 							}catch(Throwable t){
 								LOG.error(t.toString(), t);
+								return -1L;
 							} finally {
 								latch.countDown();
 							}
 
 						}
+
 					});
 
 				}
 				latch.await();
+				
+				for(Future<Long> future : futures){
+					increments += future.get();
+				}
+				
 			}
 			
 			if(hasError.get()){
@@ -281,10 +292,10 @@ public class SimpleSQLExecutor implements SQLExecutor {
 			
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			return;
 		} finally {
 			disruptor.shutdown();
 			disruptor.halt();
+			return increments;
 		}
 	}
 
@@ -298,18 +309,22 @@ public class SimpleSQLExecutor implements SQLExecutor {
 
 	}
 
-	private final void consumeIterator(Iterator<Object[]> it,
+	private final long consumeIterator(Iterator<Object[]> it,
 			AtomicBoolean shouldStop, AtomicBoolean hasError,
 			RingBuffer<DataEvent> ringBuffer) {
-
+		
+		long count = 0;
 		while (!(Thread.interrupted() || hasError.get() || shouldStop.get())
 				&& it.hasNext()) {
 			long seq = ringBuffer.next();
 			final DataEvent evt = ringBuffer.get(seq);
 			evt.dat = it.next();
 			ringBuffer.publish(seq);
+			count++;
 		}
-
+		
+		return count;
+		
 	}
 
 	public static class DataEvent {

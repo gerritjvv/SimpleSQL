@@ -1,6 +1,5 @@
 package org.simplesql.data;
 
-
 /**
  * 
  * Create's a new DataEntry from a Cell array and functions.
@@ -8,8 +7,8 @@ package org.simplesql.data;
  */
 public class DataEntryBuilder {
 
-	final Cell[] cells;
-	final TransformFunction[] functions;
+	final private Cell[] cells;
+	final private TransformFunction[] functions;
 
 	public DataEntryBuilder(Cell[] cells, TransformFunction[] functions) {
 		this.cells = cells;

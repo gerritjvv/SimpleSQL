@@ -9,8 +9,6 @@ import java.io.ObjectOutputStream;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
 
-import com.google.common.hash.Hasher;
-
 public final class ShortCell implements Cell<Number> {
 
 	short val = 0;
@@ -84,9 +82,7 @@ public final class ShortCell implements Cell<Number> {
 
 	@Override
 	public void setData(Number dat) {
-		if (dat == null)
-			val = 0;
-		val = dat.shortValue();
+		val = (dat == null) ? 0 : dat.shortValue();
 	}
 
 	@Override

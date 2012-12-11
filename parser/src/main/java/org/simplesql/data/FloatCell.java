@@ -9,8 +9,6 @@ import java.io.ObjectOutputStream;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
 
-import com.google.common.hash.Hasher;
-
 public final class FloatCell implements Cell<Number> {
 
 	float val = 0.0F;
@@ -31,7 +29,6 @@ public final class FloatCell implements Cell<Number> {
 		this.val = val;
 		this.name = name;
 	}
-	
 
 	public void readFields(DataInput in) throws IOException {
 		val = in.readFloat();
@@ -40,7 +37,6 @@ public final class FloatCell implements Cell<Number> {
 	public void write(DataOutput out) throws IOException {
 		out.writeFloat(val);
 	}
-	
 
 	@Override
 	public void inc() {
@@ -84,9 +80,7 @@ public final class FloatCell implements Cell<Number> {
 
 	@Override
 	public void setData(Number dat) {
-		if (dat == null)
-			val = 0L;
-		val = dat.floatValue();
+		val = (dat == null) ? 0F : dat.floatValue();
 	}
 
 	@Override
@@ -208,17 +202,17 @@ public final class FloatCell implements Cell<Number> {
 
 	@Override
 	public byte getByteValue() {
-		return (byte)val;
+		return (byte) val;
 	}
 
 	@Override
 	public double getDoubleValue() {
-		return (double)val;
+		return (double) val;
 	}
 
 	@Override
 	public short getShortValue() {
-		return (short)val;
+		return (short) val;
 	}
 
 	@Override

@@ -9,8 +9,6 @@ import java.io.ObjectOutputStream;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.simplesql.util.Bytes;
 
-import com.google.common.hash.Hasher;
-
 public final class DoubleCell implements Cell<Number> {
 
 	double val = 0.0D;
@@ -87,9 +85,7 @@ public final class DoubleCell implements Cell<Number> {
 
 	@Override
 	public void setData(Number dat) {
-		if (dat == null)
-			val = 0L;
-		val = dat.doubleValue();
+		val = (dat == null) ? 0L : dat.doubleValue();
 	}
 
 	@Override
@@ -216,7 +212,7 @@ public final class DoubleCell implements Cell<Number> {
 
 	@Override
 	public byte getByteValue() {
-		return (byte)val;
+		return (byte) val;
 	}
 
 	@Override

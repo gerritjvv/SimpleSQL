@@ -65,7 +65,7 @@ public class TestChunkedProcessor {
 		assertEquals(total, atotal);
 
 		// test that the total is what was expected logically
-		assertEquals(chunkSize * iterations, total);
+		assertEquals(iterations, total);
 
 	}
 
@@ -109,7 +109,7 @@ public class TestChunkedProcessor {
 		assertEquals(total, atotal);
 
 		// test that the total is what was expected logically
-		assertEquals(chunkSize * iterations, total);
+		assertEquals(iterations, total);
 
 	}
 

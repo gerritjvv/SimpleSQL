@@ -6,7 +6,7 @@
 
 	<groupId>org.simplesql</groupId>
 	<artifactId>om</artifactId>
-	<version>0.2.0</version>
+	<version>0.2.1</version>
 	<name>om</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>org.simplesql</groupId>
 			<artifactId>parser</artifactId>
-			<version>0.2.0</version>
+			<version>0.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simplesql</groupId>

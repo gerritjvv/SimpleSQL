@@ -95,7 +95,7 @@ public class ChunkedProcessor {
 
 			mainService.shutdown();
 			mainService.awaitTermination(10, TimeUnit.SECONDS);
-
+			
 			return future.get();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -154,8 +154,12 @@ public class ChunkedProcessor {
 							boolean buffer) throws Exception {
 
 						try {
+						
 							final T sink = sinkFactory.create();
 							try {
+								if(LOG.isDebugEnabled())
+									LOG.debug("Send data to sink: " + sink);
+								
 								event.store.write(sink);
 								event.store.close();
 								sink.flush();
@@ -213,6 +217,7 @@ public class ChunkedProcessor {
 			execService.shutdown();
 			execService.awaitTermination(10, TimeUnit.SECONDS);
 
+			
 			disruptor.halt();
 
 			System.out.println("Published: " + counter.get()
@@ -240,6 +245,9 @@ public class ChunkedProcessor {
 			// async operation please see above out of the while loop in
 			// which the anonymous class
 			// will write to th event.store.write(sink)
+			if(LOG.isDebugEnabled())
+				LOG.debug("publish data to sink consumption");
+			
 			disruptor
 					.publishEvent(new EventTranslator<ChunkedProcessor.WriteEvent>() {
 

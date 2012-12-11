@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -22,70 +23,51 @@ import org.simplesql.data.LongCell;
 import org.simplesql.data.MultiThreadedDataSource;
 import org.simplesql.data.SimpleCellKey;
 import org.simplesql.om.aggregate.ChunkedProcessor;
+import org.simplesql.om.aggregate.ReportWorker;
 
-public class TestChunkedProcessor {
+public class TestReportWorker {
 
 	@Test
-	public void testMultiThreadedRun() throws Throwable {
-
+	public void testReportWorker() throws Throwable{
 		Configuration conf = new PropertiesConfiguration();
-
-		ChunkedProcessor cn = new ChunkedProcessor(conf,
-				"CREATE TABLE my (name STRING,  hit INT )",
-				"SELECT name, COUNT(hit) FROM my GROUP BY name");
-
 		int chunkSize = 10;
-		MySink sink = new MySink();
-		long start = System.currentTimeMillis();
-		cn.runAsync(new MyMultiThreadedDataSource(), sink, chunkSize);
-
-		Thread.sleep(1000);
-
-		long iterations = cn.stopWait();
-
-		long end = System.currentTimeMillis() - start;
-		System.out.println("Made: " + iterations + " in " + end + "ms");
-
-		Map<Key, Cell<?>[]> map = sink.map;
-
-		for (Entry<Key, Cell<?>[]> entry : map.entrySet()) {
-			System.out.println("key: " + entry.getKey().asString() + " : "
-					+ entry.getValue()[0] + ", " + entry.getValue()[1]);
-		}
-
-		List<Long> vals = sink.vals;
-		long total = 0L;
-		for (Long v : vals)
-			total += v.longValue();
-
-		long atotal = sink.map.get(new SimpleCellKey("a"))[1].getLongValue();
-
-		// test that the total counted manually
-		// and the total in the map is the same
-		assertEquals(total, atotal);
-
-		// test that the total is what was expected logically
-		assertEquals(chunkSize * iterations, total);
-
-	}
-
-	@Test
-	public void testRun() throws Throwable {
-
-		Configuration conf = new PropertiesConfiguration();
-
+		
 		ChunkedProcessor cn = new ChunkedProcessor(conf,
 				"CREATE TABLE my (name STRING,  hit INT )",
 				"SELECT name, COUNT(hit) FROM my GROUP BY name");
 
-		int chunkSize = 1000;
-		MySink sink = new MySink();
+		final MySink sink = new MySink();
+		
+		ReportWorker worker = new ReportWorker(Executors.newCachedThreadPool(), conf, chunkSize) {
+			
+			@Override
+			public String getSelect() {
+				return "SELECT name, COUNT(hit) FROM my GROUP BY name";
+			}
+			
+			@Override
+			public String getSchema() {
+				return "CREATE TABLE my (name STRING,  hit INT )";
+			}
+			
+			@Override
+			public DataSource getDataSource() {
+				return new MyMultiThreadedDataSource();
+			}
+			
+			@Override
+			public DataSinkFactory<MySink> getDataSinkFactory() {
+				return sink;
+			}
+		};
+		
 		long start = System.currentTimeMillis();
-		cn.runAsync(new MyDataSource(), sink, chunkSize);
-
+		
+		worker.runAsync();
+		
 		Thread.sleep(1000);
 
-		long iterations = cn.stopWait();
+		long iterations = worker.stop();
 
 		long end = System.currentTimeMillis() - start;
 		System.out.println("Made: " + iterations + " in " + end + "ms");
@@ -110,8 +92,8 @@ public class TestChunkedProcessor {
 
 		// test that the total is what was expected logically
 		assertEquals(chunkSize * iterations, total);
-
 	}
+	
 
 	static class MySink extends DefaultDataSink implements
 			DataSinkFactory<MySink> {

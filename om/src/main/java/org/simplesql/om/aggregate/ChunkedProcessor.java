@@ -93,7 +93,7 @@ public class ChunkedProcessor {
 		try {
 			mainService.shutdown();
 			waitForStop.await(5L, TimeUnit.SECONDS);
-			//if no shutdown in 5 seconds we forcefully shutdown
+			// if no shutdown in 5 seconds we forcefully shutdown
 			mainService.shutdownNow();
 			mainService.awaitTermination(10, TimeUnit.SECONDS);
 
@@ -113,21 +113,22 @@ public class ChunkedProcessor {
 			final DataSinkFactory<T> sinkFactory, final int chunkSize)
 			throws Throwable {
 
-		future = Executors.newSingleThreadExecutor().submit(new Callable<Long>() {
+		future = Executors.newSingleThreadExecutor().submit(
+				new Callable<Long>() {
 
-			@Override
-			public Long call() throws Exception {
-				try {
-					return run(dataSource, sinkFactory, chunkSize);
-				} catch (Throwable e) {
-					RuntimeException excp = new RuntimeException(e.toString(),
-							e);
-					excp.setStackTrace(e.getStackTrace());
-					throw excp;
-				}
-			}
+					@Override
+					public Long call() throws Exception {
+						try {
+							return run(dataSource, sinkFactory, chunkSize);
+						} catch (Throwable e) {
+							RuntimeException excp = new RuntimeException(e
+									.toString(), e);
+							excp.setStackTrace(e.getStackTrace());
+							throw excp;
+						}
+					}
 
-		});
+				});
 
 	}
 
@@ -157,6 +158,8 @@ public class ChunkedProcessor {
 						try {
 
 							final T sink = sinkFactory.create();
+							sink.open();
+
 							try {
 								if (LOG.isDebugEnabled())
 									LOG.debug("Send data to sink: " + sink);
@@ -232,7 +235,7 @@ public class ChunkedProcessor {
 	private final long consumeIterator(Disruptor<WriteEvent> disruptor,
 			Iterator<Object[]> iterator, int chunkSize) {
 		long i = 0;
-		while (! (Thread.interrupted() || shouldStop.get() ) ) {
+		while (!(Thread.interrupted() || shouldStop.get())) {
 			final AggregateStore storage = new HashMapAggregateStore(exec
 					.getTransforms().toArray(new TransformFunction[0]));
 
@@ -244,7 +247,6 @@ public class ChunkedProcessor {
 			if (v <= 0) {
 				break;
 			}
-
 
 			// async operation please see above out of the while loop in
 			// which the anonymous class
@@ -267,7 +269,7 @@ public class ChunkedProcessor {
 			// "ms");
 			// }
 
-			i+=v;
+			i += v;
 
 		}
 

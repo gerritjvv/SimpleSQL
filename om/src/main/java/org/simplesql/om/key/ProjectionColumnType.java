@@ -13,7 +13,7 @@ import org.simplesql.om.key.typed.StringKeyColumnValueImpl;
  */
 public enum ProjectionColumnType {
 
-	TABLENAME(20), STRING(-1), INT(4), BOOLEAN(1), LONG(8), DOUBLE(8);
+	TABLENAME(20), STRING(-1), BYTE(1), SHORT(2), INT(4), BOOLEAN(1), LONG(8), DOUBLE(8);
 
 	final int width;
 

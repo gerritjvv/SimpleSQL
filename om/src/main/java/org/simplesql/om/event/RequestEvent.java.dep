@@ -29,7 +29,6 @@ public class RequestEvent implements Event<Request>{
 
 	boolean valid = true;
 
-	@Override
 	public Request getData(){
 		return request;
 		

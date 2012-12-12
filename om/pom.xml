@@ -23,11 +23,13 @@
 			<artifactId>parser</artifactId>
 			<version>0.2.1</version>
 		</dependency>
+                <!--
 		<dependency>
 			<groupId>org.simplesql</groupId>
 			<artifactId>wal</artifactId>
 			<version>0.1.0</version>
 		</dependency>
+                -->
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
